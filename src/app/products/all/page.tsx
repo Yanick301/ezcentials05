@@ -2,15 +2,13 @@
 'use client';
 
 import { ProductCard } from '@/components/ProductCard';
-import { useSearchParams, notFound } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useMemo, useEffect } from 'react';
-import type { Product } from '@/lib/types';
-import { categories, products as allProducts, getProductsByCategory } from '@/lib/data';
+import { products as allProducts } from '@/lib/data';
 import { useCart } from '@/context/CartContext';
 
-
-export default function AllProductsPage() {
+export default function AllProductsPageClient() {
   const searchParams = useSearchParams();
   const { clearCart } = useCart();
   
