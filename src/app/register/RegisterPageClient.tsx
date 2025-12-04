@@ -115,34 +115,34 @@ export default function RegisterPageClient() {
       await sendEmailVerification(user);
 
       toast({
-          title: language === 'fr' ? 'Inscription réussie !' : language === 'en' ? 'Registration Successful!' : 'Registrierung erfolgreich!',
-          description: language === 'fr' ? 'Un lien de vérification a été envoyé à votre adresse e-mail.' : language === 'en' ? 'A verification link has been sent to your email address.' : 'Ein Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.',
+          title: <TranslatedText fr="Inscription réussie !" en="Registration Successful!">Registrierung erfolgreich!</TranslatedText>,
+          description: <TranslatedText fr="Un lien de vérification a été envoyé à votre adresse e-mail." en="A verification link has been sent to your email address.">Ein Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.</TranslatedText>,
       });
       
       // Step 5: Redirect the user to the verification page
       router.push('/verify-email');
 
     } catch (error: any) {
-       let errorMessage: string;
+       let errorMessage: React.ReactNode;
        switch (error.code) {
          case 'auth/email-already-in-use':
-           errorMessage = language === 'fr' ? 'Cette adresse e-mail est déjà utilisée.' : language === 'en' ? 'This email address is already in use.' : 'Diese E-Mail-Adresse wird bereits verwendet.';
+           errorMessage = <TranslatedText fr="Cette adresse e-mail est déjà utilisée." en="This email address is already in use.">Diese E-Mail-Adresse wird bereits verwendet.</TranslatedText>;
            break;
          case 'auth/weak-password':
-           errorMessage = language === 'fr' ? 'Le mot de passe doit contenir au moins 6 caractères.' : language === 'en' ? 'Password must be at least 6 characters.' : 'Das Passwort muss mindestens 6 Zeichen lang sein.';
+           errorMessage = <TranslatedText fr="Le mot de passe doit contenir au moins 6 caractères." en="Password must be at least 6 characters.">Das Passwort muss mindestens 6 Zeichen lang sein.</TranslatedText>;
            break;
         case 'auth/invalid-email':
-           errorMessage = language === 'fr' ? 'L\'adresse e-mail est invalide.' : language === 'en' ? 'The email address is invalid.' : 'Die E-Mail-Adresse ist ungültig.';
+           errorMessage = <TranslatedText fr="L'adresse e-mail est invalide." en="The email address is invalid.">Die E-Mail-Adresse ist ungültig.</TranslatedText>;
            break;
          default:
-           errorMessage = language === 'fr' ? 'Une erreur est survenue lors de l\'inscription.' : language === 'en' ? 'An error occurred during registration.' : 'Bei der Registrierung ist ein Fehler aufgetreten.';
+           errorMessage = <TranslatedText fr="Une erreur est survenue lors de l'inscription." en="An error occurred during registration.">Bei der Registrierung ist ein Fehler aufgetreten.</TranslatedText>;
            console.error("Signup error:", error);
            break;
        }
       
       toast({
         variant: 'destructive',
-        title: language === 'fr' ? 'Échec de l\'inscription' : language === 'en' ? 'Registration Failed' : 'Registrierung fehlgeschlagen',
+        title: <TranslatedText fr="Échec de l'inscription" en="Registration Failed">Registrierung fehlgeschlagen</TranslatedText>,
         description: errorMessage,
       });
     }
@@ -157,7 +157,7 @@ export default function RegisterPageClient() {
 
         <Card className="w-full max-w-sm rounded-2xl border-none shadow-lg">
             <CardContent className="p-8">
-                <h2 className="mb-6 text-2xl font-semibold"><TranslatedText fr="Créer un compte" en="Create an Account">Créer un compte</TranslatedText></h2>
+                <h2 className="mb-6 text-2xl font-semibold"><TranslatedText fr="Créer un compte" en="Create an Account">Konto erstellen</TranslatedText></h2>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
                         <FormField
@@ -165,7 +165,7 @@ export default function RegisterPageClient() {
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel><TranslatedText fr="Nom complet" en="Full Name">Nom complet</TranslatedText></FormLabel>
+                                    <FormLabel><TranslatedText fr="Nom complet" en="Full Name">Vollständiger Name</TranslatedText></FormLabel>
                                     <FormControl>
                                         <Input {...field} className="border-0 bg-input" autoComplete="name" />
                                     </FormControl>
@@ -178,7 +178,7 @@ export default function RegisterPageClient() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel><TranslatedText fr="Email" en="Email">Email</TranslatedText></FormLabel>
+                                    <FormLabel>Email</FormLabel>
                                     <FormControl>
                                         <Input type="email" {...field} className="border-0 bg-input" autoComplete="email" />
                                     </FormControl>
@@ -191,7 +191,7 @@ export default function RegisterPageClient() {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel><TranslatedText fr="Mot de passe" en="Password">Mot de passe</TranslatedText></FormLabel>
+                                    <FormLabel><TranslatedText fr="Mot de passe" en="Password">Passwort</TranslatedText></FormLabel>
                                     <div className="relative">
                                       <FormControl>
                                           <Input type={showPassword ? 'text' : 'password'} {...field} className="border-0 bg-input pr-10" autoComplete="new-password"/>
@@ -204,7 +204,11 @@ export default function RegisterPageClient() {
                                           onClick={() => setShowPassword((prev) => !prev)}
                                       >
                                           {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                                          <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
+                                          <span className="sr-only">
+                                            <TranslatedText fr={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"} en={showPassword ? "Hide password" : "Show password"}>
+                                                {showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                                            </TranslatedText>
+                                          </span>
                                       </Button>
                                     </div>
                                     <FormMessage />
@@ -212,16 +216,16 @@ export default function RegisterPageClient() {
                             )}
                         />
                         <Button type="submit" className="w-full mt-4 rounded-full" size="lg" disabled={form.formState.isSubmitting}>
-                            {form.formState.isSubmitting ? <TranslatedText fr="Création..." en="Creating...">Création...</TranslatedText> : <TranslatedText fr="Créer un compte" en="Create Account">Créer un compte</TranslatedText>}
+                            {form.formState.isSubmitting ? <TranslatedText fr="Création..." en="Creating...">Erstelle...</TranslatedText> : <TranslatedText fr="Créer un compte" en="Create Account">Konto erstellen</TranslatedText>}
                         </Button>
                     </form>
                 </Form>
                 
                 <div className="mt-6 text-center text-sm">
                     <p className="text-muted-foreground">
-                        <TranslatedText fr="Vous avez déjà un compte ?" en="Already have an account?">Vous avez déjà un compte ?</TranslatedText>{' '}
+                        <TranslatedText fr="Vous avez déjà un compte ?" en="Already have an account?">Bereits ein Konto?</TranslatedText>{' '}
                         <Link href="/login" className="font-semibold text-foreground hover:underline">
-                            <TranslatedText fr="Se connecter" en="Log In">Se connecter</TranslatedText>
+                            <TranslatedText fr="Se connecter" en="Log In">Anmelden</TranslatedText>
                         </Link>
                     </p>
                 </div>
