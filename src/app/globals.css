@@ -1,0 +1,82 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 100% 96%;
+    --foreground: 25 50% 12%;
+    --card: 30 100% 98%;
+    --card-foreground: 25 50% 12%;
+    --popover: 30 100% 98%;
+    --popover-foreground: 25 50% 12%;
+    --primary: 25 50% 12%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 25 25% 92%;
+    --secondary-foreground: 25 30% 35%;
+    --muted: 25 25% 92%;
+    --muted-foreground: 25 30% 45%;
+    --accent: 25 25% 92%;
+    --accent-foreground: 25 30% 35%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 25 25% 88%;
+    --input: 25 25% 95%;
+    --ring: 25 50% 12%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+
+  .dark {
+    --background: 25 30% 10%;
+    --foreground: 30 100% 96%;
+    --card: 25 30% 12%;
+    --card-foreground: 30 100% 96%;
+    --popover: 25 30% 12%;
+    --popover-foreground: 30 100% 96%;
+    --primary: 30 100% 96%;
+    --primary-foreground: 25 50% 12%;
+    --secondary: 25 25% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 25 25% 18%;
+    --muted-foreground: 25 20% 65%;
+    --accent: 25 25% 18%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 25 25% 18%;
+    --input: 25 25% 18%;
+    --ring: 30 100% 96%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .bg-footer {
+    background-color: hsl(25 30% 10%);
+    background-image: radial-gradient(hsl(25 30% 15%) 0.5px, transparent 0.5px);
+    background-size: 5px 5px;
+  }
+  .bg-checkout-background {
+      @apply bg-gray-50;
+  }
+}

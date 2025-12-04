@@ -1,0 +1,13 @@
+'use client';
+
+import { LanguageProvider } from '@/context/LanguageContext';
+import type { ReactNode } from 'react';
+import { CartProvider } from '@/context/CartContext';
+
+export function AppProviders({ children }: { children: ReactNode }) {
+  return (
+    <LanguageProvider>
+      <CartProvider>{children}</CartProvider>
+    </LanguageProvider>
+  );
+}

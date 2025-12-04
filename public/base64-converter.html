@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Base64 Converter</title>
+</head>
+<body>
+
+    <input type="file" id="imageInput" accept="image/*">
+
+    <script>
+        // This variable will store the Base64 string result.
+        let base64String = "";
+
+        /**
+         * Converts an image file to a Base64 string.
+         * @param {File} file The image file to convert.
+         */
+        function imageToBase64(file) {
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                // Store the result in the variable.
+                base64String = event.target.result;
+                
+                // Print the Base64 string to the console.
+                console.log(base64String);
+            };
+
+            reader.onerror = function(error) {
+                console.error("Error reading file:", error);
+            };
+
+            // Start reading the file as a Data URL (which is a Base64 string).
+            reader.readAsDataURL(file);
+        }
+
+        // Add an event listener to the file input.
+        const imageInputElement = document.getElementById('imageInput');
+        imageInputElement.addEventListener('change', function(event) {
+            const selectedFile = event.target.files[0];
+            
+            if (selectedFile) {
+                imageToBase64(selectedFile);
+            }
+        });
+    </script>
+
+</body>
+</html>
