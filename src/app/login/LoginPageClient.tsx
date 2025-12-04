@@ -94,8 +94,8 @@ export default function LoginPageClient() {
 
         toast({
             variant: 'destructive',
-            title: language === 'fr' ? "Erreur de Profil" : language === 'en' ? "Profile Error" : "Profilfehler",
-            description: language === 'fr' ? "Impossible de créer le profil utilisateur." : language === 'en' ? "Could not create user profile." : "Benutzerprofil konnte nicht erstellt werden.",
+            title: <TranslatedText fr="Erreur de Profil" en="Profile Error">Profilfehler</TranslatedText>,
+            description: <TranslatedText fr="Impossible de créer le profil utilisateur." en="Could not create user profile.">Benutzerprofil konnte nicht erstellt werden.</TranslatedText>,
         });
         // Re-throw the error to indicate failure
         throw e;
@@ -111,8 +111,8 @@ export default function LoginPageClient() {
       if (userCredential.user && !userCredential.user.emailVerified) {
         toast({
             variant: "destructive",
-            title: language === 'fr' ? 'Vérification requise' : language === 'en' ? 'Verification Required' : 'Bestätigung erforderlich',
-            description: language === 'fr' ? 'Veuillez vérifier votre e-mail avant de vous connecter.' : language === 'en' ? 'Please verify your email before logging in.' : 'Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.',
+            title: <TranslatedText fr="Vérification requise" en="Verification Required">Bestätigung erforderlich</TranslatedText>,
+            description: <TranslatedText fr="Veuillez vérifier votre e-mail avant de vous connecter." en="Please verify your email before logging in.">Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.</TranslatedText>,
         });
         router.push('/verify-email');
         return; // Stop execution here
@@ -121,8 +121,8 @@ export default function LoginPageClient() {
       await handleUserCreation(userCredential)
       
       toast({
-          title: language === 'fr' ? 'Connexion réussie' : language === 'en' ? 'Login Successful' : 'Anmeldung erfolgreich',
-          description: language === 'fr' ? 'Bienvenue à nouveau !' : language === 'en' ? 'Welcome back!' : 'Willkommen zurück!',
+          title: <TranslatedText fr="Connexion réussie" en="Login Successful">Anmeldung erfolgreich</TranslatedText>,
+          description: <TranslatedText fr="Bienvenue à nouveau !" en="Welcome back!">Willkommen zurück!</TranslatedText>,
       });
       
       const redirectUrl = searchParams.get('redirect') || '/account';
@@ -130,14 +130,14 @@ export default function LoginPageClient() {
       router.refresh(); // Forces a state refresh to update user context
 
     } catch (error: any) {
-      let errorMessage = language === 'fr' ? 'Une erreur est survenue lors de la connexion.' : language === 'en' ? 'An error occurred during login.' : 'Bei der Anmeldung ist ein Fehler aufgetreten.';
+      let errorMessage: React.ReactNode = <TranslatedText fr="Une erreur est survenue lors de la connexion." en="An error occurred during login.">Bei der Anmeldung ist ein Fehler aufgetreten.</TranslatedText>;
       if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-          errorMessage = language === 'fr' ? 'Email ou mot de passe incorrect.' : language === 'en' ? 'Incorrect email or password.' : 'Falsche E-Mail oder falsches Passwort.';
+          errorMessage = <TranslatedText fr="Email ou mot de passe incorrect." en="Incorrect email or password.">Falsche E-Mail oder falsches Passwort.</TranslatedText>;
       }
       console.error("Login failed:", error);
       toast({
         variant: 'destructive',
-        title: language === 'fr' ? 'Échec de la connexion' : language === 'en' ? 'Login Failed' : 'Anmeldung fehlgeschlagen',
+        title: <TranslatedText fr="Échec de la connexion" en="Login Failed">Anmeldung fehlgeschlagen</TranslatedText>,
         description: errorMessage,
       });
     }
@@ -152,7 +152,7 @@ export default function LoginPageClient() {
 
         <Card className="w-full max-w-sm rounded-2xl border-none shadow-lg">
             <CardContent className="p-8">
-                <h2 className="mb-6 text-2xl font-semibold"><TranslatedText fr="Connexion" en="Log In">Se connecter</TranslatedText></h2>
+                <h2 className="mb-6 text-2xl font-semibold"><TranslatedText fr="Connexion" en="Log In">Anmelden</TranslatedText></h2>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
                         <FormField
@@ -160,7 +160,7 @@ export default function LoginPageClient() {
                             name="email"
                             render={({ field }) => (
                             <FormItem>
-                                <FormLabel><TranslatedText fr="Email" en="Email">Email</TranslatedText></FormLabel>
+                                <FormLabel>Email</FormLabel>
                                 <FormControl>
                                 <Input type="email" {...field} className="border-0 bg-input" autoComplete="email" />
                                 </FormControl>
@@ -174,7 +174,7 @@ export default function LoginPageClient() {
                             render={({ field }) => (
                             <FormItem>
                                 <div className="flex items-center justify-between">
-                                    <FormLabel><TranslatedText fr="Mot de passe" en="Password">Mot de passe</TranslatedText></FormLabel>
+                                    <FormLabel><TranslatedText fr="Mot de passe" en="Password">Passwort</TranslatedText></FormLabel>
                                 </div>
                                 <div className="relative">
                                     <FormControl>
@@ -188,7 +188,11 @@ export default function LoginPageClient() {
                                         onClick={() => setShowPassword((prev) => !prev)}
                                     >
                                         {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                                        <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
+                                        <span className="sr-only">
+                                            <TranslatedText fr={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"} en={showPassword ? "Hide password" : "Show password"}>
+                                                {showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                                            </TranslatedText>
+                                        </span>
                                     </Button>
                                 </div>
                                 <FormMessage />
@@ -196,23 +200,23 @@ export default function LoginPageClient() {
                             )}
                         />
                         <Button type="submit" className="mt-4 w-full rounded-full" size="lg" disabled={form.formState.isSubmitting}>
-                            {form.formState.isSubmitting ? <TranslatedText fr="Connexion..." en="Logging in...">Connexion...</TranslatedText> : <TranslatedText fr="Se connecter" en="Log In">Se connecter</TranslatedText>}
+                            {form.formState.isSubmitting ? <TranslatedText fr="Connexion..." en="Logging in...">Anmelden...</TranslatedText> : <TranslatedText fr="Se connecter" en="Log In">Anmelden</TranslatedText>}
                         </Button>
                     </form>
                 </Form>
 
                 <div className="mt-6 text-center text-sm">
                     <p className="text-muted-foreground">
-                        <TranslatedText fr="Pas encore de compte ?" en="Don't have an account yet?">Pas encore de compte ?</TranslatedText>{' '}
+                        <TranslatedText fr="Pas encore de compte ?" en="Don't have an account yet?">Noch kein Konto?</TranslatedText>{' '}
                         <Link href="/register" className="font-semibold text-foreground hover:underline">
-                            <TranslatedText fr="S'inscrire" en="Sign up">S'inscrire</TranslatedText>
+                            <TranslatedText fr="S'inscrire" en="Sign up">Registrieren</TranslatedText>
                         </Link>
                     </p>
                      <Link
                         href="/forgot-password"
                         className="mt-2 inline-block text-sm text-muted-foreground hover:underline"
                     >
-                        <TranslatedText fr="Mot de passe oublié ?" en="Forgot password?">Mot de passe oublié ?</TranslatedText>
+                        <TranslatedText fr="Mot de passe oublié ?" en="Forgot password?">Passwort vergessen?</TranslatedText>
                     </Link>
                 </div>
             </CardContent>
