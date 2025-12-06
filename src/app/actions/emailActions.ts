@@ -24,6 +24,8 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
 
   const resendApiKey = process.env.RESEND_API_KEY
   const adminEmail = process.env.ADMIN_EMAIL
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'EZCENTIALS <onboarding@resend.dev>';
+
 
   if (!resendApiKey || !adminEmail) {
     const errorMsg =
@@ -53,7 +55,7 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
       `Attempting to send email to ${adminEmail} for order ${orderId}...`
     )
     const { data, error } = await resend.emails.send({
-      from: 'EZCENTIALS <onboarding@resend.dev>',
+      from: fromEmail,
       to: [adminEmail],
       subject: `Nouveau reçu pour la commande ${orderId}`,
       html: `
@@ -129,6 +131,8 @@ export async function sendCustomerConfirmationEmail(
 ) {
   const { userEmail, orderId } = sendEmailToCustomerInput.parse(input)
   const resendApiKey = process.env.RESEND_API_KEY
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'EZCENTIALS <onboarding@resend.dev>';
+
 
   if (!resendApiKey) {
     console.error('Email server is not configured.')
@@ -139,7 +143,7 @@ export async function sendCustomerConfirmationEmail(
 
   try {
     await resend.emails.send({
-      from: 'EZCENTIALS <onboarding@resend.dev>',
+      from: fromEmail,
       to: userEmail,
       subject: `Votre commande EZCENTIALS #${orderId} est confirmée !`,
       html: `
@@ -168,6 +172,8 @@ export async function sendCustomerRejectionEmail(
 ) {
   const { userEmail, orderId } = sendEmailToCustomerInput.parse(input)
   const resendApiKey = process.env.RESEND_API_KEY
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'EZCENTIALS <onboarding@resend.dev>';
+
 
   if (!resendApiKey) {
     console.error('Email server is not configured.')
@@ -178,7 +184,7 @@ export async function sendCustomerRejectionEmail(
 
   try {
     await resend.emails.send({
-      from: 'EZCENTIALS <onboarding@resend.dev>',
+      from: fromEmail,
       to: userEmail,
       subject: `Information concernant votre commande EZCENTIALS #${orderId}`,
       html: `
