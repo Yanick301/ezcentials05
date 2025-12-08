@@ -12,7 +12,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TranslatedText } from '@/components/TranslatedText';
-import supabase from '@/lib/supabaseClient';
+import { useAuth } from '@/firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -54,23 +55,20 @@ export default function ForgotPasswordPage() {
     });
 
     const onSubmit: SubmitHandler<z.infer<typeof currentSchema>> = async (data) => {
-      try {
-        // Supabase: request a password reset email
-        const { error } = await supabase.auth.resetPasswordForEmail(data.email);
-        if (error) throw error;
-
-        toast({
-          title: language === 'fr' ? 'E-mail envoyé' : language === 'en' ? 'Email Sent' : 'E-Mail gesendet',
-          description: language === 'fr' ? 'Vérifiez votre boîte de réception pour le lien de réinitialisation du mot de passe.' : language === 'en' ? 'Check your inbox for the password reset link.' : 'Überprüfen Sie Ihren Posteingang für den Link zum Zurücksetzen des Passworts.',
-        });
-      } catch (error: any) {
-        console.error(error);
-        toast({
-          variant: 'destructive',
-          title: 'Fehler',
-          description: error?.message || String(error),
-        });
-      }
+        try {
+            await sendPasswordResetEmail(auth, data.email);
+            toast({
+                title: language === 'fr' ? 'E-mail envoyé' : language === 'en' ? 'Email Sent' : 'E-Mail gesendet',
+                description: language === 'fr' ? 'Vérifiez votre boîte de réception pour le lien de réinitialisation du mot de passe.' : language === 'en' ? 'Check your inbox for the password reset link.' : 'Überprüfen Sie Ihren Posteingang für den Link zum Zurücksetzen des Passworts.',
+            });
+        } catch (error: any) {
+            console.error(error);
+            toast({
+                variant: 'destructive',
+                title: 'Fehler',
+                description: error.message,
+            });
+        }
     };
 
 

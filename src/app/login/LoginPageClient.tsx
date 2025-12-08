@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
-import supabase from '@/lib/supabaseClient';
+import { signInWithEmailAndPassword, type UserCredential } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -41,114 +41,107 @@ const loginSchemaDE = z.object({
 const loginSchemaEN = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
   password: z.string().min(1, { message: 'Password is required.' }),
-
-  'use client';
-
-  import Link from 'next/link';
-  import { useForm, type SubmitHandler } from 'react-hook-form';
-  import { zodResolver } from '@hookform/resolvers/zod';
-  import { z } from 'zod';
-  import {
-    Card,
-    CardContent,
-  } from '@/components/ui/card';
-  import { Button } from '@/components/ui/button';
-  import { Input } from '@/components/ui/input';
-  import { TranslatedText } from '@/components/TranslatedText';
-  import { useFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
-  import { signInWithEmailAndPassword, type UserCredential } from 'firebase/auth';
-  import { doc, setDoc, getDoc } from 'firebase/firestore';
-  import { useRouter, useSearchParams } from 'next/navigation';
-  import { useToast } from '@/hooks/use-toast';
-  import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-  } from "@/components/ui/form";
-  import { useLanguage } from '@/context/LanguageContext';
-  import { useState } from 'react';
-  import { Eye, EyeOff } from 'lucide-react';
+});
 
 
-  const loginSchemaFR = z.object({
-    email: z.string().email({ message: 'Adresse e-mail invalide.' }),
-    password: z.string().min(1, { message: 'Le mot de passe est requis.' }),
-  });
-  const loginSchemaDE = z.object({
-    email: z.string().email({ message: 'Ungültige E-Mail-Adresse.' }),
-    password: z.string().min(1, { message: 'Passwort ist erforderlich.' }),
-  });
-  const loginSchemaEN = z.object({
-    email: z.string().email({ message: 'Invalid email address.' }),
-    password: z.string().min(1, { message: 'Password is required.' }),
+export default function LoginPageClient() {
+  const { auth, firestore } = useFirebase();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+  const { language } = useLanguage();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const currentSchema = language === 'fr' ? loginSchemaFR : language === 'en' ? loginSchemaEN : loginSchemaDE;
+
+  const form = useForm<z.infer<typeof currentSchema>>({
+    resolver: zodResolver(currentSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
+  const handleUserCreation = async (userCredential: UserCredential) => {
+    const user = userCredential.user;
+    if (!user || !firestore) return;
 
-  export default function LoginPageClient() {
-    const { auth, firestore } = useFirebase();
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const { toast } = useToast();
-    const { language } = useLanguage();
-    const [showPassword, setShowPassword] = useState(false);
-
-    const currentSchema = language === 'fr' ? loginSchemaFR : language === 'en' ? loginSchemaEN : loginSchemaDE;
-
-    const form = useForm<z.infer<typeof currentSchema>>({
-      resolver: zodResolver(currentSchema),
-      defaultValues: {
-        email: '',
-        password: '',
-      },
-    });
-
-    const handleUserCreation = async (userCredential: UserCredential) => {
-      const user = userCredential.user;
-      if (!user || !firestore) return;
-
-      const userRef = doc(firestore, 'userProfiles', user.uid);
+    const userRef = doc(firestore, 'userProfiles', user.uid);
     
-      try {
-          const userDoc = await getDoc(userRef);
+    try {
+        const userDoc = await getDoc(userRef);
 
-          // Only create the profile if it doesn't already exist.
-          if (!userDoc.exists()) {
-               await setDoc(userRef, {
-                  id: user.uid,
-                  email: user.email,
-                  firstName: user.displayName?.split(' ')[0] || '',
-                  lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-                  photoURL: user.photoURL || '',
-               }, { merge: true });
-          }
-      } catch (e: any) {
-          const permissionError = new FirestorePermissionError({
-            path: `userProfiles/${user.uid}`,
-            operation: 'create',
-            requestResourceData: {
-              id: user.uid,
-              email: user.email,
-            },
-          });
-          errorEmitter.emit('permission-error', permissionError);
+        // Only create the profile if it doesn't already exist.
+        if (!userDoc.exists()) {
+             await setDoc(userRef, {
+                id: user.uid,
+                email: user.email,
+                firstName: user.displayName?.split(' ')[0] || '',
+                lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+                photoURL: user.photoURL || '',
+             }, { merge: true });
+        }
+    } catch (e: any) {
+        const permissionError = new FirestorePermissionError({
+          path: `userProfiles/${user.uid}`,
+          operation: 'create',
+          requestResourceData: {
+            id: user.uid,
+            email: user.email,
+          },
+        });
+        errorEmitter.emit('permission-error', permissionError);
 
-          toast({
-              variant: 'destructive',
-              title: <TranslatedText fr="Erreur de Profil" en="Profile Error">Profilfehler</TranslatedText>,
-              description: <TranslatedText fr="Impossible de créer le profil utilisateur." en="Could not create user profile.">Benutzerprofil konnte nicht erstellt werden.</TranslatedText>,
-          });
-          // Re-throw the error to indicate failure
-          throw e;
+        toast({
+            variant: 'destructive',
+            title: <TranslatedText fr="Erreur de Profil" en="Profile Error">Profilfehler</TranslatedText>,
+            description: <TranslatedText fr="Impossible de créer le profil utilisateur." en="Could not create user profile.">Benutzerprofil konnte nicht erstellt werden.</TranslatedText>,
+        });
+        // Re-throw the error to indicate failure
+        throw e;
+    }
+  };
+
+  const onSubmit: SubmitHandler<z.infer<typeof currentSchema>> = async (data) => {
+    if (!auth || !firestore) return;
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      
+      // IMPORTANT: Check for email verification
+      if (userCredential.user && !userCredential.user.emailVerified) {
+        toast({
+            variant: "destructive",
+            title: <TranslatedText fr="Vérification requise" en="Verification Required">Bestätigung erforderlich</TranslatedText>,
+            description: <TranslatedText fr="Veuillez vérifier votre e-mail avant de vous connecter." en="Please verify your email before logging in.">Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.</TranslatedText>,
+        });
+        router.push('/verify-email');
+        return; // Stop execution here
       }
-    };
 
-    const onSubmit: SubmitHandler<z.infer<typeof currentSchema>> = async (data) => {
-      if (!auth || !firestore) return;
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      await handleUserCreation(userCredential)
+      
+      toast({
+          title: <TranslatedText fr="Connexion réussie" en="Login Successful">Anmeldung erfolgreich</TranslatedText>,
+          description: <TranslatedText fr="Bienvenue à nouveau !" en="Welcome back!">Willkommen zurück!</TranslatedText>,
+      });
+      
+      const redirectUrl = searchParams.get('redirect') || '/account';
+      router.push(redirectUrl);
+      router.refresh(); // Forces a state refresh to update user context
+
+    } catch (error: any) {
+      let errorMessage: React.ReactNode = <TranslatedText fr="Une erreur est survenue lors de la connexion." en="An error occurred during login.">Bei der Anmeldung ist ein Fehler aufgetreten.</TranslatedText>;
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          errorMessage = <TranslatedText fr="Email ou mot de passe incorrect." en="Incorrect email or password.">Falsche E-Mail oder falsches Passwort.</TranslatedText>;
+      }
+      console.error("Login failed:", error);
+      toast({
+        variant: 'destructive',
+        title: <TranslatedText fr="Échec de la connexion" en="Login Failed">Anmeldung fehlgeschlagen</TranslatedText>,
+        description: errorMessage,
+      });
+    }
+  };
       
         // IMPORTANT: Check for email verification
         if (userCredential.user && !userCredential.user.emailVerified) {
