@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { ReactNode } from 'react';
+import supabase from '@/lib/supabaseClient';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg role="img" viewBox="0 0 24 24" {...props}>
@@ -18,8 +19,16 @@ export function GoogleSignInButton({
   className?: string;
   children: ReactNode;
 }) {
+  const handleGoogle = async () => {
+    try {
+      await supabase.auth.signInWithOAuth({ provider: 'google' } as any);
+    } catch (e) {
+      console.error('Google sign-in error', e);
+    }
+  };
+
   return (
-    <Button variant="outline" className={cn('w-full', className)}>
+    <Button variant="outline" className={cn('w-full', className)} onClick={handleGoogle}>
       <GoogleIcon className="mr-2 h-4 w-4" />
       {children}
     </Button>

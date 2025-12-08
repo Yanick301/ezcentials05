@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { signInWithEmailAndPassword, type UserCredential } from 'firebase/auth';
+import supabase from '@/lib/supabaseClient';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -62,11 +62,10 @@ export default function LoginPageClient() {
     },
   });
 
-  const handleUserCreation = async (userCredential: UserCredential) => {
-    const user = userCredential.user;
+  const handleUserCreation = async (user: any) => {
     if (!user || !firestore) return;
 
-    const userRef = doc(firestore, 'userProfiles', user.uid);
+    const userRef = doc(firestore, 'userProfiles', user.id || user.uid);
     
     try {
         const userDoc = await getDoc(userRef);
@@ -74,11 +73,11 @@ export default function LoginPageClient() {
         // Only create the profile if it doesn't already exist.
         if (!userDoc.exists()) {
              await setDoc(userRef, {
-                id: user.uid,
+                id: user.id || user.uid,
                 email: user.email,
-                firstName: user.displayName?.split(' ')[0] || '',
-                lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-                photoURL: user.photoURL || '',
+                firstName: (user.user_metadata?.full_name || user.user_metadata?.name || user.displayName || '').split(' ')[0] || '',
+                lastName: (user.user_metadata?.full_name || user.user_metadata?.name || user.displayName || '').split(' ').slice(1).join(' ') || '',
+                photoURL: user.user_metadata?.avatar_url || user.photoURL || '',
              }, { merge: true });
         }
     } catch (e: any) {
@@ -103,38 +102,42 @@ export default function LoginPageClient() {
   };
 
   const onSubmit: SubmitHandler<z.infer<typeof currentSchema>> = async (data) => {
-    if (!auth || !firestore) return;
+    if (!firestore) return;
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-      
-      // IMPORTANT: Check for email verification
-      if (userCredential.user && !userCredential.user.emailVerified) {
+      const { data: res, error } = await supabase.auth.signInWithPassword({ email: data.email, password: data.password });
+      if (error) throw error;
+
+      const user = res.user;
+
+      // If Supabase email confirmation is required, email_confirmed_at may be null
+      const emailConfirmed = (user as any)?.email_confirmed_at;
+      if (emailConfirmed === null || emailConfirmed === undefined) {
         toast({
             variant: "destructive",
             title: <TranslatedText fr="Vérification requise" en="Verification Required">Bestätigung erforderlich</TranslatedText>,
             description: <TranslatedText fr="Veuillez vérifier votre e-mail avant de vous connecter." en="Please verify your email before logging in.">Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.</TranslatedText>,
         });
         router.push('/verify-email');
-        return; // Stop execution here
+        return;
       }
 
-      await handleUserCreation(userCredential)
-      
+      await handleUserCreation(user);
+
       toast({
           title: <TranslatedText fr="Connexion réussie" en="Login Successful">Anmeldung erfolgreich</TranslatedText>,
           description: <TranslatedText fr="Bienvenue à nouveau !" en="Welcome back!">Willkommen zurück!</TranslatedText>,
       });
-      
+
       const redirectUrl = searchParams.get('redirect') || '/account';
       router.push(redirectUrl);
-      router.refresh(); // Forces a state refresh to update user context
+      router.refresh();
 
     } catch (error: any) {
       let errorMessage: React.ReactNode = <TranslatedText fr="Une erreur est survenue lors de la connexion." en="An error occurred during login.">Bei der Anmeldung ist ein Fehler aufgetreten.</TranslatedText>;
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+      if (error?.status === 401 || error?.message?.toLowerCase?.().includes('invalid') || error?.message?.toLowerCase?.().includes('wrong')) {
           errorMessage = <TranslatedText fr="Email ou mot de passe incorrect." en="Incorrect email or password.">Falsche E-Mail oder falsches Passwort.</TranslatedText>;
       }
-      console.error("Login failed:", error);
+      console.error('Login failed:', error);
       toast({
         variant: 'destructive',
         title: <TranslatedText fr="Échec de la connexion" en="Login Failed">Anmeldung fehlgeschlagen</TranslatedText>,

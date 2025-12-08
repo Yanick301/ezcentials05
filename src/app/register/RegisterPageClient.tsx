@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { createUserWithEmailAndPassword, updateProfile, type UserCredential, sendEmailVerification } from 'firebase/auth';
+import supabase from '@/lib/supabaseClient';
 import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -47,18 +47,17 @@ const registerSchemaEN = z.object({
 });
 
 
-const handleUserProfileCreation = async (userCredential: UserCredential, firestore: any, name: string) => {
-    const user = userCredential.user;
+const handleUserProfileCreation = async (user: any, firestore: any, name: string) => {
     if (!user || !firestore) return;
 
-    const userRef = doc(firestore, 'userProfiles', user.uid);
+  const userRef = doc(firestore, 'userProfiles', user.id || user.uid);
     try {
         await setDoc(userRef, {
-            id: user.uid,
-            email: user.email,
-            firstName: name.split(' ')[0] || '',
-            lastName: name.split(' ').slice(1).join(' ') || '',
-            photoURL: user.photoURL || '',
+      id: user.id || user.uid,
+      email: user.email,
+      firstName: name.split(' ')[0] || '',
+      lastName: name.split(' ').slice(1).join(' ') || '',
+      photoURL: user.user_metadata?.avatar_url || user.photoURL || '',
             isAdmin: false, // Default to non-admin
         }, { merge: true });
     } catch (e: any) {
@@ -91,55 +90,51 @@ export default function RegisterPageClient() {
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof currentSchema>> = async (data) => {
-    if (!auth || !firestore) {
+    if (!firestore) {
       toast({
-        variant: "destructive",
-        title: "Configuration Error",
-        description: "Firebase services are not available.",
+        variant: 'destructive',
+        title: 'Configuration Error',
+        description: 'Firestore service is not available.',
       });
       return;
     }
 
     try {
-      // Step 1: Create the user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      const user = userCredential.user;
+      // Create the user in Supabase
+      const { data: res, error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: { data: { full_name: data.name } },
+      } as any);
+      if (error) throw error;
 
-      // Step 2: Update the display name in Auth
-      await updateProfile(user, { displayName: data.name });
-      
-      // Step 3: Create the user profile document in Firestore
-      await handleUserProfileCreation(userCredential, firestore, data.name);
-      
-      // Step 4: Send the verification email
-      await sendEmailVerification(user);
+      const user = res.user;
+
+      // Create the user profile document in Firestore
+      await handleUserProfileCreation(user, firestore, data.name);
 
       toast({
           title: <TranslatedText fr="Inscription réussie !" en="Registration Successful!">Registrierung erfolgreich!</TranslatedText>,
           description: <TranslatedText fr="Un lien de vérification a été envoyé à votre adresse e-mail." en="A verification link has been sent to your email address.">Ein Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.</TranslatedText>,
       });
-      
-      // Step 5: Redirect the user to the verification page
+
+      // Redirect the user to the verification page
       router.push('/verify-email');
 
     } catch (error: any) {
        let errorMessage: React.ReactNode;
-       switch (error.code) {
-         case 'auth/email-already-in-use':
-           errorMessage = <TranslatedText fr="Cette adresse e-mail est déjà utilisée." en="This email address is already in use.">Diese E-Mail-Adresse wird bereits verwendet.</TranslatedText>;
-           break;
-         case 'auth/weak-password':
-           errorMessage = <TranslatedText fr="Le mot de passe doit contenir au moins 6 caractères." en="Password must be at least 6 characters.">Das Passwort muss mindestens 6 Zeichen lang sein.</TranslatedText>;
-           break;
-        case 'auth/invalid-email':
-           errorMessage = <TranslatedText fr="L'adresse e-mail est invalide." en="The email address is invalid.">Die E-Mail-Adresse ist ungültig.</TranslatedText>;
-           break;
-         default:
-           errorMessage = <TranslatedText fr="Une erreur est survenue lors de l'inscription." en="An error occurred during registration.">Bei der Registrierung ist ein Fehler aufgetreten.</TranslatedText>;
-           console.error("Signup error:", error);
-           break;
+       const code = error?.code || error?.status || error?.message;
+       if (code === '23505' || /already exists|already in use|email.*exists/i.test(String(code))) {
+         errorMessage = <TranslatedText fr="Cette adresse e-mail est déjà utilisée." en="This email address is already in use.">Diese E-Mail-Adresse wird bereits verwendet.</TranslatedText>;
+       } else if (/weak|password.*short|password.*6/i.test(String(code))) {
+         errorMessage = <TranslatedText fr="Le mot de passe doit contenir au moins 6 caractères." en="Password must be at least 6 characters.">Das Passwort muss mindestens 6 Zeichen lang sein.</TranslatedText>;
+       } else if (/invalid email|invalid.*email/i.test(String(code))) {
+         errorMessage = <TranslatedText fr="L'adresse e-mail est invalide." en="The email address is invalid.">Die E-Mail-Adresse ist ungültig.</TranslatedText>;
+       } else {
+         errorMessage = <TranslatedText fr="Une erreur est survenue lors de l'inscription." en="An error occurred during registration.">Bei der Registrierung ist ein Fehler aufgetreten.</TranslatedText>;
+         console.error('Signup error:', error);
        }
-      
+
       toast({
         variant: 'destructive',
         title: <TranslatedText fr="Échec de l'inscription" en="Registration Failed">Registrierung fehlgeschlagen</TranslatedText>,
