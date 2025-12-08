@@ -142,121 +142,85 @@ export default function LoginPageClient() {
       });
     }
   };
-      
-        // IMPORTANT: Check for email verification
-        if (userCredential.user && !userCredential.user.emailVerified) {
-          toast({
-              variant: "destructive",
-              title: <TranslatedText fr="Vérification requise" en="Verification Required">Bestätigung erforderlich</TranslatedText>,
-              description: <TranslatedText fr="Veuillez vérifier votre e-mail avant de vous connecter." en="Please verify your email before logging in.">Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.</TranslatedText>,
-          });
-          router.push('/verify-email');
-          return; // Stop execution here
-        }
 
-        await handleUserCreation(userCredential)
-      
-        toast({
-            title: <TranslatedText fr="Connexion réussie" en="Login Successful">Anmeldung erfolgreich</TranslatedText>,
-            description: <TranslatedText fr="Bienvenue à nouveau !" en="Welcome back!">Willkommen zurück!</TranslatedText>,
-        });
-      
-        const redirectUrl = searchParams.get('redirect') || '/account';
-        router.push(redirectUrl);
-        router.refresh(); // Forces a state refresh to update user context
+  return (
+    <div className="flex min-h-[calc(100vh-80px)] w-full flex-col items-center justify-center p-4">
+        <div className="mb-8 text-center">
+            <h1 className="font-headline text-5xl tracking-tighter">EZCENTIALS</h1>
+            <p className="mt-2 text-sm uppercase tracking-widest text-muted-foreground"><TranslatedText fr="COLLECTION PREMIUM" en="PREMIUM COLLECTION">PREMIUM COLLECTION</TranslatedText></p>
+        </div>
 
-      } catch (error: any) {
-        let errorMessage: React.ReactNode = <TranslatedText fr="Une erreur est survenue lors de la connexion." en="An error occurred during login.">Bei der Anmeldung ist ein Fehler aufgetreten.</TranslatedText>;
-        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-            errorMessage = <TranslatedText fr="Email ou mot de passe incorrect." en="Incorrect email or password.">Falsche E-Mail oder falsches Passwort.</TranslatedText>;
-        }
-        console.error("Login failed:", error);
-        toast({
-          variant: 'destructive',
-          title: <TranslatedText fr="Échec de la connexion" en="Login Failed">Anmeldung fehlgeschlagen</TranslatedText>,
-          description: errorMessage,
-        });
-      }
-    };
+        <Card className="w-full max-w-sm rounded-2xl border-none shadow-lg">
+            <CardContent className="p-8">
+                <h2 className="mb-6 text-2xl font-semibold"><TranslatedText fr="Connexion" en="Log In">Anmelden</TranslatedText></h2>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                <Input type="email" {...field} className="border-0 bg-input" autoComplete="email" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                            <FormItem>
+                                <div className="flex items-center justify-between">
+                                    <FormLabel><TranslatedText fr="Mot de passe" en="Password">Passwort</TranslatedText></FormLabel>
+                                </div>
+                                <div className="relative">
+                                    <FormControl>
+                                        <Input type={showPassword ? 'text' : 'password'} {...field} className="border-0 bg-input pr-10" autoComplete="current-password" />
+                                    </FormControl>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute inset-y-0 right-0 h-full px-3"
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                    >
+                                        {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                                        <span className="sr-only">
+                                            <TranslatedText fr={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"} en={showPassword ? "Hide password" : "Show password"}>
+                                                {showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                                            </TranslatedText>
+                                        </span>
+                                    </Button>
+                                </div>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="mt-4 w-full rounded-full" size="lg" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? <TranslatedText fr="Connexion..." en="Logging in...">Anmelden...</TranslatedText> : <TranslatedText fr="Se connecter" en="Log In">Anmelden</TranslatedText>}
+                        </Button>
+                    </form>
+                </Form>
 
-    return (
-      <div className="flex min-h-[calc(100vh-80px)] w-full flex-col items-center justify-center p-4">
-          <div className="mb-8 text-center">
-              <h1 className="font-headline text-5xl tracking-tighter">EZCENTIALS</h1>
-              <p className="mt-2 text-sm uppercase tracking-widest text-muted-foreground"><TranslatedText fr="COLLECTION PREMIUM" en="PREMIUM COLLECTION">PREMIUM COLLECTION</TranslatedText></p>
-          </div>
-
-          <Card className="w-full max-w-sm rounded-2xl border-none shadow-lg">
-              <CardContent className="p-8">
-                  <h2 className="mb-6 text-2xl font-semibold"><TranslatedText fr="Connexion" en="Log In">Anmelden</TranslatedText></h2>
-                  <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                          <FormField
-                              control={form.control}
-                              name="email"
-                              render={({ field }) => (
-                              <FormItem>
-                                  <FormLabel>Email</FormLabel>
-                                  <FormControl>
-                                  <Input type="email" {...field} className="border-0 bg-input" autoComplete="email" />
-                                  </FormControl>
-                                  <FormMessage />
-                              </FormItem>
-                              )}
-                          />
-                          <FormField
-                              control={form.control}
-                              name="password"
-                              render={({ field }) => (
-                              <FormItem>
-                                  <div className="flex items-center justify-between">
-                                      <FormLabel><TranslatedText fr="Mot de passe" en="Password">Passwort</TranslatedText></FormLabel>
-                                  </div>
-                                  <div className="relative">
-                                      <FormControl>
-                                          <Input type={showPassword ? 'text' : 'password'} {...field} className="border-0 bg-input pr-10" autoComplete="current-password" />
-                                      </FormControl>
-                                      <Button
-                                          type="button"
-                                          variant="ghost"
-                                          size="icon"
-                                          className="absolute inset-y-0 right-0 h-full px-3"
-                                          onClick={() => setShowPassword((prev) => !prev)}
-                                      >
-                                          {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                                          <span className="sr-only">
-                                              <TranslatedText fr={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"} en={showPassword ? "Hide password" : "Show password"}>
-                                                  {showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
-                                              </TranslatedText>
-                                          </span>
-                                      </Button>
-                                  </div>
-                                  <FormMessage />
-                              </FormItem>
-                              )}
-                          />
-                          <Button type="submit" className="mt-4 w-full rounded-full" size="lg" disabled={form.formState.isSubmitting}>
-                              {form.formState.isSubmitting ? <TranslatedText fr="Connexion..." en="Logging in...">Anmelden...</TranslatedText> : <TranslatedText fr="Se connecter" en="Log In">Anmelden</TranslatedText>}
-                          </Button>
-                      </form>
-                  </Form>
-
-                  <div className="mt-6 text-center text-sm">
-                      <p className="text-muted-foreground">
-                          <TranslatedText fr="Pas encore de compte ?" en="Don't have an account yet?">Noch kein Konto?</TranslatedText>{' '}
-                          <Link href="/register" className="font-semibold text-foreground hover:underline">
-                              <TranslatedText fr="S'inscrire" en="Sign up">Registrieren</TranslatedText>
-                          </Link>
-                      </p>
-                       <Link
-                          href="/forgot-password"
-                          className="mt-2 inline-block text-sm text-muted-foreground hover:underline"
-                      >
-                          <TranslatedText fr="Mot de passe oublié ?" en="Forgot password?">Passwort vergessen?</TranslatedText>
-                      </Link>
-                  </div>
-              </CardContent>
-          </Card>
-      </div>
-    );
-  }
+                <div className="mt-6 text-center text-sm">
+                    <p className="text-muted-foreground">
+                        <TranslatedText fr="Pas encore de compte ?" en="Don't have an account yet?">Noch kein Konto?</TranslatedText>{' '}
+                        <Link href="/register" className="font-semibold text-foreground hover:underline">
+                            <TranslatedText fr="S'inscrire" en="Sign up">Registrieren</TranslatedText>
+                        </Link>
+                    </p>
+                     <Link
+                        href="/forgot-password"
+                        className="mt-2 inline-block text-sm text-muted-foreground hover:underline"
+                    >
+                        <TranslatedText fr="Mot de passe oublié ?" en="Forgot password?">Passwort vergessen?</TranslatedText>
+                    </Link>
+                </div>
+            </CardContent>
+        </Card>
+    </div>
+  );
+}
