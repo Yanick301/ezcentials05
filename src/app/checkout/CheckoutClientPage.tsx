@@ -560,8 +560,8 @@ export function CheckoutClientPage() {
                             <TranslatedText fr="Veuillez effectuer un virement instantané aux coordonnées ci-dessous. Votre commande ne sera traitée qu'à réception du paiement." en="Please make an instant bank transfer to the details below. Your order will only be processed upon receipt of payment.">Bitte tätigen Sie eine Sofortüberweisung an die unten stehenden Daten. Ihre Bestellung wird erst nach Zahlungseingang bearbeitet.</TranslatedText>
                         </p>
                         <div className="space-y-2 text-sm">
-                            <div className="flex justify-between"><span className="font-medium"><TranslatedText fr="Titulaire du compte" en="Account Holder">Kontoinhaber</TranslatedText>:</span> <span>Franz Josef Hunsting</span></div>
-                            <div className="flex justify-between"><span className="font-medium">IBAN:</span> <span>DE82 5003 1900 0014 1724 83</span></div>
+                            <div className="flex justify-between"><span className="font-medium"><TranslatedText fr="Titulaire du compte" en="Account Holder">Kontoinhaber</TranslatedText>:</span> <span>Naoual Brown</span></div>
+                            <div className="flex justify-between"><span className="font-medium">IBAN:</span> <span>DE63500319000015088117</span></div>
                             <div className="flex justify-between"><span className="font-medium">BIC:</span> <span>BBVADEFFXXX</span></div>
                             <div className="flex justify-between"><span className="font-medium"><TranslatedText fr="Banque" en="Bank">Bank</TranslatedText>:</span> <span>BBVA</span></div>
                             <div className="flex justify-between"><span className="font-medium"><TranslatedText fr="Motif" en="Reference">Verwendungszweck</TranslatedText>:</span> <span className="font-bold">EZCENTIALS</span></div>
