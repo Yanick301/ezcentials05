@@ -316,11 +316,24 @@ export default function ProductPage() {
              {product.colors && product.colors.length > 0 && (
                 <div>
                     <Label className="text-sm font-medium"><TranslatedText fr="Couleur" en="Color">Farbe</TranslatedText></Label>
-                    <RadioGroup value={selectedColor} onValueChange={setSelectedColor} className="mt-2 flex flex-wrap gap-2">
+                    <RadioGroup value={selectedColor} onValueChange={setSelectedColor} className="mt-2 flex flex-wrap gap-2 items-center">
                          {product.colors.map(color => (
                             <RadioGroupItem key={color.name_de} value={color.name_de} id={`color-${color.name_de}`} className="sr-only" />
                         ))}
-                        {product.colors.map(color => (
+                        {/* Première couleur = "celui-ci" */}
+                        {product.colors[0] && (
+                            <Label 
+                                htmlFor={`color-${product.colors[0].name_de}`}
+                                className={cn(
+                                    'flex h-10 cursor-pointer items-center justify-center rounded-md border px-4 text-sm transition-colors',
+                                    selectedColor === product.colors[0].name_de ? 'border-primary bg-primary text-primary-foreground' : 'hover:bg-accent'
+                                )}
+                            >
+                              <TranslatedText fr="Celui-ci" en="This one">Dieser</TranslatedText>
+                            </Label>
+                        )}
+                        {/* Autres couleurs disponibles (max 3 autres pour avoir 4 au total) */}
+                        {product.colors.slice(1, 4).map(color => (
                             <Label 
                                 key={color.name_de} 
                                 htmlFor={`color-${color.name_de}`}

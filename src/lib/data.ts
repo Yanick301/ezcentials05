@@ -14,6 +14,7 @@ export const categories: Category[] = [
       { id: 'sub-homme-2', name: 'Pantalons', name_fr: 'Pantalons', name_en: 'Trousers', slug: 'pantalons-homme' },
       { id: 'sub-homme-3', name: 'Vestes', name_fr: 'Vestes', name_en: 'Jackets', slug: 'vestes-homme' },
       { id: 'sub-homme-4', name: 'Accessoires', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessoires-homme' },
+      { id: 'sub-homme-5', name: 'Oberteile', name_fr: 'Hauts', name_en: 'Tops', slug: 'sweat-and-tops-homme' },
     ]
   },
   { 
