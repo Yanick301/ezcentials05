@@ -62,7 +62,9 @@ export function Header() {
               className="flex w-[300px] flex-col bg-background p-0 sm:w-[350px]"
             >
               {/* Visually hidden title for accessibility */}
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+              <SheetTitle className="sr-only">
+                <TranslatedText fr="Menu de navigation" en="Navigation menu">Navigationsmenü</TranslatedText>
+              </SheetTitle>
               <header className="border-b p-6">
                 <Link
                   href="/"

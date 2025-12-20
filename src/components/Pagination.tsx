@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { TranslatedText } from '@/components/TranslatedText';
+import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 
 interface PaginationProps {
@@ -13,7 +14,10 @@ interface PaginationProps {
 }
 
 export function Pagination({ currentPage, totalPages, onPageChange, className }: PaginationProps) {
+  const { language } = useLanguage();
   if (totalPages <= 1) return null;
+
+  const paginationAriaLabel = language === 'fr' ? 'Pagination' : language === 'en' ? 'Pagination' : 'Paginierung';
 
   const getPageNumbers = () => {
     const delta = 2; // Number of pages to show on each side of current page
@@ -38,7 +42,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
 
   return (
     <nav
-      aria-label="Pagination"
+      aria-label={paginationAriaLabel}
       className={cn("flex items-center justify-center gap-2 mt-12", className)}
     >
       <Button
@@ -49,7 +53,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
         aria-label={
           currentPage === 1
             ? undefined
-            : 'Previous page'
+            : undefined
         }
       >
         <ChevronLeft className="h-4 w-4" />
@@ -83,11 +87,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
               variant={isActive ? 'default' : 'outline'}
               size="sm"
               onClick={() => onPageChange(pageNum)}
-              aria-label={
-                isActive
-                  ? undefined
-                  : `Go to page ${pageNum}`
-              }
+              aria-label={isActive ? undefined : undefined}
               aria-current={isActive ? 'page' : undefined}
               className={cn(
                 isActive && 'pointer-events-none'
@@ -104,11 +104,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        aria-label={
-          currentPage === totalPages
-            ? undefined
-            : 'Next page'
-        }
+        aria-label={currentPage === totalPages ? undefined : undefined}
       >
         <span className="sr-only">
           <TranslatedText fr="Page suivante" en="Next page">
