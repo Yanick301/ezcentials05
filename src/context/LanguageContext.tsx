@@ -15,16 +15,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [isInitial, setIsInitial] = useState(true);
 
   useEffect(() => {
+    // Toujours utiliser l'allemand par défaut, sauf si l'utilisateur a explicitement choisi une autre langue
     const storedLang = localStorage.getItem('ezcentials-lang');
     if (storedLang && ['de', 'fr', 'en'].includes(storedLang)) {
       setLanguageState(storedLang);
     } else {
-        const browserLang = navigator.language.split('-')[0];
-        if (['de', 'fr', 'en'].includes(browserLang)) {
-            setLanguageState(browserLang);
-        } else {
-            setLanguageState('de'); // Default language
-        }
+      // L'allemand est toujours la langue par défaut pour ce site
+      setLanguageState('de');
     }
     setIsInitial(false);
   }, []);

@@ -1,15 +1,16 @@
 
 import { Suspense } from 'react';
-import { Loader2 } from 'lucide-react';
 import AllProductsPageClient from './AllProductsPageClient';
-import { TranslatedText } from '@/components/TranslatedText';
+import { ProductListSkeleton } from '@/components/skeletons/ProductListSkeleton';
 
 export default function AllProductsPage() {
   return (
     <Suspense fallback={
-      <div className="container mx-auto flex h-[60vh] items-center justify-center text-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <p className="ml-4"><TranslatedText fr="Chargement des produits..." en="Loading products...">Lade Produkte...</TranslatedText></p>
+      <div className="container mx-auto px-4 py-12">
+        <div className="mb-8 h-12 w-full max-w-md mx-auto">
+          <div className="h-full w-full bg-muted animate-pulse rounded-md" />
+        </div>
+        <ProductListSkeleton count={12} />
       </div>
     }>
       <AllProductsPageClient />

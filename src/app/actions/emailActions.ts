@@ -3,6 +3,18 @@
 import { Resend } from 'resend'
 import { z } from 'zod'
 
+// Simple HTML escape for email content
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return text.replace(/[&<>"']/g, (m) => map[m]);
+}
+
 const SendReceiptInput = z.object({
   orderId: z.string(),
   receiptDataUrl: z.string(),
@@ -23,7 +35,7 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
     SendReceiptInput.parse(input)
 
   const resendApiKey = process.env.RESEND_API_KEY
-  const adminEmail = process.env.ADMIN_EMAIL
+  const adminEmail = process.env.ADMIN_EMAIL || 'ezcentials@gmail.com'
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'EZCENTIALS <onboarding@resend.dev>';
 
 
@@ -59,8 +71,8 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
       to: [adminEmail],
       subject: `Nouveau reçu pour la commande ${orderId}`,
       html: `
-        <h1>Nouveau reçu de paiement pour la commande ${orderId}</h1>
-        <p><strong>Email du client:</strong> ${userEmail}</p>
+        <h1>Nouveau reçu de paiement pour la commande ${escapeHtml(orderId)}</h1>
+        <p><strong>Email du client:</strong> ${escapeHtml(userEmail)}</p>
 
         <h2>Détails de la commande:</h2>
         ${orderDetailsHtml}
@@ -77,13 +89,13 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
               <table cellspacing="0" cellpadding="0">
                 <tr>
                   <td align="center" width="200" height="40" bgcolor="#28a745" style="border-radius: 5px; color: #ffffff; display: block;">
-                    <a href="${confirmUrl}" target="_blank" style="font-size: 16px; font-weight: bold; font-family: sans-serif; text-decoration: none; line-height: 40px; width: 100%; display: inline-block;">
+                    <a href="${escapeHtml(confirmUrl)}" target="_blank" style="font-size: 16px; font-weight: bold; font-family: sans-serif; text-decoration: none; line-height: 40px; width: 100%; display: inline-block;">
                       <span style="color: #ffffff;">Confirmer la commande</span>
                     </a>
                   </td>
                   <td width="20"></td>
                   <td align="center" width="200" height="40" bgcolor="#dc3545" style="border-radius: 5px; color: #ffffff; display: block;">
-                     <a href="${rejectUrl}" target="_blank" style="font-size: 16px; font-weight: bold; font-family: sans-serif; text-decoration: none; line-height: 40px; width: 100%; display: inline-block;">
+                     <a href="${escapeHtml(rejectUrl)}" target="_blank" style="font-size: 16px; font-weight: bold; font-family: sans-serif; text-decoration: none; line-height: 40px; width: 100%; display: inline-block;">
                       <span style="color: #ffffff;">Rejeter la commande</span>
                     </a>
                   </td>
@@ -93,8 +105,8 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
           </tr>
         </table>
         <p style="font-size: 12px; color: #666;">Si les boutons ne fonctionnent pas, copiez-collez les liens suivants :<br>
-           Confirmer : ${confirmUrl}<br>
-           Rejeter : ${rejectUrl}
+           Confirmer : ${escapeHtml(confirmUrl)}<br>
+           Rejeter : ${escapeHtml(rejectUrl)}
         </p>
       `,
       attachments: [

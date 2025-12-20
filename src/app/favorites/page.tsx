@@ -4,11 +4,12 @@
 import { products as allProducts, getProductById } from '@/lib/data';
 import { ProductCard } from '@/components/ProductCard';
 import { TranslatedText } from '@/components/TranslatedText';
-import { Heart, Loader2 } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useFavorites } from '@/context/FavoritesContext';
 import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { ProductListSkeleton } from '@/components/skeletons/ProductListSkeleton';
 
 export default function FavoritesPage() {
   const { favorites, isFavoritesLoading } = useFavorites();
@@ -21,8 +22,12 @@ export default function FavoritesPage() {
 
   if (isFavoritesLoading) {
     return (
-      <div className="container mx-auto flex min-h-[60vh] items-center justify-center text-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="container mx-auto px-4 py-12">
+        <div className="mb-8">
+          <div className="h-10 w-64 bg-muted animate-pulse rounded-md mb-2" />
+          <div className="h-6 w-96 bg-muted animate-pulse rounded-md" />
+        </div>
+        <ProductListSkeleton count={8} />
       </div>
     );
   }

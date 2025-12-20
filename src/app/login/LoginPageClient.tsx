@@ -12,9 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TranslatedText } from '@/components/TranslatedText';
-import { useFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { signInWithEmailAndPassword, type UserCredential } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { useSupabase } from '@/supabase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -45,7 +43,7 @@ const loginSchemaEN = z.object({
 
 
 export default function LoginPageClient() {
-  const { auth, firestore } = useFirebase();
+  const { supabase } = useSupabase();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -62,63 +60,54 @@ export default function LoginPageClient() {
     },
   });
 
-  const handleUserCreation = async (userCredential: UserCredential) => {
-    const user = userCredential.user;
-    if (!user || !firestore) return;
-
-    const userRef = doc(firestore, 'userProfiles', user.uid);
-    
-    try {
-        const userDoc = await getDoc(userRef);
-
-        // Only create the profile if it doesn't already exist.
-        if (!userDoc.exists()) {
-             await setDoc(userRef, {
-                id: user.uid,
-                email: user.email,
-                firstName: user.displayName?.split(' ')[0] || '',
-                lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-                photoURL: user.photoURL || '',
-             }, { merge: true });
-        }
-    } catch (e: any) {
-        const permissionError = new FirestorePermissionError({
-          path: `userProfiles/${user.uid}`,
-          operation: 'create',
-          requestResourceData: {
-            id: user.uid,
-            email: user.email,
-          },
-        });
-        errorEmitter.emit('permission-error', permissionError);
-
-        toast({
-            variant: 'destructive',
-            title: <TranslatedText fr="Erreur de Profil" en="Profile Error">Profilfehler</TranslatedText>,
-            description: <TranslatedText fr="Impossible de créer le profil utilisateur." en="Could not create user profile.">Benutzerprofil konnte nicht erstellt werden.</TranslatedText>,
-        });
-        // Re-throw the error to indicate failure
-        throw e;
-    }
-  };
-
   const onSubmit: SubmitHandler<z.infer<typeof currentSchema>> = async (data) => {
-    if (!auth || !firestore) return;
+    if (!supabase) return;
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
       
-      // IMPORTANT: Check for email verification
-      if (userCredential.user && !userCredential.user.emailVerified) {
+      if (signInError) {
+        throw signInError;
+      }
+
+      // Vérifier si l'email est vérifié
+      if (authData.user && !authData.user.email_confirmed_at) {
         toast({
             variant: "destructive",
             title: <TranslatedText fr="Vérification requise" en="Verification Required">Bestätigung erforderlich</TranslatedText>,
             description: <TranslatedText fr="Veuillez vérifier votre e-mail avant de vous connecter." en="Please verify your email before logging in.">Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.</TranslatedText>,
         });
         router.push('/verify-email');
-        return; // Stop execution here
+        return;
       }
 
-      await handleUserCreation(userCredential)
+      // Le profil utilisateur est créé automatiquement par le trigger SQL
+      // Vérifier s'il existe, sinon le créer
+      const { data: profile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', authData.user.id)
+        .single();
+
+      if (profileError && profileError.code === 'PGRST116') {
+        // Le profil n'existe pas, le créer
+        const { error: createError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: authData.user.id,
+            email: authData.user.email || '',
+            first_name: (authData.user.user_metadata?.first_name as string) || '',
+            last_name: (authData.user.user_metadata?.last_name as string) || '',
+            photo_url: (authData.user.user_metadata?.photo_url as string) || null,
+            is_admin: false,
+          } as any);
+
+        if (createError) {
+          console.error('Error creating profile:', createError);
+        }
+      }
       
       toast({
           title: <TranslatedText fr="Connexion réussie" en="Login Successful">Anmeldung erfolgreich</TranslatedText>,
@@ -127,11 +116,11 @@ export default function LoginPageClient() {
       
       const redirectUrl = searchParams.get('redirect') || '/account';
       router.push(redirectUrl);
-      router.refresh(); // Forces a state refresh to update user context
+      router.refresh();
 
     } catch (error: any) {
       let errorMessage: React.ReactNode = <TranslatedText fr="Une erreur est survenue lors de la connexion." en="An error occurred during login.">Bei der Anmeldung ist ein Fehler aufgetreten.</TranslatedText>;
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+      if (error.message?.includes('Invalid login credentials') || error.message?.includes('Email not confirmed')) {
           errorMessage = <TranslatedText fr="Email ou mot de passe incorrect." en="Incorrect email or password.">Falsche E-Mail oder falsches Passwort.</TranslatedText>;
       }
       console.error("Login failed:", error);

@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { safeJsonParse, safeGetLocalStorage, safeSetLocalStorage, isLocalStorageAvailable } from '@/lib/security';
 
 interface LocalOrder {
     id: string;
@@ -20,24 +21,15 @@ export function OrderStatusSyncer({ onStatusUpdate }: OrderStatusSyncerProps) {
 
     useEffect(() => {
         const checkLocalStatusUpdates = () => {
-            if (typeof window === 'undefined') return;
+            if (typeof window === 'undefined' || !isLocalStorageAvailable()) return;
 
-            let localOrders: LocalOrder[];
-            let statusUpdates: Record<string, 'completed' | 'rejected'>;
+            const localOrdersData = safeGetLocalStorage('localOrders');
+            const statusUpdatesData = safeGetLocalStorage('orderStatusUpdates');
 
-            try {
-                const localOrdersData = localStorage.getItem('localOrders');
-                const statusUpdatesData = localStorage.getItem('orderStatusUpdates');
-
-                if (!localOrdersData || !statusUpdatesData) return;
-                
-                localOrders = JSON.parse(localOrdersData);
-                statusUpdates = JSON.parse(statusUpdatesData);
-
-            } catch (error) {
-                console.error("OrderStatusSyncer: Failed to parse data from localStorage", error);
-                return;
-            }
+            if (!localOrdersData || !statusUpdatesData) return;
+            
+            const localOrders = safeJsonParse<LocalOrder[]>(localOrdersData, []);
+            const statusUpdates = safeJsonParse<Record<string, 'completed' | 'rejected'>>(statusUpdatesData, {});
             
             let ordersWereUpdated = false;
 
@@ -58,12 +50,10 @@ export function OrderStatusSyncer({ onStatusUpdate }: OrderStatusSyncerProps) {
             }
 
             if (ordersWereUpdated) {
-                try {
-                    localStorage.setItem('localOrders', JSON.stringify(localOrders));
-                    localStorage.setItem('orderStatusUpdates', JSON.stringify(statusUpdates)); // Save the cleaned up updates
+                const success1 = safeSetLocalStorage('localOrders', JSON.stringify(localOrders));
+                const success2 = safeSetLocalStorage('orderStatusUpdates', JSON.stringify(statusUpdates));
+                if (success1 && success2) {
                     console.log("OrderStatusSyncer: Local order statuses were synchronized.");
-                } catch (error) {
-                    console.error("OrderStatusSyncer: Failed to save updated orders to localStorage", error);
                 }
             }
         };

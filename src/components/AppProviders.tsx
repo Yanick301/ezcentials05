@@ -4,17 +4,23 @@
 import { LanguageProvider } from '@/context/LanguageContext';
 import type { ReactNode } from 'react';
 import { CartProvider } from '@/context/CartContext';
-import { FirebaseClientProvider } from '@/firebase';
+import { SupabaseProvider } from '@/supabase';
 import { FavoritesProvider } from '@/context/FavoritesContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
-    <FirebaseClientProvider>
+    <ThemeProvider>
       <LanguageProvider>
-        <FavoritesProvider>
-          <CartProvider>{children}</CartProvider>
-        </FavoritesProvider>
+        <ErrorBoundary>
+          <SupabaseProvider>
+            <FavoritesProvider>
+              <CartProvider>{children}</CartProvider>
+            </FavoritesProvider>
+          </SupabaseProvider>
+        </ErrorBoundary>
       </LanguageProvider>
-    </FirebaseClientProvider>
+    </ThemeProvider>
   );
 }

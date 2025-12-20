@@ -9,6 +9,7 @@ import React, {
   useCallback,
 } from 'react';
 import type { Product, CartItem } from '@/lib/types';
+import { safeJsonParse, safeGetLocalStorage, safeSetLocalStorage, isLocalStorageAvailable } from '@/lib/security';
 
 type CartContextType = {
   cartItems: CartItem[];
@@ -29,28 +30,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    try {
-      const localData = localStorage.getItem(LOCAL_STORAGE_CART_KEY);
-      if (localData) {
-        setCartItems(JSON.parse(localData));
-      }
-    } catch (error) {
-      console.error('Failed to load cart from local storage:', error);
-    } finally {
+    if (!isLocalStorageAvailable()) {
       setIsInitialLoad(false);
+      return;
     }
+    
+    const localData = safeGetLocalStorage(LOCAL_STORAGE_CART_KEY);
+    if (localData) {
+      const parsed = safeJsonParse<CartItem[]>(localData, []);
+      setCartItems(parsed);
+    }
+    setIsInitialLoad(false);
   }, []);
 
   useEffect(() => {
-    if (!isInitialLoad) {
-      try {
-        localStorage.setItem(
-          LOCAL_STORAGE_CART_KEY,
-          JSON.stringify(cartItems)
-        );
-      } catch (error) {
-        console.error('Failed to save cart to local storage:', error);
-      }
+    if (!isInitialLoad && isLocalStorageAvailable()) {
+      safeSetLocalStorage(LOCAL_STORAGE_CART_KEY, JSON.stringify(cartItems));
     }
   }, [cartItems, isInitialLoad]);
 

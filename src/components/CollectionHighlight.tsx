@@ -1,9 +1,11 @@
 
 import Link from 'next/link';
+import Image from 'next/image';
 import type { ReactNode } from 'react';
-import placeholderImagesData from '@/lib/placeholder-images.json';
+import { findProductImage } from '@/lib/image-utils';
 import { Button } from './ui/button';
 import { products as allProducts } from '@/lib/data';
+import { useMemo } from 'react';
 
 type Stat = {
     value: string;
@@ -22,7 +24,6 @@ type CollectionHighlightProps = {
     secondaryActionText: ReactNode;
 }
 
-const { placeholderImages } = placeholderImagesData;
 
 export function CollectionHighlight({
     supertitle,
@@ -36,13 +37,13 @@ export function CollectionHighlight({
     secondaryActionText,
 }: CollectionHighlightProps) {
 
-    const images = imageIds.map(id => {
-        const image = placeholderImages.find(img => img.id === id);
+    const images = useMemo(() => imageIds.map(id => {
+        const image = findProductImage(id);
         if (!image) return null;
         
         const product = allProducts.find(p => p.images.includes(id));
         return { ...image, slug: product?.slug };
-    }).filter(Boolean);
+    }).filter(Boolean), [imageIds]);
 
     return (
         <section className="w-full bg-background py-16 lg:py-24">
@@ -51,16 +52,21 @@ export function CollectionHighlight({
                     <div className="grid grid-cols-2 gap-4">
                         {images.map((image) => (
                             image && (
-                                <Link key={image.id} href={image.slug ? `/product/${image.slug}` : '#'}>
-                                    <div className="aspect-w-1 aspect-h-1 block">
-                                        <div className="overflow-hidden rounded-lg">
-                                            <img
-                                                src={image.imageUrl}
-                                                alt={image.description || 'Collection image'}
-                                                className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-105"
-                                                data-ai-hint={image.imageHint}
-                                            />
-                                        </div>
+                                <Link key={image.id} href={image.slug ? `/product/${image.slug}` : '#'} className="group" prefetch={true}>
+                                    <div className="relative aspect-square w-full overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
+                                        <Image
+                                            src={image.imageUrl}
+                                            alt={'description' in image ? image.description : 'Collection image'}
+                                            fill
+                                            sizes="(max-width: 768px) 50vw, 25vw"
+                                            className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
+                                            loading="lazy"
+                                            data-ai-hint={image.imageHint}
+                                            onError={(e) => {
+                                                console.error(`Failed to load collection image: ${image.imageUrl}`);
+                                                e.currentTarget.src = '/images/logo.png';
+                                            }}
+                                        />
                                     </div>
                                 </Link>
                             )
@@ -74,12 +80,12 @@ export function CollectionHighlight({
                         <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
                             {description}
                         </p>
-                        <div className="mt-8 flex items-center gap-4">
-                            <Button asChild size="lg" variant="default">
-                                <Link href={primaryActionLink}>{primaryActionText}</Link>
+                        <div className="mt-8 flex flex-wrap items-center gap-4">
+                            <Button asChild size="lg" variant="default" className="hover:scale-105 transition-transform duration-300">
+                                <Link href={primaryActionLink} prefetch={true}>{primaryActionText}</Link>
                             </Button>
-                            <Button asChild size="lg" variant="outline">
-                                <Link href={secondaryActionLink}>{secondaryActionText}</Link>
+                            <Button asChild size="lg" variant="outline" className="hover:scale-105 transition-transform duration-300">
+                                <Link href={secondaryActionLink} prefetch={true}>{secondaryActionText}</Link>
                             </Button>
                         </div>
                         <div className="mt-12 grid grid-cols-3 gap-4 text-center">

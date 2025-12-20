@@ -18,6 +18,18 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
 }
 
+// IMPORTANT:
+// ToastProps can include a native HTML `title?: string` attribute.
+// If we intersect ToastProps with `title?: ReactNode`, TS can produce `string & ReactNode`,
+// which breaks when passing JSX (e.g. <TranslatedText />).
+// So we REMOVE the native `title` prop from ToastProps, then add our ReactNode title back.
+type ToasterToastSafe = Omit<ToastProps, "title"> & {
+  id: string
+  title?: React.ReactNode
+  description?: React.ReactNode
+  action?: ToastActionElement
+}
+
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
   UPDATE_TOAST: "UPDATE_TOAST",
@@ -37,23 +49,23 @@ type ActionType = typeof actionTypes
 type Action =
   | {
       type: ActionType["ADD_TOAST"]
-      toast: ToasterToast
+      toast: ToasterToastSafe
     }
   | {
       type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast>
+      toast: Partial<ToasterToastSafe>
     }
   | {
       type: ActionType["DISMISS_TOAST"]
-      toastId?: ToasterToast["id"]
+      toastId?: ToasterToastSafe["id"]
     }
   | {
       type: ActionType["REMOVE_TOAST"]
-      toastId?: ToasterToast["id"]
+      toastId?: ToasterToastSafe["id"]
     }
 
 interface State {
-  toasts: ToasterToast[]
+  toasts: ToasterToastSafe[]
 }
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
@@ -140,12 +152,12 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+type Toast = Omit<ToasterToastSafe, "id">
 
 function toast({ ...props }: Toast) {
   const id = genId()
 
-  const update = (props: ToasterToast) =>
+  const update = (props: ToasterToastSafe) =>
     dispatch({
       type: "UPDATE_TOAST",
       toast: { ...props, id },

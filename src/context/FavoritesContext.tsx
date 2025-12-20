@@ -9,6 +9,7 @@ import {
   type ReactNode,
   useCallback,
 } from 'react';
+import { safeJsonParse, safeGetLocalStorage, safeSetLocalStorage, isLocalStorageAvailable } from '@/lib/security';
 
 type FavoritesContextType = {
   favorites: string[];
@@ -29,29 +30,23 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   // Load initial favorites from localStorage on mount (client-side only)
   useEffect(() => {
-    try {
-      const localData = localStorage.getItem(LOCAL_STORAGE_FAVORITES_KEY);
-      if (localData) {
-        setFavorites(JSON.parse(localData));
-      }
-    } catch (error) {
-      console.error('Failed to load favorites from local storage:', error);
-    } finally {
+    if (!isLocalStorageAvailable()) {
       setIsLoading(false);
+      return;
     }
+    
+    const localData = safeGetLocalStorage(LOCAL_STORAGE_FAVORITES_KEY);
+    if (localData) {
+      const parsed = safeJsonParse<string[]>(localData, []);
+      setFavorites(parsed);
+    }
+    setIsLoading(false);
   }, []);
 
   // Save favorites to localStorage whenever they change
   useEffect(() => {
-    if (!isLoading) {
-      try {
-        localStorage.setItem(
-          LOCAL_STORAGE_FAVORITES_KEY,
-          JSON.stringify(favorites)
-        );
-      } catch (error) {
-        console.error('Failed to save favorites to local storage:', error);
-      }
+    if (!isLoading && isLocalStorageAvailable()) {
+      safeSetLocalStorage(LOCAL_STORAGE_FAVORITES_KEY, JSON.stringify(favorites));
     }
   }, [favorites, isLoading]);
 

@@ -11,8 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TranslatedText } from '@/components/TranslatedText';
-import { useAuth, useUser } from '@/firebase';
-import { sendEmailVerification } from 'firebase/auth';
+import { useSupabase, useUser } from '@/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/context/LanguageContext';
 import { useRouter } from 'next/navigation';
@@ -20,7 +19,7 @@ import { useEffect, useState } from 'react';
 import { MailCheck } from 'lucide-react';
 
 export default function VerifyEmailPage() {
-  const auth = useAuth();
+  const { supabase } = useSupabase();
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
   const { language } = useLanguage();
@@ -30,56 +29,85 @@ export default function VerifyEmailPage() {
   // This effect will run when the user's auth state changes.
   // If their email becomes verified, it will redirect them.
   useEffect(() => {
-    // We check `user` directly. If it exists and emailVerified is true, we redirect.
-    if (user?.emailVerified) {
+    // We check `user` directly. If it exists and email_confirmed_at is set, we redirect.
+    if (user?.email_confirmed_at) {
       toast({
-        title: language === 'fr' ? 'Compte vérifié !' : language === 'en' ? 'Account Verified!' : 'Konto bestätigt!',
-        description: language === 'fr' ? 'Vous allez être redirigé...' : language === 'en' ? 'Redirecting...' : 'Sie werden weitergeleitet...',
+        title: <TranslatedText fr="Compte vérifié !" en="Account Verified!">Konto bestätigt!</TranslatedText>,
+        description: <TranslatedText fr="Vous allez être redirigé..." en="Redirecting...">Sie werden weitergeleitet...</TranslatedText>,
       });
       router.push('/account');
     }
   }, [user, language, router, toast]);
 
   const handleResendEmail = async () => {
-    if (!auth.currentUser) {
+    if (!supabase) {
         toast({
             variant: "destructive",
-            title: "Erreur",
-            description: "Kein Benutzer angemeldet.",
+            title: <TranslatedText fr="Erreur de configuration" en="Configuration Error">Konfigurationsfehler</TranslatedText>,
+            description: <TranslatedText fr="Les services Supabase ne sont pas disponibles." en="Supabase services are not available.">Supabase-Dienste sind nicht verfügbar.</TranslatedText>,
         });
         return;
     }
+    
+    if (!user || !user.email) {
+        toast({
+            variant: "destructive",
+            title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,
+            description: <TranslatedText fr="Aucun utilisateur connecté." en="No user logged in.">Kein Benutzer angemeldet.</TranslatedText>,
+        });
+        return;
+    }
+    
     setIsResending(true);
     try {
-      await sendEmailVerification(auth.currentUser);
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: user.email,
+        options: {
+          emailRedirectTo: `${siteUrl}/auth/callback?next=/account`,
+        },
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
       toast({
-        title: language === 'fr' ? 'E-mail renvoyé' : language === 'en' ? 'Email Resent' : 'E-Mail erneut gesendet',
-        description: language === 'fr' ? 'Un nouveau lien de vérification a été envoyé.' : language === 'en' ? 'A new verification link has been sent.' : 'Ein neuer Bestätigungslink wurde gesendet.',
+        title: <TranslatedText fr="E-mail renvoyé" en="Email Resent">E-Mail erneut gesendet</TranslatedText>,
+        description: <TranslatedText fr="Un nouveau lien de vérification a été envoyé à votre adresse e-mail." en="A new verification link has been sent to your email address.">Ein neuer Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.</TranslatedText>,
       });
     } catch (error: any) {
-      console.error(error);
+      console.error('Error resending confirmation email:', error);
+      const errorMessage = error.message || (
+        language === 'fr' ? 'Une erreur s\'est produite lors de l\'envoi de l\'e-mail.' : 
+        language === 'en' ? 'An error occurred while sending the email.' : 
+        'Beim Senden der E-Mail ist ein Fehler aufgetreten.'
+      );
       toast({
         variant: 'destructive',
-        title: 'Erreur',
-        description: "Une erreur s'est produite lors de l'envoi de l'e-mail.",
+        title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,
+        description: errorMessage,
       });
     } finally {
         setIsResending(false);
     }
   };
 
-  // While firebase is checking auth state, we can show a simple loader.
+  // While supabase is checking auth state, we can show a simple loader.
   if (isUserLoading) {
       return (
           <div className="flex min-h-[80vh] items-center justify-center">
-              <p>Chargement...</p>
+              <p>
+                <TranslatedText fr="Chargement..." en="Loading...">Laden...</TranslatedText>
+              </p>
           </div>
       )
   }
 
   // If user is already verified (e.g. they came back to this page), they'll be redirected by the useEffect.
   // We can show a message while that happens.
-  if (user?.emailVerified) {
+  if (user?.email_confirmed_at) {
        return (
           <div className="flex min-h-[80vh] items-center justify-center">
               <p><TranslatedText fr="Compte déjà vérifié. Redirection..." en="Account already verified. Redirecting...">Konto bereits bestätigt. Weiterleitung...</TranslatedText></p>

@@ -30,9 +30,18 @@ export type Product = {
   description_fr: string;
   description_en: string;
   category: string;
+  subcategory?: string; // Subcategory slug
   images: string[];
   sizes?: string[];
   colors?: Color[];
+};
+
+export type SubCategory = {
+  id: string;
+  name: string; // German
+  name_fr: string;
+  name_en: string;
+  slug: string;
 };
 
 export type Category = {
@@ -42,6 +51,7 @@ export type Category = {
   name_en: string;
   slug: string;
   imageId: string;
+  subcategories?: SubCategory[];
 };
 
 export type CartItem = {

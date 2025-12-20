@@ -12,9 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TranslatedText } from '@/components/TranslatedText';
-import { useFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { createUserWithEmailAndPassword, updateProfile, type UserCredential, sendEmailVerification } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { useSupabase } from '@/supabase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -47,33 +45,8 @@ const registerSchemaEN = z.object({
 });
 
 
-const handleUserProfileCreation = async (userCredential: UserCredential, firestore: any, name: string) => {
-    const user = userCredential.user;
-    if (!user || !firestore) return;
-
-    const userRef = doc(firestore, 'userProfiles', user.uid);
-    try {
-        await setDoc(userRef, {
-            id: user.uid,
-            email: user.email,
-            firstName: name.split(' ')[0] || '',
-            lastName: name.split(' ').slice(1).join(' ') || '',
-            photoURL: user.photoURL || '',
-            isAdmin: false, // Default to non-admin
-        }, { merge: true });
-    } catch (e: any) {
-         const permissionError = new FirestorePermissionError({
-          path: `userProfiles/${user.uid}`,
-          operation: 'create',
-          requestResourceData: { id: user.uid, email: user.email },
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        throw e; // Re-throw to be caught by the calling function
-    }
-};
-
 export default function RegisterPageClient() {
-  const { auth, firestore } = useFirebase();
+  const { supabase } = useSupabase();
   const router = useRouter();
   const { toast } = useToast();
   const { language } = useLanguage();
@@ -91,53 +64,78 @@ export default function RegisterPageClient() {
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof currentSchema>> = async (data) => {
-    if (!auth || !firestore) {
+    if (!supabase) {
       toast({
         variant: "destructive",
-        title: "Configuration Error",
-        description: "Firebase services are not available.",
+        title: <TranslatedText fr="Erreur de configuration" en="Configuration Error">Konfigurationsfehler</TranslatedText>,
+        description: <TranslatedText fr="Les services Supabase ne sont pas disponibles." en="Supabase services are not available.">Supabase-Dienste sind nicht verfügbar.</TranslatedText>,
       });
       return;
     }
 
     try {
-      // Step 1: Create the user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      const user = userCredential.user;
+      const firstName = data.name.split(' ')[0] || '';
+      const lastName = data.name.split(' ').slice(1).join(' ') || '';
 
-      // Step 2: Update the display name in Auth
-      await updateProfile(user, { displayName: data.name });
-      
-      // Step 3: Create the user profile document in Firestore
-      await handleUserProfileCreation(userCredential, firestore, data.name);
-      
-      // Step 4: Send the verification email
-      await sendEmailVerification(user);
+      // Step 1: Create the user in Supabase Auth
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+          },
+          emailRedirectTo: `${siteUrl}/auth/callback?next=/account`,
+        },
+      });
+
+      if (signUpError) {
+        throw signUpError;
+      }
+
+      if (!authData.user) {
+        throw new Error('User creation failed');
+      }
+
+      // Step 2: Le profil utilisateur est créé automatiquement par le trigger SQL
+      // Mais on peut aussi le créer manuellement si nécessaire (au cas où le trigger échoue)
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .upsert({
+          id: authData.user.id,
+          email: data.email,
+          first_name: firstName,
+          last_name: lastName,
+          is_admin: false,
+        } as any, {
+          onConflict: 'id'
+        });
+
+      if (profileError && !profileError.message.includes('duplicate')) {
+        console.error('Error creating profile:', profileError);
+      }
 
       toast({
           title: <TranslatedText fr="Inscription réussie !" en="Registration Successful!">Registrierung erfolgreich!</TranslatedText>,
           description: <TranslatedText fr="Un lien de vérification a été envoyé à votre adresse e-mail." en="A verification link has been sent to your email address.">Ein Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.</TranslatedText>,
       });
       
-      // Step 5: Redirect the user to the verification page
+      // Step 3: Redirect the user to the verification page
       router.push('/verify-email');
 
     } catch (error: any) {
        let errorMessage: React.ReactNode;
-       switch (error.code) {
-         case 'auth/email-already-in-use':
+       if (error.message?.includes('User already registered') || error.message?.includes('already registered')) {
            errorMessage = <TranslatedText fr="Cette adresse e-mail est déjà utilisée." en="This email address is already in use.">Diese E-Mail-Adresse wird bereits verwendet.</TranslatedText>;
-           break;
-         case 'auth/weak-password':
+       } else if (error.message?.includes('Password')) {
            errorMessage = <TranslatedText fr="Le mot de passe doit contenir au moins 6 caractères." en="Password must be at least 6 characters.">Das Passwort muss mindestens 6 Zeichen lang sein.</TranslatedText>;
-           break;
-        case 'auth/invalid-email':
+       } else if (error.message?.includes('email')) {
            errorMessage = <TranslatedText fr="L'adresse e-mail est invalide." en="The email address is invalid.">Die E-Mail-Adresse ist ungültig.</TranslatedText>;
-           break;
-         default:
+       } else {
            errorMessage = <TranslatedText fr="Une erreur est survenue lors de l'inscription." en="An error occurred during registration.">Bei der Registrierung ist ein Fehler aufgetreten.</TranslatedText>;
            console.error("Signup error:", error);
-           break;
        }
       
       toast({

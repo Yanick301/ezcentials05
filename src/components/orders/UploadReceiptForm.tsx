@@ -6,6 +6,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { sendReceiptEmail } from '@/app/actions/emailActions'
+import { updateOrderStatus } from '@/app/actions/orderActions'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,6 +23,7 @@ import { useToast } from '@/hooks/use-toast'
 import { TranslatedText } from '@/components/TranslatedText'
 import { useLanguage } from '@/context/LanguageContext'
 import type { OrderItem } from '@/lib/types'
+import { safeJsonParse, safeGetLocalStorage, safeSetLocalStorage, isLocalStorageAvailable } from '@/lib/security'
 
 const uploadSchemaDE = z.object({
   receipt: z
@@ -151,12 +153,24 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
         <p><strong>Total: €${order.totalAmount.toFixed(2)}</strong></p>
       `
 
+      // Mettre à jour le statut de la commande dans Supabase à 'processing'
+      const updateResult = await updateOrderStatus({
+        orderId: order.id,
+        status: 'processing',
+        receiptImageUrl: receiptDataUrl, // Sauvegarder l'URL du reçu
+      });
+
+      if (!updateResult.success) {
+        throw new Error(updateResult.error || 'Impossible de mettre à jour le statut de la commande.');
+      }
+
+      // Envoyer l'email à l'admin
       const emailResult = await sendReceiptEmail({
         orderId: order.id,
         receiptDataUrl,
         orderDetailsHtml,
         userEmail: order.shippingInfo.email,
-        siteUrl: window.location.origin,
+        siteUrl: process.env.NEXT_PUBLIC_SITE_URL || window.location.origin,
       })
 
       if (!emailResult.success) {
@@ -164,24 +178,31 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
         if (emailResult.error?.includes('Email server is not configured')) {
            toast({
             variant: "destructive",
-            title: "Serveur d'email non configuré",
-            description: "Le reçu n'a pas pu être envoyé à l'admin, mais votre commande est enregistrée.",
+            title: <TranslatedText fr="Serveur d'email non configuré" en="Email server not configured">E-Mail-Server nicht konfiguriert</TranslatedText>,
+            description: <TranslatedText fr="Le reçu n'a pas pu être envoyé à l'admin, mais votre commande est enregistrée." en="The receipt could not be sent to the admin, but your order is saved.">Der Beleg konnte nicht an den Administrator gesendet werden, aber Ihre Bestellung ist gespeichert.</TranslatedText>,
            });
         } else {
-          // For other email errors, throw to be caught by the general catch block
-          throw new Error(emailResult.error || 'Failed to send email.')
+          // For other email errors, show warning but don't fail the process
+          console.warn('Email sending failed:', emailResult.error);
+          toast({
+            variant: "default",
+            title: <TranslatedText fr="Reçu enregistré" en="Receipt saved">Beleg gespeichert</TranslatedText>,
+            description: <TranslatedText fr="Votre reçu a été enregistré, mais l'email n'a pas pu être envoyé." en="Your receipt has been saved, but the email could not be sent.">Ihr Beleg wurde gespeichert, aber die E-Mail konnte nicht gesendet werden.</TranslatedText>,
+          });
         }
       }
       
-      // We still update the local status to 'processing' for the user's view
-      // This happens even if the email fails, as per the new logic
-      const localOrders: LocalOrder[] = JSON.parse(
-        localStorage.getItem('localOrders') || '[]'
-      )
-      const updatedOrders = localOrders.map((o: LocalOrder) =>
-        o.id === order.id ? { ...o, paymentStatus: 'processing' } : o
-      )
-      localStorage.setItem('localOrders', JSON.stringify(updatedOrders))
+      // Mettre à jour aussi localStorage pour compatibilité
+      if (isLocalStorageAvailable()) {
+        const localOrders = safeJsonParse<LocalOrder[]>(
+          safeGetLocalStorage('localOrders'),
+          []
+        );
+        const updatedOrders = localOrders.map((o: LocalOrder) =>
+          o.id === order.id ? { ...o, paymentStatus: 'processing', receiptImageUrl: receiptDataUrl } : o
+        );
+        safeSetLocalStorage('localOrders', JSON.stringify(updatedOrders));
+      }
 
       toast({
         title: (

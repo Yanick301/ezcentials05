@@ -13,8 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { TranslatedText } from '../TranslatedText';
-import { useUser, useAuth } from '@/firebase';
-import { signOut } from 'firebase/auth';
+import { useUser, useAuth } from '@/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Skeleton } from '../ui/skeleton';
@@ -22,7 +21,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useEffect, useState } from 'react';
 
 export function UserButton() {
-  const { user, isUserLoading } = useUser();
+  const { user, profile, isUserLoading } = useUser();
   const auth = useAuth();
   const { toast } = useToast();
   const { language } = useLanguage();
@@ -35,16 +34,18 @@ export function UserButton() {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
+      await auth.signOut();
       toast({
-        title: language === 'fr' ? 'Déconnecté' : language === 'en' ? 'Logged Out' : 'Abgemeldet',
-        description: language === 'fr' ? 'Vous avez été déconnecté avec succès.' : language === 'en' ? 'You have been successfully logged out.' : 'Sie wurden erfolgreich abgemeldet.',
+        title: <TranslatedText fr="Déconnecté" en="Logged Out">Abgemeldet</TranslatedText>,
+        description: <TranslatedText fr="Vous avez été déconnecté avec succès." en="You have been successfully logged out.">Sie wurden erfolgreich abgemeldet.</TranslatedText>,
       });
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: language === 'fr' ? 'Échec de la déconnexion' : language === 'en' ? 'Logout Failed' : 'Abmeldung fehlgeschlagen',
-        description: error.message,
+        title: <TranslatedText fr="Échec de la déconnexion" en="Logout Failed">Abmeldung fehlgeschlagen</TranslatedText>,
+        description: error.message || (
+          <TranslatedText fr="Une erreur s'est produite lors de la déconnexion." en="An error occurred during logout.">Bei der Abmeldung ist ein Fehler aufgetreten.</TranslatedText>
+        ),
       });
     }
   };
@@ -59,20 +60,21 @@ export function UserButton() {
   }
 
   if (user) {
+    const displayName = profile ? `${profile.firstName} ${profile.lastName}`.trim() : user.email?.split('@')[0] || 'User';
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                 <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
-                    <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+                    <AvatarImage src={profile?.photoURL || undefined} alt={displayName} />
+                    <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
                 </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user.displayName || 'User'}</p>
+                <p className="text-sm font-medium leading-none">{displayName}</p>
                 <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
             </div>
           </DropdownMenuLabel>

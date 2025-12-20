@@ -3,6 +3,7 @@
 'use client';
 
 import { notFound, useParams } from 'next/navigation';
+import Image from 'next/image';
 import { Star, ShoppingCart, MessageCircle, Edit, Trash2 } from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 
@@ -10,21 +11,21 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProductCard } from '@/components/ProductCard';
-import placeholderImagesData from '@/lib/placeholder-images.json';
+import { findProductImage } from '@/lib/image-utils';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/LanguageContext';
-import { getProductBySlug, getProductsByCategory, products as allProducts } from '@/lib/data';
+import { getProductBySlug, getProductsByCategory, products as allProducts, categories } from '@/lib/data';
 import type { Review, Product } from '@/lib/types';
+import { Breadcrumbs, useBreadcrumbsForProduct } from '@/components/Breadcrumbs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useCart } from '@/context/CartContext';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import AddReviewForm from '@/components/reviews/AddReviewForm';
 import EditReviewForm from '@/components/reviews/EditReviewForm';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, doc, deleteDoc } from 'firebase/firestore';
+import { useUser, useSupabase, useCollection } from '@/supabase';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,8 +36,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { ProductPageSkeleton } from '@/components/skeletons/ProductPageSkeleton';
+import { SEOHead } from '@/components/SEOHead';
 
-const { placeholderImages } = placeholderImagesData;
 
 export default function ProductPage() {
   const params = useParams();
@@ -54,7 +56,7 @@ export default function ProductPage() {
   const { toast } = useToast();
   const { addToCart } = useCart();
   const { user } = useUser();
-  const firestore = useFirestore();
+  const { supabase } = useSupabase();
 
   useEffect(() => {
     setIsLoadingProduct(true);
@@ -75,20 +77,51 @@ export default function ProductPage() {
     setIsLoadingProduct(false);
   }, [slug]);
 
-  // Firestore query for reviews
-  const reviewsQuery = useMemoFirebase(() => {
-    if (!product || !firestore) return null;
-    return query(collection(firestore, 'products', product.id, 'reviews'));
-  }, [product, firestore]);
+  // Supabase query for reviews (DB row shape)
+  type DbReview = {
+    id: string;
+    product_id: string;
+    user_id: string;
+    user_name: string;
+    rating: number;
+    comment: string;
+    comment_fr: string | null;
+    comment_en: string | null;
+    created_at: string;
+    updated_at: string;
+  };
 
-  const { data: reviews, isLoading: isLoadingReviews } = useCollection<Review>(reviewsQuery);
+  const { data: dbReviews, isLoading: isLoadingReviews } = useCollection<DbReview>(
+    'reviews',
+    product
+      ? {
+          filter: (query) => query.eq('product_id', product.id),
+          orderBy: { column: 'created_at', ascending: false },
+        }
+      : undefined
+  );
+
+  const reviews = useMemo<Review[]>(() => {
+    if (!dbReviews) return [];
+    return dbReviews.map((r) => ({
+      id: r.id,
+      productId: r.product_id,
+      userId: r.user_id,
+      userName: r.user_name,
+      rating: r.rating,
+      comment: r.comment,
+      comment_fr: r.comment_fr ?? undefined,
+      comment_en: r.comment_en ?? undefined,
+      createdAt: r.created_at,
+    }));
+  }, [dbReviews]);
 
   const sortedReviews = useMemo(() => {
-    return reviews ? [...reviews].sort((a, b) => {
-        const dateA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : new Date(a.createdAt).getTime();
-        const dateB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : new Date(b.createdAt).getTime();
-        return dateB - dateA;
-    }) : [];
+    return [...reviews].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
   }, [reviews]);
 
 
@@ -110,21 +143,25 @@ export default function ProductPage() {
   };
   
   const handleDeleteReview = async () => {
-    if (!reviewToDelete || !firestore || !product) return;
+    if (!reviewToDelete || !supabase || !product) return;
 
     try {
-        const reviewRef = doc(firestore, 'products', product.id, 'reviews', reviewToDelete.id);
-        await deleteDoc(reviewRef);
+        const { error } = await supabase
+          .from('reviews')
+          .delete()
+          .eq('id', reviewToDelete.id);
+
+        if (error) throw error;
         toast({
-            title: "Avis supprimé",
-            description: "Votre avis a été supprimé avec succès.",
+            title: <TranslatedText fr="Avis supprimé" en="Review deleted">Bewertung gelöscht</TranslatedText>,
+            description: <TranslatedText fr="Votre avis a été supprimé avec succès." en="Your review has been successfully deleted.">Ihre Bewertung wurde erfolgreich gelöscht.</TranslatedText>,
         });
     } catch (error) {
         console.error("Error deleting review: ", error);
         toast({
             variant: "destructive",
-            title: "Erreur",
-            description: "Impossible de supprimer l'avis. Veuillez réessayer.",
+            title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,
+            description: <TranslatedText fr="Impossible de supprimer l'avis. Veuillez réessayer." en="Unable to delete the review. Please try again.">Die Bewertung konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.</TranslatedText>,
         });
     } finally {
         setReviewToDelete(null);
@@ -154,7 +191,7 @@ export default function ProductPage() {
   }
 
   if (isLoadingProduct) {
-    return <div className="container mx-auto px-4 py-12 text-center"><TranslatedText fr="Chargement du produit..." en="Loading product...">Produkt wird geladen...</TranslatedText></div>;
+    return <ProductPageSkeleton />;
   }
   
   if (!isLoadingProduct && !product) {
@@ -165,8 +202,8 @@ export default function ProductPage() {
     return null; // Should be handled by notFound, but for type safety
   }
   
-  const mainImage = placeholderImages.find(p => p.id === product.images[0]);
-  const altImages = product.images.slice(1).map(id => placeholderImages.find(p => p.id === id));
+  const mainImage = findProductImage(product.images[0]);
+  const altImages = product.images.slice(1).map(id => findProductImage(id));
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -177,33 +214,52 @@ export default function ProductPage() {
       color: selectedColor,
     });
     toast({
-      title: language === 'fr' ? 'Ajouté au panier !' : language === 'en' ? 'Added to cart!' : 'Zum Warenkorb hinzugefügt!',
-      description: language === 'fr' ? `${product.name_fr} a été ajouté à votre panier.` : language === 'en' ? `${product.name_en} has been added to your cart.` : `${product.name} wurde Ihrem Warenkorb hinzugefügt.`,
+      title: <TranslatedText fr="Ajouté au panier !" en="Added to cart!">Zum Warenkorb hinzugefügt!</TranslatedText>,
+      description: (
+        <TranslatedText 
+          fr={`${product.name_fr} a été ajouté à votre panier.`} 
+          en={`${product.name_en} has been added to your cart.`}
+        >
+          {`${product.name} wurde Ihrem Warenkorb hinzugefügt.`}
+        </TranslatedText>
+      ),
     });
   };
 
+  const category = categories.find(c => c.slug === product.category);
+  const breadcrumbs = useBreadcrumbsForProduct(product, category);
+
   return (
-    <div className="container mx-auto px-4 py-12">
+    <>
+      {product && <SEOHead product={product} type="product" />}
+      <div className="container mx-auto px-4 py-12">
+        <Breadcrumbs items={breadcrumbs} />
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
         {/* Image Gallery */}
         <div className="flex flex-col gap-4">
             {mainImage && (
-                <div className="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                    <img
+                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg">
+                    <Image
                         src={mainImage.imageUrl}
-                        alt={product.name}
-                        className="h-full w-full object-cover"
+                        alt={language === 'fr' ? product.name_fr : language === 'en' ? product.name_en : product.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover"
+                        priority
                         data-ai-hint={mainImage.imageHint}
                     />
                 </div>
             )}
             <div className="grid grid-cols-3 gap-4">
                 {altImages.map(img => img && (
-                    <div key={img.id} className="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                        <img
+                    <div key={img.id} className="relative aspect-[3/4] w-full overflow-hidden rounded-lg">
+                        <Image
                             src={img.imageUrl}
-                            alt={`${product.name} alternative Ansicht`}
-                            className="h-full w-full object-cover"
+                            alt={`${language === 'fr' ? product.name_fr : language === 'en' ? product.name_en : product.name} - ${language === 'fr' ? 'Vue alternative' : language === 'en' ? 'Alternative view' : 'Alternative Ansicht'}`}
+                            fill
+                            sizes="(max-width: 768px) 33vw, 150px"
+                            className="object-cover"
+                            loading="lazy"
                             data-ai-hint={img.imageHint}
                         />
                     </div>
@@ -305,7 +361,9 @@ export default function ProductPage() {
             <TabsContent value="reviews" className="mt-4">
               <div className="space-y-8">
                 {isLoadingReviews ? (
-                    <p>Chargement des avis...</p>
+                    <p>
+                      <TranslatedText fr="Chargement des avis..." en="Loading reviews...">Bewertungen werden geladen...</TranslatedText>
+                    </p>
                 ) : sortedReviews.length > 0 ? (
                   sortedReviews.map((review) => (
                       <div key={review.id} className="flex gap-4">
@@ -337,7 +395,7 @@ export default function ProductPage() {
                                     </div>
                                 </div>
                                 <p className="mt-2 text-muted-foreground">{getTranslatedReview(review)}</p>
-                                {user && user.uid === review.userId && (
+                                {user && user.id === review.userId && (
                                     <div className="mt-2 flex items-center gap-2">
                                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingReviewId(review.id)}>
                                             <Edit className="h-4 w-4" />
@@ -360,7 +418,7 @@ export default function ProductPage() {
                   </div>
                 )}
               </div>
-              <AddReviewForm productId={product.id} />
+              <AddReviewForm productId={product.id} product={product} />
             </TabsContent>
           </Tabs>
         </div>
@@ -398,7 +456,7 @@ export default function ProductPage() {
             </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-    </div>
+      </div>
+    </>
   );
 }

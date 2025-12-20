@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Heart, ListOrdered, User } from 'lucide-react';
 import { TranslatedText } from '@/components/TranslatedText';
 import { cn } from '@/lib/utils';
-import { useUser } from '@/firebase';
+import { useUser } from '@/supabase';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';

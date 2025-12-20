@@ -6,15 +6,15 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Star, Send } from 'lucide-react';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser, useSupabase } from '@/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { TranslatedText } from '@/components/TranslatedText';
-import type { Review } from '@/lib/types';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import type { Review, Product } from '@/lib/types';
+import { sanitizeReviewComment } from '@/lib/security';
 
 
 const reviewSchema = z.object({
@@ -24,9 +24,9 @@ const reviewSchema = z.object({
 
 type ReviewFormValues = z.infer<typeof reviewSchema>;
 
-export default function AddReviewForm({ productId }: { productId: string }) {
-  const { user } = useUser();
-  const firestore = useFirestore();
+export default function AddReviewForm({ productId, product }: { productId: string; product?: Product }) {
+  const { user, profile } = useUser();
+  const { supabase } = useSupabase();
   const { toast } = useToast();
   const { register, handleSubmit, control, formState: { errors, isSubmitting }, reset } = useForm<ReviewFormValues>({
     resolver: zodResolver(reviewSchema),
@@ -37,44 +37,91 @@ export default function AddReviewForm({ productId }: { productId: string }) {
   });
 
   const onSubmit = async (data: ReviewFormValues) => {
-    if (!user || !firestore) {
+    if (!user || !supabase) {
       toast({
         variant: 'destructive',
-        title: 'Vous devez être connecté',
-        description: "Connectez-vous pour laisser un avis.",
+        title: <TranslatedText fr="Vous devez être connecté" en="You must be logged in">Sie müssen angemeldet sein</TranslatedText>,
+        description: <TranslatedText fr="Connectez-vous pour laisser un avis." en="Log in to leave a review.">Melden Sie sich an, um eine Bewertung abzugeben.</TranslatedText>,
       });
       return;
     }
 
     try {
+        // Vérifier si le produit existe dans Supabase, sinon le créer
+        const { data: existingProduct, error: checkError } = await supabase
+          .from('products')
+          .select('id')
+          .eq('id', productId)
+          .single();
+
+        if (checkError && checkError.code === 'PGRST116' && product) {
+          // Le produit n'existe pas, le créer
+          const productData = {
+            id: product.id,
+            name: product.name,
+            name_fr: product.name_fr,
+            name_en: product.name_en,
+            slug: product.slug,
+            price: product.price,
+            old_price: product.oldPrice || null,
+            description: product.description,
+            description_fr: product.description_fr,
+            description_en: product.description_en,
+            category: product.category,
+            images: product.images || [],
+            sizes: product.sizes || null,
+            colors: product.colors || null,
+          };
+
+          const { error: insertError } = await supabase
+            .from('products')
+            .insert(productData);
+
+          if (insertError) {
+            console.error('Error creating product in Supabase:', insertError);
+            // Continuer quand même, peut-être que le produit existe déjà
+          }
+        } else if (checkError && checkError.code !== 'PGRST116') {
+          // Autre erreur
+          console.error('Error checking product:', checkError);
+        }
+
+        // Sanitize comment to prevent XSS
+        const sanitizedComment = sanitizeReviewComment(data.comment);
+        
+        const userName = profile ? `${profile.firstName} ${profile.lastName}`.trim() : user.email?.split('@')[0] || 'Utilisateur Anonyme';
+        
         const reviewData = {
-          userId: user.uid,
-          userName: user.displayName || 'Utilisateur Anonyme',
+          product_id: productId,
+          user_id: user.id,
+          user_name: userName,
           rating: data.rating,
-          comment: data.comment,
-          createdAt: serverTimestamp(),
-          // We could add translated versions here if we had an AI translation service
-          comment_de: data.comment,
-          comment_fr: data.comment,
-          comment_en: data.comment,
+          comment: sanitizedComment,
+          comment_fr: sanitizedComment,
+          comment_en: sanitizedComment,
         };
 
-        const reviewsColRef = collection(firestore, 'products', productId, 'reviews');
-        await addDoc(reviewsColRef, reviewData);
+        const { error } = await supabase
+          .from('reviews')
+          .insert(reviewData as any);
+        
+        if (error) {
+          throw error;
+        }
         
         toast({
-          title: "Avis ajouté !",
-          description: "Merci pour votre contribution. Votre avis sera visible après un court instant.",
+          title: <TranslatedText fr="Avis ajouté !" en="Review added!">Bewertung hinzugefügt!</TranslatedText>,
+          description: <TranslatedText fr="Merci pour votre contribution. Votre avis sera visible après un court instant." en="Thank you for your contribution. Your review will be visible shortly.">Vielen Dank für Ihren Beitrag. Ihre Bewertung wird in Kürze sichtbar sein.</TranslatedText>,
         });
 
         reset();
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error adding review: ", error);
         toast({
             variant: "destructive",
-            title: "Erreur",
-            description: "Impossible d'ajouter l'avis. Veuillez réessayer.",
+            title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,
+            description: error.message || <TranslatedText fr="Impossible d'ajouter l'avis. Veuillez réessayer." en="Unable to add review. Please try again.">Bewertung konnte nicht hinzugefügt werden. Bitte versuchen Sie es erneut.</TranslatedText>,
         });
     }
   };

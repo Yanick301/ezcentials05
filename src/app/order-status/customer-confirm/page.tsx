@@ -7,7 +7,9 @@ import { Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TranslatedText } from '@/components/TranslatedText';
 import { sendCustomerConfirmationEmail } from '@/app/actions/emailActions';
+import { updateOrderStatus } from '@/app/actions/orderActions';
 import { cn } from '@/lib/utils';
+import { decodeBase64, safeJsonParse, safeSetLocalStorage, isValidOrderId, isValidEmail } from '@/lib/security';
 
 function CustomerConfirmClientPage() {
   const searchParams = useSearchParams();
@@ -24,9 +26,22 @@ function CustomerConfirmClientPage() {
       return;
     }
 
+    // Validate orderId format
+    if (!isValidOrderId(orderId)) {
+      setStatus('invalid');
+      setMessage('Lien de confirmation invalide : format de commande invalide.');
+      return;
+    }
+
     let decodedEmail = '';
     try {
-        decodedEmail = Buffer.from(encodedUserEmail, 'base64').toString('utf-8');
+        decodedEmail = decodeBase64(encodedUserEmail);
+        // Validate email format
+        if (!isValidEmail(decodedEmail)) {
+          setStatus('invalid');
+          setMessage('Lien de confirmation invalide : e-mail invalide.');
+          return;
+        }
     } catch (e) {
         console.error("Failed to decode email", e);
         setStatus('invalid');
@@ -36,23 +51,36 @@ function CustomerConfirmClientPage() {
 
     const processConfirmation = async () => {
       try {
+        // Mettre à jour le statut dans Supabase
+        const updateResult = await updateOrderStatus({ orderId, status: 'completed' });
+        
+        if (!updateResult.success) {
+          setStatus('error');
+          setMessage(updateResult.error || 'Impossible de mettre à jour le statut de la commande.');
+          return;
+        }
+
+        // Envoyer l'email de confirmation au client
         const emailResult = await sendCustomerConfirmationEmail({ userEmail: decodedEmail, orderId });
         
         if (emailResult.success) {
+          // Mettre à jour aussi localStorage pour compatibilité
           try {
-            const statusUpdates = JSON.parse(localStorage.getItem('orderStatusUpdates') || '{}');
+            const statusUpdates = safeJsonParse<Record<string, string>>(
+              localStorage.getItem('orderStatusUpdates'),
+              {}
+            );
             statusUpdates[orderId] = 'completed';
-            localStorage.setItem('orderStatusUpdates', JSON.stringify(statusUpdates));
-            setStatus('success');
-            setMessage(`La commande #${orderId} a été marquée comme "terminée". Le client en sera notifié par e-mail.`);
+            safeSetLocalStorage('orderStatusUpdates', JSON.stringify(statusUpdates));
           } catch (e) {
             console.warn('Could not update order status in local storage.', e);
-            setStatus('error');
-            setMessage('L\'e-mail a été envoyé, mais le statut local n\'a pas pu être mis à jour.');
           }
+          
+          setStatus('success');
+          setMessage(`La commande #${orderId} a été marquée comme "terminée". Le client en sera notifié par e-mail.`);
         } else {
           setStatus('error');
-          setMessage(emailResult.error || 'Échec de l\'envoi de l\'e-mail de confirmation.');
+          setMessage(emailResult.error || 'Le statut a été mis à jour, mais l\'e-mail de confirmation n\'a pas pu être envoyé.');
         }
       } catch (e: any) {
         console.error('Error processing confirmation:', e);

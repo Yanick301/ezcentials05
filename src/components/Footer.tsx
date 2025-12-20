@@ -1,6 +1,7 @@
 
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { TranslatedText } from './TranslatedText';
 import { useState, useEffect } from 'react';
 
@@ -84,7 +85,7 @@ export function Footer() {
                         {socialLinks.map((link) => (
                             <li key={link.name}>
                                 <a href={link.href} target="_blank" rel="noopener noreferrer" className="block text-sm text-stone-300 transition-all duration-300 ease-in-out hover:scale-110 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
-                                    <img src={link.image} alt={`${link.name} logo`} className="h-7 w-7" />
+                                    <Image src={link.image} alt={`${link.name} logo`} width={28} height={28} className="h-7 w-7" loading="lazy" />
                                 </a>
                             </li>
                         ))}

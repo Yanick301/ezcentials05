@@ -9,47 +9,44 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { TranslatedText } from '@/components/TranslatedText';
-import { useUser, useAuth, errorEmitter, FirestorePermissionError, useFirestore } from '@/firebase';
+import { useUser, useAuth, useSupabase } from '@/supabase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, ListOrdered, User, Camera, Loader2, LogOut } from 'lucide-react';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
-import { updateProfile, signOut } from 'firebase/auth';
-import { doc, updateDoc } from 'firebase/firestore';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/context/LanguageContext';
 import { useRouter } from 'next/navigation';
 
 
-// Helper to convert file to Base64
-const toBase64 = (file: File): Promise<string> => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = error => reject(error);
-});
 
 
 export default function AccountPage() {
-  const { user, profile } = useUser();
+  const { user, profile, isUserLoading } = useUser();
   const auth = useAuth();
-  const firestore = useFirestore();
+  const { supabase } = useSupabase();
   const { toast } = useToast();
   const { language } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
 
-
-  if (!user) {
-    return null;
-  }
+  useEffect(() => {
+    if (isUserLoading) return;
+    if (!user) router.push('/login?redirect=/account');
+  }, [isUserLoading, user, router]);
   
   const getInitials = (name?: string | null) => {
     if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   }
+
+  const displayName = useMemo(() => {
+    const fromProfile = profile ? `${profile.firstName} ${profile.lastName}`.trim() : '';
+    if (fromProfile) return fromProfile;
+    return user?.email?.split('@')[0] || 'Utilisateur';
+  }, [profile, user?.email]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -57,32 +54,34 @@ export default function AccountPage() {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
+      await auth.signOut();
       toast({
-        title: language === 'fr' ? 'Déconnecté' : language === 'en' ? 'Logged Out' : 'Abgemeldet',
-        description: language === 'fr' ? 'Vous avez été déconnecté avec succès.' : language === 'en' ? 'You have been successfully logged out.' : 'Sie wurden erfolgreich abgemeldet.',
+        title: <TranslatedText fr="Déconnecté" en="Logged Out">Abgemeldet</TranslatedText>,
+        description: <TranslatedText fr="Vous avez été déconnecté avec succès." en="You have been successfully logged out.">Sie wurden erfolgreich abgemeldet.</TranslatedText>,
       });
       router.push('/login');
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: language === 'fr' ? 'Échec de la déconnexion' : language === 'en' ? 'Logout Failed' : 'Abmeldung fehlgeschlagen',
-        description: error.message,
+        title: <TranslatedText fr="Échec de la déconnexion" en="Logout Failed">Abmeldung fehlgeschlagen</TranslatedText>,
+        description: error.message || (
+          <TranslatedText fr="Une erreur s'est produite lors de la déconnexion." en="An error occurred during logout.">Bei der Abmeldung ist ein Fehler aufgetreten.</TranslatedText>
+        ),
       });
     }
   };
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files.length === 0 || !user || !auth.currentUser || !firestore) {
+    if (!event.target.files || event.target.files.length === 0 || !user || !supabase) {
       return;
     }
     
     const file = event.target.files[0];
-     if (file.size > 1 * 1024 * 1024) { 
+     if (file.size > 2 * 1024 * 1024) { 
         toast({
             variant: "destructive",
-            title: language === 'fr' ? "Fichier trop volumineux" : language === 'en' ? "File too large" : "Datei zu groß",
-            description: language === 'fr' ? "La taille de l'image doit être inférieure à 1 Mo." : language === 'en' ? "Image size must be less than 1MB." : "Die Bildgröße muss weniger als 1 MB betragen.",
+            title: <TranslatedText fr="Fichier trop volumineux" en="File too large">Datei zu groß</TranslatedText>,
+            description: <TranslatedText fr="La taille de l'image doit être inférieure à 2 Mo." en="Image size must be less than 2MB.">Die Bildgröße muss weniger als 2 MB betragen.</TranslatedText>,
         });
         return;
     }
@@ -90,32 +89,52 @@ export default function AccountPage() {
     setIsUploading(true);
 
     try {
-        const base64Image = await toBase64(file);
+        // Upload vers Supabase Storage
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `profile-pictures/${fileName}`;
 
-        // Update Auth profile
-        await updateProfile(auth.currentUser, { photoURL: base64Image });
+        // Supprimer l'ancienne photo si elle existe
+        if (profile?.photoURL && profile.photoURL.includes('supabase.co')) {
+          const oldPath = profile.photoURL.split('/').slice(-2).join('/');
+          await supabase.storage.from('avatars').remove([oldPath]);
+        }
 
-        // Update Firestore profile
-        const userProfileRef = doc(firestore, 'userProfiles', user.uid);
-        await updateDoc(userProfileRef, { photoURL: base64Image });
+        // Upload de la nouvelle photo
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        // Obtenir l'URL publique
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+
+        // Mise à jour du profil avec l'URL de l'image
+        const { error } = await supabase
+          .from('user_profiles')
+          .update({ photo_url: publicUrl })
+          .eq('id', user.id);
+
+        if (error) throw error;
         
         toast({
-            title: language === 'fr' ? "Photo de profil mise à jour" : language === 'en' ? "Profile picture updated" : "Profilbild aktualisiert",
-            description: language === 'fr' ? "Votre nouvelle photo de profil a été enregistrée." : language === 'en' ? "Your new profile picture has been saved." : "Ihr neues Profilbild wurde gespeichert.",
+            title: <TranslatedText fr="Photo de profil mise à jour" en="Profile picture updated">Profilbild aktualisiert</TranslatedText>,
+            description: <TranslatedText fr="Votre nouvelle photo de profil a été enregistrée." en="Your new profile picture has been saved.">Ihr neues Profilbild wurde gespeichert.</TranslatedText>,
         });
 
-    } catch (error) {
-        const permissionError = new FirestorePermissionError({
-          path: `userProfiles/${user.uid}`,
-          operation: 'update',
-          requestResourceData: { photoURL: '[BASE64_DATA]' }
-        });
-        errorEmitter.emit('permission-error', permissionError);
-
+    } catch (error: any) {
        toast({
         variant: "destructive",
-        title: language === 'fr' ? "Erreur de téléversement" : language === 'en' ? "Upload Error" : "Upload-Fehler",
-        description: language === 'fr' ? "Impossible de mettre à jour la photo de profil. Vérifiez les permissions." : language === 'en' ? "Could not update profile picture. Check permissions." : "Profilbild konnte nicht aktualisiert werden. Berechtigungen prüfen.",
+        title: <TranslatedText fr="Erreur de téléversement" en="Upload Error">Upload-Fehler</TranslatedText>,
+        description: error?.message || (
+          <TranslatedText fr="Impossible de mettre à jour la photo de profil." en="Could not update profile picture.">Profilbild konnte nicht aktualisiert werden.</TranslatedText>
+        ),
       });
     } finally {
         setIsUploading(false);
@@ -125,7 +144,17 @@ export default function AccountPage() {
     }
   };
   
-  const photoURL = user.photoURL || profile?.photoURL;
+  const photoURL = profile?.photoURL;
+
+  if (isUserLoading) {
+    return (
+      <div className="p-12 text-center">
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   return (
     <div>
@@ -146,8 +175,8 @@ export default function AccountPage() {
                 <CardContent className="flex flex-col items-center p-8 text-center">
                     <div className="relative">
                       <Avatar className="h-24 w-24">
-                          <AvatarImage src={photoURL || undefined} alt={user.displayName || 'User'} />
-                          <AvatarFallback className="text-3xl">{getInitials(user.displayName)}</AvatarFallback>
+                          <AvatarImage src={photoURL || undefined} alt={displayName} />
+                          <AvatarFallback className="text-3xl">{getInitials(displayName)}</AvatarFallback>
                       </Avatar>
                       <Button
                         variant="ghost"
@@ -159,7 +188,7 @@ export default function AccountPage() {
                         {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
                       </Button>
                     </div>
-                    <h2 className="mt-4 text-xl font-semibold">{user.displayName || 'Benutzer'}</h2>
+                    <h2 className="mt-4 text-xl font-semibold">{displayName}</h2>
                     <p className="mt-1 text-sm text-muted-foreground">{user.email}</p>
                 </CardContent>
             </Card>
@@ -199,7 +228,7 @@ export default function AccountPage() {
                     <CardContent className="space-y-4">
                         <div>
                             <h3 className="text-sm font-medium text-muted-foreground"><TranslatedText fr="Nom complet" en="Full Name">Vollständiger Name</TranslatedText></h3>
-                            <p>{user.displayName || 'N/A'}</p>
+                            <p>{displayName || 'N/A'}</p>
                         </div>
                         <div>
                             <h3 className="text-sm font-medium text-muted-foreground"><TranslatedText fr="Adresse e-mail" en="Email Address">E-Mail-Adresse</TranslatedText></h3>

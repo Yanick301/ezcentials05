@@ -5,7 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Star, Send } from 'lucide-react';
-import { useFirestore } from '@/firebase';
+import { useSupabase } from '@/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { TranslatedText } from '@/components/TranslatedText';
 import type { Review } from '@/lib/types';
-import { doc, updateDoc } from 'firebase/firestore';
+import { sanitizeReviewComment } from '@/lib/security';
 
 const reviewSchema = z.object({
   rating: z.number().min(1, 'La note est requise').max(5),
@@ -30,7 +30,7 @@ interface EditReviewFormProps {
 }
 
 export default function EditReviewForm({ review, productId, onReviewUpdated, onCancel }: EditReviewFormProps) {
-  const firestore = useFirestore();
+  const { supabase } = useSupabase();
   const { toast } = useToast();
   const { control, register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ReviewFormValues>({
     resolver: zodResolver(reviewSchema),
@@ -41,29 +41,39 @@ export default function EditReviewForm({ review, productId, onReviewUpdated, onC
   });
 
   const onSubmit = async (data: ReviewFormValues) => {
-    if (!firestore) return;
+    if (!supabase) return;
     
     try {
-        const reviewRef = doc(firestore, 'products', productId, 'reviews', review.id);
-        await updateDoc(reviewRef, {
+        // Sanitize comment to prevent XSS
+        const sanitizedComment = sanitizeReviewComment(data.comment);
+        
+        const { error } = await supabase
+          .from('reviews')
+          .update({
             rating: data.rating,
-            comment: data.comment,
-            // Assuming we might want to translate on edit as well
-            comment_de: data.comment,
-            comment_fr: data.comment,
-            comment_en: data.comment,
-        });
+            comment: sanitizedComment,
+            comment_fr: sanitizedComment,
+            comment_en: sanitizedComment,
+          } as any)
+          .eq('id', review.id);
+        
+        if (error) {
+          throw error;
+        }
+        
         toast({
-            title: "Avis mis à jour",
-            description: "Votre avis a été modifié avec succès.",
+            title: <TranslatedText fr="Avis mis à jour" en="Review updated">Bewertung aktualisiert</TranslatedText>,
+            description: <TranslatedText fr="Votre avis a été modifié avec succès." en="Your review has been successfully updated.">Ihre Bewertung wurde erfolgreich aktualisiert.</TranslatedText>,
         });
         onReviewUpdated();
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error updating review:", error);
         toast({
             variant: "destructive",
-            title: "Erreur",
-            description: "Impossible de modifier l'avis.",
+            title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,
+            description: error.message || (
+                <TranslatedText fr="Impossible de modifier l'avis." en="Unable to update the review.">Die Bewertung konnte nicht aktualisiert werden.</TranslatedText>
+            ),
         });
     }
   };

@@ -7,10 +7,19 @@ import { Eye, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useCart } from '@/context/CartContext';
+import { TranslatedText } from './TranslatedText';
+import { useLanguage } from '@/context/LanguageContext';
 
 export function ProductCardActions({ product }: { product: Product }) {
   const { toast } = useToast();
   const { addToCart } = useCart();
+  const { language } = useLanguage();
+
+  const getTranslatedName = () => {
+    if (language === 'fr') return product.name_fr;
+    if (language === 'en') return product.name_en;
+    return product.name;
+  };
 
   const handleAddToCart = () => {
     const defaultSize = product.sizes ? product.sizes[0] : undefined;
@@ -22,8 +31,15 @@ export function ProductCardActions({ product }: { product: Product }) {
       color: defaultColor,
     });
     toast({
-      title: 'Ajouté au panier !',
-      description: `${product.name} a été ajouté à votre panier.`,
+      title: <TranslatedText fr="Ajouté au panier !" en="Added to cart!">Zum Warenkorb hinzugefügt!</TranslatedText>,
+      description: (
+        <TranslatedText 
+          fr={`${getTranslatedName()} a été ajouté à votre panier.`} 
+          en={`${getTranslatedName()} has been added to your cart.`}
+        >
+          {`${getTranslatedName()} wurde zu Ihrem Warenkorb hinzugefügt.`}
+        </TranslatedText>
+      ),
     });
   };
 
@@ -33,7 +49,7 @@ export function ProductCardActions({ product }: { product: Product }) {
         <ShoppingCart className="h-5 w-5 text-muted-foreground" />
       </Button>
       <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted">
-        <Link href={`/product/${product.slug}`}>
+        <Link href={`/product/${product.slug}`} prefetch={true}>
             <Eye className="h-5 w-5 text-muted-foreground" />
         </Link>
       </Button>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -25,94 +24,141 @@ import {
   Ban,
   Upload,
   Clock,
+  Truck,
 } from 'lucide-react';
-import { useUser } from '@/firebase';
+import { useUser, useSupabase } from '@/supabase';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { fr, de, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/context/LanguageContext';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
 import type { OrderItem } from '@/lib/types';
 import UploadReceiptForm from '@/components/orders/UploadReceiptForm';
-import { OrderStatusSyncer } from '@/components/OrderStatusSyncer';
+import type { Database, Json } from '@/lib/supabase/database.types';
 
-interface LocalOrder {
-    id: string;
-    userId: string;
-    shippingInfo: any;
-    items: OrderItem[];
-    subtotal: number;
-    shipping: number;
-    taxes: number;
-    totalAmount: number;
-    orderDate: string;
-    paymentStatus: 'pending' | 'processing' | 'completed' | 'rejected';
-    receiptImageUrl: string | null;
+type OrderRow = Database['public']['Tables']['orders']['Row'];
+
+type ShippingInfo = {
+  name: string;
+  email: string;
+  address: string;
+  city: string;
+  zip: string;
+  country: string;
+};
+
+interface Order {
+  id: string;
+  user_id: string;
+  shipping_info: ShippingInfo;
+  items: OrderItem[];
+  subtotal: number;
+  shipping: number;
+  taxes: number;
+  total_amount: number;
+  order_date: string;
+  payment_status: 'pending' | 'processing' | 'completed' | 'rejected';
+  receipt_image_url: string | null;
+  shipping_status: 'preparing' | 'shipped' | 'in_transit' | 'delivered' | 'cancelled';
+  tracking_number: string | null;
+  shipped_at: string | null;
+  delivered_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
-const getSafeDate = (order: any): Date => {
-  if (!order || !order.orderDate) {
-    return new Date();
-  }
-  try {
-    const parsedDate = new Date(order.orderDate);
-    if (!isNaN(parsedDate.getTime())) {
-      return parsedDate;
-    }
-  } catch (e) {}
-  return new Date();
-};
+function normalizeShippingInfo(value: Json): ShippingInfo {
+  const v = (value && typeof value === 'object' && !Array.isArray(value)) ? (value as any) : {};
+  return {
+    name: typeof v.name === 'string' ? v.name : '',
+    email: typeof v.email === 'string' ? v.email : '',
+    address: typeof v.address === 'string' ? v.address : '',
+    city: typeof v.city === 'string' ? v.city : '',
+    zip: typeof v.zip === 'string' ? v.zip : '',
+    country: typeof v.country === 'string' ? v.country : '',
+  };
+}
+
+function normalizeItems(value: Json): OrderItem[] {
+  if (!Array.isArray(value)) return [];
+  return value as any as OrderItem[];
+}
+
+function normalizeOrder(row: OrderRow): Order {
+  return {
+    ...row,
+    shipping_info: normalizeShippingInfo(row.shipping_info),
+    items: normalizeItems(row.items),
+    shipping_status: (row.shipping_status as Order['shipping_status']) || 'preparing',
+    tracking_number: row.tracking_number || null,
+    shipped_at: row.shipped_at || null,
+    delivered_at: row.delivered_at || null,
+  };
+}
 
 export default function OrdersPage() {
   const { user, isUserLoading } = useUser();
+  const { supabase } = useSupabase();
   const { language } = useLanguage();
-  const [orders, setOrders] = useState<LocalOrder[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [isOrdersLoading, setIsOrdersLoading] = useState(true);
-  
-  const fetchOrders = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    setIsOrdersLoading(true);
-    if (user) {
-        try {
-            const localOrdersData = localStorage.getItem('localOrders');
-            if (!localOrdersData) {
-                setOrders([]);
-            } else {
-                const allOrders: LocalOrder[] = JSON.parse(localOrdersData);
-                const userOrders = allOrders
-                    .filter(order => order.userId === user.uid)
-                    .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
-                setOrders(userOrders);
-            }
-        } catch (error) {
-            console.error("Failed to sync orders from local storage", error);
-            setOrders([]);
-        }
-    } else {
-        setOrders([]);
+
+  const fetchOrders = useCallback(async () => {
+    if (!supabase || !user) {
+      setIsOrdersLoading(false);
+      setOrders([]);
+      return;
     }
-    setIsOrdersLoading(false);
-  }, [user]);
+
+    setIsOrdersLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching orders:', error);
+        setOrders([]);
+      } else {
+        const rows = (data || []) as unknown as OrderRow[];
+        setOrders(rows.map(normalizeOrder));
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      setOrders([]);
+    } finally {
+      setIsOrdersLoading(false);
+    }
+  }, [supabase, user]);
 
   useEffect(() => {
-    if (!isUserLoading) {
+    if (!isUserLoading && user) {
       fetchOrders();
-    }
-  }, [user, isUserLoading, fetchOrders]);
 
-  // Callback for OrderStatusSyncer to update state
-  const handleStatusUpdate = useCallback((orderId: string, newStatus: 'completed' | 'rejected') => {
-    setOrders(prevOrders => {
-      const orderToUpdate = prevOrders.find(o => o.id === orderId);
-      if (orderToUpdate && orderToUpdate.paymentStatus !== newStatus) {
-        // Create a new array with the updated order
-        return prevOrders.map(o => o.id === orderId ? { ...o, paymentStatus: newStatus } : o);
-      }
-      // If no update was needed, return the previous state to avoid re-render
-      return prevOrders;
-    });
-  }, []);
+      // S'abonner aux changements en temps réel
+      const channel = supabase
+        ?.channel(`user_orders:${user.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'orders',
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            fetchOrders();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase?.removeChannel(channel);
+      };
+    }
+  }, [user, isUserLoading, fetchOrders, supabase]);
 
   const isLoading = isUserLoading || isOrdersLoading;
 
@@ -124,7 +170,7 @@ export default function OrdersPage() {
         return 'default';
       case 'completed':
         return 'secondary';
-       case 'rejected':
+      case 'rejected':
         return 'destructive';
       default:
         return 'outline';
@@ -169,7 +215,7 @@ export default function OrdersPage() {
         return 'Processing';
       case 'completed':
         return 'Completed';
-       case 'rejected':
+      case 'rejected':
         return 'Rejected';
       default:
         return status;
@@ -190,9 +236,8 @@ export default function OrdersPage() {
         return null;
     }
   };
-  
+
   const handleReceiptUploaded = useCallback(() => {
-    // Re-fetch orders to update the status on the page
     fetchOrders();
   }, [fetchOrders]);
 
@@ -206,7 +251,6 @@ export default function OrdersPage() {
 
   return (
     <div>
-      <OrderStatusSyncer onStatusUpdate={handleStatusUpdate} />
       <h1 className="mb-6 font-headline text-3xl">
         <TranslatedText fr="Historique des commandes" en="Order History">
           Bestellverlauf
@@ -220,10 +264,10 @@ export default function OrdersPage() {
                 <div>
                   <CardTitle className="text-lg">
                     <TranslatedText
-                      fr={`Commande du ${format(getSafeDate(order), 'PPP', { locale: fr })}`}
-                      en={`Order of ${format(getSafeDate(order), 'PPP', { locale: enUS })}`}
+                      fr={`Commande du ${format(new Date(order.order_date), 'PPP', { locale: fr })}`}
+                      en={`Order of ${format(new Date(order.order_date), 'PPP', { locale: enUS })}`}
                     >
-                      Bestellung vom {format(getSafeDate(order), 'PPP', { locale: de })}
+                      Bestellung vom {format(new Date(order.order_date), 'PPP', { locale: de })}
                     </TranslatedText>
                   </CardTitle>
                   <CardDescription>
@@ -234,24 +278,24 @@ export default function OrdersPage() {
                   </CardDescription>
                 </div>
                 <Badge
-                  variant={getStatusVariant(order.paymentStatus)}
+                  variant={getStatusVariant(order.payment_status)}
                   className="flex items-center"
                 >
-                  {getStatusIcon(order.paymentStatus)}
+                  {getStatusIcon(order.payment_status)}
                   <TranslatedText
-                    fr={getStatusTextFR(order.paymentStatus)}
-                    en={getStatusTextEN(order.paymentStatus)}
+                    fr={getStatusTextFR(order.payment_status)}
+                    en={getStatusTextEN(order.payment_status)}
                   >
-                    {getStatusTextDE(order.paymentStatus)}
+                    {getStatusTextDE(order.payment_status)}
                   </TranslatedText>
                 </Badge>
               </CardHeader>
               <CardContent>
                 <div className="rounded-md border p-4">
                   <ul className="divide-y">
-                    {order.items.map((item) => (
+                    {order.items.map((item, index) => (
                       <li
-                        key={item.id}
+                        key={index}
                         className="flex items-center justify-between py-3 text-sm"
                       >
                         <span className="flex-grow pr-4">
@@ -297,43 +341,58 @@ export default function OrdersPage() {
                           Gesamt
                         </TranslatedText>
                       </p>
-                      <p>€{order.totalAmount.toFixed(2)}</p>
+                      <p>€{order.total_amount.toFixed(2)}</p>
                     </div>
                   </div>
                 </div>
 
-                {order.paymentStatus === 'pending' && (
+                {order.payment_status === 'pending' && (
                   <div className="mt-6 rounded-md bg-destructive/10 p-6">
                     <Accordion type="single" collapsible>
-                        <AccordionItem value="upload-receipt" className="border-b-0">
-                           <AccordionTrigger className="w-full justify-center font-semibold text-destructive hover:no-underline">
-                              <div className="flex items-center">
-                                <Upload className="mr-2 h-4 w-4" />
-                                <TranslatedText
-                                  fr="Finaliser le paiement"
-                                  en="Finalize Payment"
-                                >
-                                  Zahlung abschließen
-                                </TranslatedText>
-                              </div>
-                            </AccordionTrigger>
-                            <AccordionContent className="pt-4">
-                               <p className="mb-4 text-center text-sm text-destructive/80">
-                                <TranslatedText
-                                    fr="Pour finaliser votre commande, veuillez nous envoyer votre preuve de paiement."
-                                    en="To finalize your order, please send us your proof of payment."
-                                >
-                                    Um Ihre Bestellung abzuschließen, senden Sie uns bitte Ihren Zahlungsnachweis.
-                                </TranslatedText>
-                                </p>
-                                <UploadReceiptForm order={order} onReceiptUploaded={handleReceiptUploaded} />
-                            </AccordionContent>
-                        </AccordionItem>
+                      <AccordionItem value="upload-receipt" className="border-b-0">
+                        <AccordionTrigger className="w-full justify-center font-semibold text-destructive hover:no-underline">
+                          <div className="flex items-center">
+                            <Upload className="mr-2 h-4 w-4" />
+                            <TranslatedText
+                              fr="Finaliser le paiement"
+                              en="Finalize Payment"
+                            >
+                              Zahlung abschließen
+                            </TranslatedText>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4">
+                          <p className="mb-4 text-center text-sm text-destructive/80">
+                            <TranslatedText
+                              fr="Pour finaliser votre commande, veuillez nous envoyer votre preuve de paiement."
+                              en="To finalize your order, please send us your proof of payment."
+                            >
+                              Um Ihre Bestellung abzuschließen, senden Sie uns bitte Ihren Zahlungsnachweis.
+                            </TranslatedText>
+                          </p>
+                          <UploadReceiptForm 
+                            order={{
+                              id: order.id,
+                              userId: order.user_id,
+                              shippingInfo: order.shipping_info,
+                              items: order.items,
+                              subtotal: order.subtotal,
+                              shipping: order.shipping,
+                              taxes: order.taxes,
+                              totalAmount: order.total_amount,
+                              orderDate: order.order_date,
+                              paymentStatus: order.payment_status,
+                              receiptImageUrl: order.receipt_image_url,
+                            }} 
+                            onReceiptUploaded={handleReceiptUploaded} 
+                          />
+                        </AccordionContent>
+                      </AccordionItem>
                     </Accordion>
                   </div>
                 )}
 
-                {order.paymentStatus === 'processing' && (
+                {order.payment_status === 'processing' && (
                   <div className="mt-6 flex flex-col items-center justify-center gap-4 rounded-md border-2 border-dashed border-blue-200 bg-blue-50/50 p-4 text-center">
                     <div className="flex items-center text-blue-800">
                       <Clock className="mr-2 h-5 w-5" />
@@ -344,30 +403,42 @@ export default function OrdersPage() {
                       </p>
                     </div>
                     <p className="text-sm text-blue-700">
-                        <TranslatedText 
-                            fr="Vous recevrez un e-mail de confirmation de commande dans les 10 prochaines minutes."
-                            en="You will receive an order confirmation email within the next 10 minutes."
-                        >
-                            Sie erhalten in den nächsten 10 Minuten eine E-Mail zur Bestellbestätigung.
-                        </TranslatedText>
+                      <TranslatedText
+                        fr="Votre commande est en cours de vérification. Vous recevrez une notification lorsque le statut changera."
+                        en="Your order is being verified. You will receive a notification when the status changes."
+                      >
+                        Ihre Bestellung wird überprüft. Sie erhalten eine Benachrichtigung, wenn sich der Status ändert.
+                      </TranslatedText>
                     </p>
                   </div>
                 )}
 
-                {order.paymentStatus === 'completed' && (
-                  <div className="mt-6 flex flex-col items-center justify-center rounded-md bg-green-50 p-4 text-sm font-semibold text-green-700">
-                    <div className="flex items-center">
-                      <CheckCircle className="mr-2 h-5 w-5" />
-                      <p>
-                        <TranslatedText fr="Paiement validé" en="Payment validated">
-                          Zahlung bestätigt
-                        </TranslatedText>
-                      </p>
+                {order.payment_status === 'completed' && (
+                  <div className="mt-6 space-y-4">
+                    <div className="flex flex-col items-center justify-center rounded-md bg-green-50 p-4 text-sm font-semibold text-green-700">
+                      <div className="flex items-center">
+                        <CheckCircle className="mr-2 h-5 w-5" />
+                        <p>
+                          <TranslatedText fr="Paiement validé" en="Payment validated">
+                            Zahlung bestätigt
+                          </TranslatedText>
+                        </p>
+                      </div>
                     </div>
+                    {(order.shipping_status !== 'preparing' || order.tracking_number) && (
+                      <Button asChild variant="outline" className="w-full">
+                        <Link href={`/tracking/${order.id}`}>
+                          <Truck className="mr-2 h-4 w-4" />
+                          <TranslatedText fr="Suivre la livraison" en="Track Delivery">
+                            Lieferung verfolgen
+                          </TranslatedText>
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 )}
 
-                {order.paymentStatus === 'rejected' && (
+                {order.payment_status === 'rejected' && (
                   <div className="mt-6 flex flex-col items-center justify-center rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
                     <div className="flex items-center">
                       <Ban className="mr-2 h-5 w-5" />
@@ -413,3 +484,4 @@ export default function OrdersPage() {
     </div>
   );
 }
+
