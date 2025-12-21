@@ -51,17 +51,26 @@ function CustomerConfirmClientPage() {
 
     const processConfirmation = async () => {
       try {
+        console.log('Processing order confirmation for:', orderId);
+        
         // Mettre à jour le statut dans Supabase
         const updateResult = await updateOrderStatus({ orderId, status: 'completed' });
         
+        console.log('Update result:', updateResult);
+        
         if (!updateResult.success) {
+          console.error('Failed to update order status:', updateResult.error);
           setStatus('error');
-          setMessage(updateResult.error || 'Impossible de mettre à jour le statut de la commande.');
+          setMessage(updateResult.error || 'Impossible de mettre à jour le statut de la commande. Veuillez contacter le support.');
           return;
         }
 
+        console.log('Order status updated successfully');
+
         // Envoyer l'email de confirmation au client
         const emailResult = await sendCustomerConfirmationEmail({ userEmail: decodedEmail, orderId });
+        
+        console.log('Email result:', emailResult);
         
         if (emailResult.success) {
           // Mettre à jour aussi localStorage pour compatibilité
@@ -79,13 +88,14 @@ function CustomerConfirmClientPage() {
           setStatus('success');
           setMessage(`La commande #${orderId} a été marquée comme "terminée". Le client en sera notifié par e-mail.`);
         } else {
-          setStatus('error');
-          setMessage(emailResult.error || 'Le statut a été mis à jour, mais l\'e-mail de confirmation n\'a pas pu être envoyé.');
+          // Le statut a été mis à jour mais l'email a échoué
+          setStatus('success');
+          setMessage(`La commande #${orderId} a été confirmée avec succès. ${emailResult.error ? 'Note: L\'email de confirmation n\'a pas pu être envoyé.' : ''}`);
         }
       } catch (e: any) {
         console.error('Error processing confirmation:', e);
         setStatus('error');
-        setMessage(e.message || 'Une erreur est survenue lors du traitement.');
+        setMessage(e.message || 'Une erreur est survenue lors du traitement. Veuillez réessayer ou contacter le support.');
       }
     };
 

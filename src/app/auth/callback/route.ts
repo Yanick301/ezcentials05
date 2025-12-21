@@ -26,7 +26,14 @@ export async function GET(request: Request) {
       
       if (!exchangeError && data?.session) {
         // Si c'est une réinitialisation de mot de passe, rediriger vers reset-password
-        if (type === 'recovery' || next.includes('reset-password')) {
+        // Vérifier aussi si le hash de l'URL contient 'recovery' (Supabase l'ajoute parfois)
+        const isRecovery = type === 'recovery' || 
+                          next.includes('reset-password') || 
+                          requestUrl.hash.includes('recovery') ||
+                          requestUrl.pathname.includes('recovery');
+        
+        if (isRecovery) {
+          // Rediriger vers reset-password avec le code pour que la page puisse vérifier la session
           return NextResponse.redirect(new URL('/reset-password', requestUrl.origin));
         }
         // Sinon, redirection normale après confirmation
@@ -34,7 +41,7 @@ export async function GET(request: Request) {
       } else {
         console.error('Error exchanging code for session:', exchangeError);
         // Si c'est une erreur de réinitialisation, rediriger vers forgot-password
-        if (type === 'recovery') {
+        if (type === 'recovery' || next.includes('reset-password')) {
           return NextResponse.redirect(new URL('/forgot-password?error=auth_failed', requestUrl.origin));
         }
         return NextResponse.redirect(new URL('/login?error=auth_failed', requestUrl.origin));

@@ -85,29 +85,44 @@ function ResetPasswordForm() {
       }
 
       // Vérifier si l'utilisateur a une session valide (après avoir cliqué sur le lien)
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (session) {
+      if (session && session.user) {
+        // Vérifier que la session est bien en mode recovery
+        // En mode recovery, Supabase permet de changer le mot de passe
         setIsValidToken(true);
+        setIsLoading(false);
       } else {
         // Si pas de session, vérifier s'il y a un code dans l'URL
         const code = searchParams.get('code');
         if (code) {
-          // Le callback devrait avoir déjà échangé le code
-          // Attendre un peu et vérifier à nouveau
-          setTimeout(async () => {
-            const { data: { session: newSession } } = await supabase.auth.getSession();
-            if (newSession) {
+          // Essayer d'échanger le code pour une session
+          try {
+            const { data: exchangeData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+            
+            if (!exchangeError && exchangeData?.session) {
               setIsValidToken(true);
+              setIsLoading(false);
             } else {
+              console.error('Error exchanging code:', exchangeError);
               toast({
                 variant: 'destructive',
                 title: <TranslatedText fr="Lien invalide" en="Invalid Link">Ungültiger Link</TranslatedText>,
                 description: <TranslatedText fr="Ce lien de réinitialisation est invalide ou a expiré." en="This reset link is invalid or has expired.">Dieser Link zum Zurücksetzen ist ungültig oder abgelaufen.</TranslatedText>,
               });
               router.push('/forgot-password');
+              setIsLoading(false);
             }
-          }, 1000);
+          } catch (error) {
+            console.error('Error in checkToken:', error);
+            toast({
+              variant: 'destructive',
+              title: <TranslatedText fr="Lien invalide" en="Invalid Link">Ungültiger Link</TranslatedText>,
+              description: <TranslatedText fr="Ce lien de réinitialisation est invalide ou a expiré." en="This reset link is invalid or has expired.">Dieser Link zum Zurücksetzen ist ungültig oder abgelaufen.</TranslatedText>,
+            });
+            router.push('/forgot-password');
+            setIsLoading(false);
+          }
         } else {
           toast({
             variant: 'destructive',
@@ -115,9 +130,9 @@ function ResetPasswordForm() {
             description: <TranslatedText fr="Aucun code de réinitialisation trouvé. Veuillez demander un nouveau lien." en="No reset code found. Please request a new link.">Kein Code zum Zurücksetzen gefunden. Bitte fordern Sie einen neuen Link an.</TranslatedText>,
           });
           router.push('/forgot-password');
+          setIsLoading(false);
         }
       }
-      setIsLoading(false);
     };
 
     checkToken();
@@ -134,23 +149,45 @@ function ResetPasswordForm() {
     }
 
     try {
-      const { error } = await supabase.auth.updateUser({
+      // Vérifier que l'utilisateur a une session valide
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (!session || sessionError) {
+        toast({
+          variant: 'destructive',
+          title: <TranslatedText fr="Session invalide" en="Invalid Session">Ungültige Sitzung</TranslatedText>,
+          description: <TranslatedText fr="Votre session a expiré. Veuillez demander un nouveau lien de réinitialisation." en="Your session has expired. Please request a new reset link.">Ihre Sitzung ist abgelaufen. Bitte fordern Sie einen neuen Link zum Zurücksetzen an.</TranslatedText>,
+        });
+        router.push('/forgot-password');
+        return;
+      }
+
+      // Mettre à jour le mot de passe
+      const { data: updateData, error: updateError } = await supabase.auth.updateUser({
         password: data.password,
       });
 
-      if (error) {
-        throw error;
+      if (updateError) {
+        throw updateError;
       }
 
-      toast({
-        title: <TranslatedText fr="Mot de passe mis à jour" en="Password Updated">Passwort aktualisiert</TranslatedText>,
-        description: <TranslatedText fr="Votre mot de passe a été mis à jour avec succès." en="Your password has been successfully updated.">Ihr Passwort wurde erfolgreich aktualisiert.</TranslatedText>,
-      });
+      // Vérifier que le mot de passe a bien été mis à jour
+      if (updateData?.user) {
+        toast({
+          title: <TranslatedText fr="Mot de passe mis à jour" en="Password Updated">Passwort aktualisiert</TranslatedText>,
+          description: <TranslatedText fr="Votre mot de passe a été mis à jour avec succès." en="Your password has been successfully updated.">Ihr Passwort wurde erfolgreich aktualisiert.</TranslatedText>,
+        });
 
-      // Rediriger vers la page de connexion
-      router.push('/login');
+        // Déconnecter l'utilisateur pour qu'il se reconnecte avec le nouveau mot de passe
+        await supabase.auth.signOut();
+
+        // Rediriger vers la page de connexion
+        router.push('/login');
+      } else {
+        throw new Error('Failed to update password');
+      }
     } catch (error: any) {
-      console.error(error);
+      console.error('Error updating password:', error);
       toast({
         variant: 'destructive',
         title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,

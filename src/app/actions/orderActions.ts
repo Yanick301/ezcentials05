@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { z } from 'zod'
 
 const createOrderInput = z.object({
@@ -60,11 +61,15 @@ const updateOrderStatusInput = z.object({
 
 export async function updateOrderStatus(input: z.infer<typeof updateOrderStatusInput>) {
   try {
-    const supabase = await createClient()
+    // Utiliser le client admin pour bypasser RLS
+    // Cela permet de mettre à jour le statut même sans utilisateur authentifié
+    // (nécessaire pour les liens de confirmation dans les emails)
+    const supabase = createAdminClient()
     const validatedInput = updateOrderStatusInput.parse(input)
 
     const updateData: any = {
       payment_status: validatedInput.status,
+      updated_at: new Date().toISOString(),
     }
 
     if (validatedInput.receiptImageUrl !== undefined) {
@@ -83,7 +88,12 @@ export async function updateOrderStatus(input: z.infer<typeof updateOrderStatusI
       return { success: false, error: error.message }
     }
 
-    return { success: true, error: null }
+    if (!data) {
+      console.error('No data returned from update')
+      return { success: false, error: 'Order not found' }
+    }
+
+    return { success: true, error: null, data }
   } catch (error: any) {
     console.error('Error in updateOrderStatus:', error)
     return { success: false, error: error.message || 'Failed to update order status' }
