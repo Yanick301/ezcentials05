@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { ProductPageSkeleton } from '@/components/skeletons/ProductPageSkeleton';
 import { SEOHead } from '@/components/SEOHead';
+import { getProductPrice } from '@/lib/perfume-prices';
 
 
 export default function ProductPage() {
@@ -270,7 +271,7 @@ export default function ProductPage() {
         {/* Product Info */}
         <div>
           <h1 className="font-headline text-3xl md:text-4xl"><TranslatedText fr={product.name_fr} en={product.name_en}>{product.name}</TranslatedText></h1>
-          <p className="mt-2 text-2xl text-muted-foreground">€{product.price.toFixed(2)}</p>
+          <p className="mt-2 text-2xl text-muted-foreground">€{getProductPrice(product, selectedSize).toFixed(2)}</p>
           
           <div className="mt-4 flex items-center gap-2">
             <div className="flex items-center">
@@ -295,21 +296,35 @@ export default function ProductPage() {
           <div className="mt-8 space-y-6">
             {product.sizes && product.sizes.length > 0 && (
                 <div>
-                    <Label className="text-sm font-medium"><TranslatedText fr="Taille" en="Size">Größe</TranslatedText></Label>
+                    <Label className="text-sm font-medium">
+                      {product.category === 'perfume' ? (
+                        <TranslatedText fr="Volume" en="Volume">Volumen</TranslatedText>
+                      ) : (
+                        <TranslatedText fr="Taille" en="Size">Größe</TranslatedText>
+                      )}
+                    </Label>
                     <RadioGroup value={selectedSize} onValueChange={setSelectedSize} className="mt-2 flex flex-wrap gap-2">
                         {product.sizes.map(size => (
                             <RadioGroupItem key={size} value={size} id={`size-${size}`} className="sr-only" />
                         ))}
-                        {product.sizes.map(size => (
+                        {product.sizes.map(size => {
+                          const sizePrice = product.category === 'perfume' ? getProductPrice(product, size) : null;
+                          return (
                             <Label 
                                 key={size} 
                                 htmlFor={`size-${size}`}
                                 className={cn(
-                                    'flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border text-sm transition-colors',
+                                    'flex flex-col h-auto min-w-[60px] px-3 py-2 cursor-pointer items-center justify-center rounded-md border text-sm transition-colors',
                                     selectedSize === size ? 'border-primary bg-primary text-primary-foreground' : 'hover:bg-accent'
                                 )}
-                            >{size}</Label>
-                        ))}
+                            >
+                              <span>{size}</span>
+                              {sizePrice && product.category === 'perfume' && (
+                                <span className="text-xs mt-1">€{sizePrice.toFixed(2)}</span>
+                              )}
+                            </Label>
+                          );
+                        })}
                     </RadioGroup>
                 </div>
             )}

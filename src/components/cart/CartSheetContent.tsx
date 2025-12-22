@@ -12,6 +12,7 @@ import { DialogClose } from '@radix-ui/react-dialog';
 import { findProductImage } from '@/lib/image-utils';
 import { useLanguage } from '@/context/LanguageContext';
 import type { Color } from '@/lib/types';
+import { getProductPrice } from '@/lib/perfume-prices';
 
 
 const SheetClose = ({
@@ -123,7 +124,7 @@ export function CartSheetContent() {
                     </Button>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    €{item.product.price.toFixed(2)}
+                    €{getProductPrice(item.product, item.size).toFixed(2)}
                   </p>
                   {(item.size || translatedColor) && (
                     <p className="text-xs text-muted-foreground">

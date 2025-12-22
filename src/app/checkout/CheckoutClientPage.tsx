@@ -35,6 +35,7 @@ import { useEffect } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { safeJsonParse, safeGetLocalStorage, safeSetLocalStorage, isLocalStorageAvailable } from '@/lib/security';
 import { createOrder } from '@/app/actions/orderActions';
+import { getProductPrice } from '@/lib/perfume-prices';
 
 
 const baseSchema = {
@@ -528,7 +529,7 @@ export function CheckoutClientPage() {
                           </div>
                           <p className="flex-none text-base font-medium text-foreground">
                             €
-                            {(item.product.price * item.quantity).toFixed(2)}
+                            {(getProductPrice(item.product, item.size) * item.quantity).toFixed(2)}
                           </p>
                         </li>
                       );

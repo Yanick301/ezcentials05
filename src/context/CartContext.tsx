@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import type { Product, CartItem } from '@/lib/types';
 import { safeJsonParse, safeGetLocalStorage, safeSetLocalStorage, isLocalStorageAvailable } from '@/lib/security';
+import { getProductPrice } from '@/lib/perfume-prices';
 
 type CartContextType = {
   cartItems: CartItem[];
@@ -96,7 +97,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + getProductPrice(item.product, item.size) * item.quantity,
     0
   );
 
