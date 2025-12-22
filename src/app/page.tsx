@@ -140,7 +140,13 @@ export default function HomePage() {
                 className="w-full"
             >
                 <CarouselContent className="-ml-2 md:-ml-4">
-                    {categories.map((category, index) => (
+                    {[...categories].sort((a, b) => {
+                        const aHasSub = a.subcategories && a.subcategories.length > 0;
+                        const bHasSub = b.subcategories && b.subcategories.length > 0;
+                        if (aHasSub && !bHasSub) return -1;
+                        if (!aHasSub && bHasSub) return 1;
+                        return 0;
+                    }).map((category, index) => (
                         <CarouselItem key={category.id || index} className="pl-2 md:pl-4 basis-4/5 md:basis-1/2 lg:basis-1/3">
                              <CategoryCard 
                                 pretitle={<TranslatedText fr="CATÉGORIE" en="CATEGORY">KATEGORIE</TranslatedText>}

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
-import { Loader2, Package, Truck, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { Loader2, Package, Truck, CheckCircle, Clock, XCircle, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr, de, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/context/LanguageContext';
@@ -22,6 +22,7 @@ interface Order {
   tracking_number: string | null;
   shipped_at: string | null;
   delivered_at: string | null;
+  created_at: string;
   shipping_info: {
     name: string;
     address: string;
@@ -49,6 +50,7 @@ function normalizeOrder(row: OrderRow): Order {
     tracking_number: row.tracking_number,
     shipped_at: row.shipped_at,
     delivered_at: row.delivered_at,
+    created_at: row.created_at,
     shipping_info: normalizeShippingInfo(row.shipping_info),
   };
 }
@@ -217,6 +219,66 @@ export default function TrackingPage() {
 
   const statusText = getStatusText(order.shipping_status);
 
+  // Calculer la progression de livraison
+  const calculateDeliveryProgress = () => {
+    if (order.shipping_status === 'cancelled') {
+      return { progress: 0, carPosition: 0 };
+    }
+    
+    if (order.shipping_status === 'delivered') {
+      return { progress: 100, carPosition: 100 };
+    }
+    
+    const orderDate = new Date(order.created_at);
+    const now = new Date();
+    const hoursSinceOrder = (now.getTime() - orderDate.getTime()) / (1000 * 60 * 60);
+    const daysSinceOrder = hoursSinceOrder / 24;
+    
+    // Durée estimée de livraison : 6 jours
+    const estimatedDeliveryDays = 6;
+    
+    let progress = 0;
+    let carPosition = 0;
+    
+    switch (order.shipping_status) {
+      case 'preparing':
+        // 0-25% : Préparation (0-1.5 jours)
+        const preparingProgress = Math.min(1, daysSinceOrder / 1.5);
+        progress = preparingProgress * 25;
+        carPosition = progress * 0.3; // La voiture commence à bouger lentement
+        break;
+      case 'shipped':
+        // 25-45% : Expédié (1.5-2.5 jours)
+        const shippedDays = Math.max(0, daysSinceOrder - 1.5);
+        const shippedProgress = Math.min(1, shippedDays / 1);
+        progress = 25 + (shippedProgress * 20);
+        carPosition = 7.5 + (shippedProgress * 12.5);
+        break;
+      case 'in_transit':
+        // 45-95% : En transit (2.5-5.5 jours)
+        const transitDays = Math.max(0, daysSinceOrder - 2.5);
+        const transitProgress = Math.min(1, transitDays / 3);
+        progress = 45 + (transitProgress * 50);
+        carPosition = 20 + (transitProgress * 70);
+        break;
+    }
+    
+    // Si la commande est en cours depuis plus longtemps que prévu, on continue la progression
+    if (daysSinceOrder > estimatedDeliveryDays && order.shipping_status !== 'delivered') {
+      const extraDays = daysSinceOrder - estimatedDeliveryDays;
+      const extraProgress = Math.min(5, extraDays * 2); // Max 5% supplémentaire
+      progress = Math.min(95, progress + extraProgress);
+      carPosition = Math.min(95, carPosition + extraProgress);
+    }
+    
+    return { 
+      progress: Math.min(100, Math.max(0, Math.round(progress))), 
+      carPosition: Math.min(100, Math.max(0, carPosition)) 
+    };
+  };
+
+  const { progress, carPosition } = calculateDeliveryProgress();
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-6">
@@ -236,6 +298,105 @@ export default function TrackingPage() {
           <TranslatedText fr="Commande" en="Order">Bestellung</TranslatedText> #{order.id.slice(0, 8)}
         </p>
       </div>
+
+      {/* Animation de suivi de livraison */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Truck className="h-5 w-5" />
+            <TranslatedText fr="Suivi en temps réel" en="Real-time tracking">
+              Echtzeit-Verfolgung
+            </TranslatedText>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="relative">
+            {/* Route */}
+            <div className="relative h-32 bg-gradient-to-r from-muted via-muted/50 to-muted rounded-lg overflow-hidden">
+              {/* Ligne de route */}
+              <div className="absolute top-1/2 left-0 right-0 h-1 bg-border transform -translate-y-1/2">
+                <div 
+                  className="h-full bg-primary transition-all duration-1000 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              
+              {/* Points d'étapes */}
+              <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1/2">
+                <div className={`w-4 h-4 rounded-full border-2 ${progress >= 0 ? 'bg-primary border-primary' : 'bg-background border-muted-foreground'}`} />
+                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xs text-center whitespace-nowrap">
+                  <TranslatedText fr="Commande" en="Order">Bestellung</TranslatedText>
+                </div>
+              </div>
+              
+              <div className="absolute top-1/2 left-1/4 transform -translate-y-1/2 -translate-x-1/2">
+                <div className={`w-4 h-4 rounded-full border-2 ${progress >= 20 ? 'bg-primary border-primary' : 'bg-background border-muted-foreground'}`} />
+                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xs text-center whitespace-nowrap">
+                  <TranslatedText fr="Expédié" en="Shipped">Versandt</TranslatedText>
+                </div>
+              </div>
+              
+              <div className="absolute top-1/2 left-2/3 transform -translate-y-1/2 -translate-x-1/2">
+                <div className={`w-4 h-4 rounded-full border-2 ${progress >= 60 ? 'bg-primary border-primary' : 'bg-background border-muted-foreground'}`} />
+                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xs text-center whitespace-nowrap">
+                  <TranslatedText fr="En transit" en="In Transit">Unterwegs</TranslatedText>
+                </div>
+              </div>
+              
+              <div className="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2">
+                <div className={`w-4 h-4 rounded-full border-2 ${progress >= 100 ? 'bg-primary border-primary' : 'bg-background border-muted-foreground'}`} />
+                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xs text-center whitespace-nowrap">
+                  <TranslatedText fr="Livré" en="Delivered">Geliefert</TranslatedText>
+                </div>
+              </div>
+              
+              {/* Voiture animée */}
+              {order.shipping_status !== 'cancelled' && (
+                <div 
+                  className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 transition-all duration-1000 ease-out z-10"
+                  style={{ left: `${carPosition}%` }}
+                >
+                  <div className="relative">
+                    <div className="relative">
+                      <Truck className="h-8 w-8 text-primary drop-shadow-lg" />
+                      {/* Animation de mouvement subtile */}
+                      <div className="absolute inset-0 animate-pulse opacity-20">
+                        <Truck className="h-8 w-8 text-primary" />
+                      </div>
+                    </div>
+                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-primary bg-background/80 px-2 py-1 rounded whitespace-nowrap border border-primary/20">
+                      {Math.round(progress)}%
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Informations de progression */}
+            <div className="mt-6 flex justify-between text-sm text-muted-foreground">
+              <div>
+                <p className="font-medium">
+                  <TranslatedText fr="Progression" en="Progress">Fortschritt</TranslatedText>
+                </p>
+                <p className="text-lg font-semibold text-foreground">{Math.round(progress)}%</p>
+              </div>
+              <div className="text-right">
+                <p className="font-medium">
+                  <TranslatedText fr="Statut" en="Status">Status</TranslatedText>
+                </p>
+                <p className="text-lg font-semibold text-foreground">
+                  <TranslatedText
+                    fr={statusText.fr}
+                    en={statusText.en}
+                  >
+                    {statusText.de}
+                  </TranslatedText>
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="mb-6">
         <CardHeader>

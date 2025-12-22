@@ -92,7 +92,13 @@ export function Header() {
               <main className="flex-grow overflow-y-auto p-6">
                 <nav>
                   <ul className="flex flex-col space-y-3">
-                    {categories.map((category) => {
+                    {[...categories].sort((a, b) => {
+                      const aHasSub = a.subcategories && a.subcategories.length > 0;
+                      const bHasSub = b.subcategories && b.subcategories.length > 0;
+                      if (aHasSub && !bHasSub) return -1;
+                      if (!aHasSub && bHasSub) return 1;
+                      return 0;
+                    }).map((category) => {
                       const hasSubcategories = category.subcategories && category.subcategories.length > 0;
                       const isOpen = openCategories.has(category.id);
                       
@@ -186,7 +192,13 @@ export function Header() {
 
         <div className="flex flex-1 items-center justify-end space-x-1 md:space-x-2 shrink-0 flex-nowrap">
           <nav className="hidden lg:flex lg:items-center lg:space-x-1 text-sm font-medium">
-            {categories.map((category) => {
+            {[...categories].sort((a, b) => {
+              const aHasSub = a.subcategories && a.subcategories.length > 0;
+              const bHasSub = b.subcategories && b.subcategories.length > 0;
+              if (aHasSub && !bHasSub) return -1;
+              if (!aHasSub && bHasSub) return 1;
+              return 0;
+            }).map((category) => {
               const hasSubcategories = category.subcategories && category.subcategories.length > 0;
               
               if (hasSubcategories) {

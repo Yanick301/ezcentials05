@@ -17,6 +17,8 @@ import { Separator } from '@/components/ui/separator'
 import UploadReceiptForm from '@/components/orders/UploadReceiptForm';
 import { useCart } from '@/context/CartContext';
 import { safeJsonParse, safeGetLocalStorage, isLocalStorageAvailable } from '@/lib/security';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 
 interface LocalOrder {
@@ -148,6 +150,17 @@ function UploadReceiptPageComponent() {
               Ihr Beleg wurde zur Überprüfung gesendet. Sie werden automatisch weitergeleitet.
             </TranslatedText>
           </p>
+          {orderId && (
+            <div className="mt-6">
+              <Button asChild className="w-full">
+                <Link href={`/tracking/${orderId}`}>
+                  <TranslatedText fr="Suivre ma commande" en="Track my order">
+                    Meine Bestellung verfolgen
+                  </TranslatedText>
+                </Link>
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     );

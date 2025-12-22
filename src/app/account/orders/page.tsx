@@ -425,16 +425,14 @@ export default function OrdersPage() {
                         </p>
                       </div>
                     </div>
-                    {(order.shipping_status !== 'preparing' || order.tracking_number) && (
-                      <Button asChild variant="outline" className="w-full">
-                        <Link href={`/tracking/${order.id}`}>
-                          <Truck className="mr-2 h-4 w-4" />
-                          <TranslatedText fr="Suivre la livraison" en="Track Delivery">
-                            Lieferung verfolgen
-                          </TranslatedText>
-                        </Link>
-                      </Button>
-                    )}
+                    <Button asChild className="w-full">
+                      <Link href={`/tracking/${order.id}`}>
+                        <Truck className="mr-2 h-4 w-4" />
+                        <TranslatedText fr="Suivre ma commande" en="Track my order">
+                          Meine Bestellung verfolgen
+                        </TranslatedText>
+                      </Link>
+                    </Button>
                   </div>
                 )}
 

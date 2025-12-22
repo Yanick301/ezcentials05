@@ -159,3 +159,4 @@ export function getProductPrice(product: { slug: string; price: number; category
   return product.price;
 }
 
+
