@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, Heart, ChevronDown } from 'lucide-react';
+import { Menu, Heart, ChevronDown, Plus, Minus } from 'lucide-react';
 import { useState } from 'react';
 
 import { categories } from '@/lib/data';
@@ -29,9 +29,22 @@ import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
 
   const handleLinkClick = () => {
     setIsSheetOpen(false);
+  };
+
+  const toggleCategory = (categoryId: string) => {
+    setOpenCategories((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
   };
 
   const handleFooterActionClick = () => {
@@ -78,47 +91,69 @@ export function Header() {
               </header>
               <main className="flex-grow overflow-y-auto p-6">
                 <nav>
-                  <ul className="flex flex-col space-y-4">
-                    {categories.map((category) => (
-                      <li key={category.id} className="space-y-1">
-                        <div className="flex items-center justify-between group">
-                          <Link
-                            href={`/products/${category.slug}`}
-                            className="text-lg font-semibold text-foreground/90 transition-all hover:text-foreground hover:translate-x-1 flex-1"
-                            onClick={handleLinkClick}
-                            prefetch={true}
-                          >
-                            <TranslatedText
-                              fr={category.name_fr}
-                              en={category.name_en}
+                  <ul className="flex flex-col space-y-3">
+                    {categories.map((category) => {
+                      const hasSubcategories = category.subcategories && category.subcategories.length > 0;
+                      const isOpen = openCategories.has(category.id);
+                      
+                      return (
+                        <li key={category.id} className="space-y-0">
+                          <div className="flex items-center justify-between group">
+                            <Link
+                              href={`/products/${category.slug}`}
+                              className="text-lg font-semibold text-foreground/90 transition-all hover:text-foreground hover:translate-x-1 flex-1 py-2"
+                              onClick={handleLinkClick}
+                              prefetch={true}
                             >
-                              {category.name}
-                            </TranslatedText>
-                          </Link>
-                        </div>
-                        {category.subcategories && category.subcategories.length > 0 && (
-                          <ul className="ml-4 mt-2 flex flex-col space-y-1.5 border-l-2 border-primary/20 pl-4">
-                            {category.subcategories.map((subcategory) => (
-                              <li key={subcategory.id}>
-                                <Link
-                                  href={`/products/${category.slug}/${subcategory.slug}`}
-                                  className="text-sm text-foreground/70 transition-all hover:text-foreground hover:translate-x-1 hover:font-medium block py-1"
-                                  onClick={handleLinkClick}
-                                  prefetch={true}
-                                >
-                                  <TranslatedText
-                                    fr={subcategory.name_fr}
-                                    en={subcategory.name_en}
+                              <TranslatedText
+                                fr={category.name_fr}
+                                en={category.name_en}
+                              >
+                                {category.name}
+                              </TranslatedText>
+                            </Link>
+                            {hasSubcategories && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  toggleCategory(category.id);
+                                }}
+                                className="ml-2 p-1.5 rounded-md transition-all duration-200 hover:bg-accent/50 active:scale-95 flex items-center justify-center group/btn"
+                                aria-label={isOpen ? "Fermer" : "Ouvrir"}
+                                aria-expanded={isOpen}
+                              >
+                                {isOpen ? (
+                                  <Minus className="h-4 w-4 text-foreground/70 group-hover/btn:text-foreground transition-colors" />
+                                ) : (
+                                  <Plus className="h-4 w-4 text-foreground/70 group-hover/btn:text-foreground transition-colors" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+                          {hasSubcategories && isOpen && (
+                            <ul className="ml-2 mt-1 mb-2 flex flex-col space-y-0.5 border-l-2 border-primary/30 pl-4 animate-in slide-in-from-top-1 duration-200">
+                              {category.subcategories.map((subcategory) => (
+                                <li key={subcategory.id}>
+                                  <Link
+                                    href={`/products/${category.slug}/${subcategory.slug}`}
+                                    className="text-sm text-foreground/70 transition-all hover:text-foreground hover:translate-x-1 hover:font-medium block py-2 px-2 rounded-md hover:bg-accent/30"
+                                    onClick={handleLinkClick}
+                                    prefetch={true}
                                   >
-                                    {subcategory.name}
-                                  </TranslatedText>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </li>
-                    ))}
+                                    <TranslatedText
+                                      fr={subcategory.name_fr}
+                                      en={subcategory.name_en}
+                                    >
+                                      {subcategory.name}
+                                    </TranslatedText>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </nav>
               </main>
