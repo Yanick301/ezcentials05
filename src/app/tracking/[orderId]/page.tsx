@@ -280,30 +280,51 @@ export default function TrackingPage() {
   const { progress, carPosition } = calculateDeliveryProgress();
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-6">
-        <Button asChild variant="ghost" className="mb-4">
-          <Link href="/account/orders">
-            ← <TranslatedText fr="Retour aux commandes" en="Back to orders">
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
+      {/* Header avec animation d'entrée */}
+      <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
+        <Button asChild variant="ghost" className="mb-4 -ml-2 hover:bg-accent/50 transition-colors">
+          <Link href="/account/orders" className="flex items-center gap-2">
+            <span className="text-lg">←</span>
+            <TranslatedText fr="Retour aux commandes" en="Back to orders">
               Zurück zu Bestellungen
             </TranslatedText>
           </Link>
         </Button>
-        <h1 className="font-headline text-3xl mb-2">
-          <TranslatedText fr="Suivi de livraison" en="Delivery Tracking">
-            Lieferverfolgung
-          </TranslatedText>
-        </h1>
-        <p className="text-muted-foreground">
-          <TranslatedText fr="Commande" en="Order">Bestellung</TranslatedText> #{order.id.slice(0, 8)}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-headline text-4xl md:text-5xl mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <TranslatedText fr="Suivi de livraison" en="Delivery Tracking">
+                Lieferverfolgung
+              </TranslatedText>
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              <TranslatedText fr="Commande" en="Order">Bestellung</TranslatedText>{' '}
+              <span className="font-mono font-semibold text-foreground">#{order.id.slice(0, 8).toUpperCase()}</span>
+            </p>
+          </div>
+          <Badge 
+            variant={getStatusVariant(order.shipping_status)} 
+            className="hidden md:flex items-center gap-2 px-4 py-2 text-sm h-auto"
+          >
+            {getStatusIcon(order.shipping_status)}
+            <TranslatedText
+              fr={statusText.fr}
+              en={statusText.en}
+            >
+              {statusText.de}
+            </TranslatedText>
+          </Badge>
+        </div>
       </div>
 
-      {/* Animation de suivi de livraison */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Truck className="h-5 w-5" />
+      {/* Animation de suivi de livraison améliorée */}
+      <Card className="mb-6 border-2 shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-xl">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Truck className="h-5 w-5 text-primary" />
+            </div>
             <TranslatedText fr="Suivi en temps réel" en="Real-time tracking">
               Echtzeit-Verfolgung
             </TranslatedText>
@@ -311,77 +332,106 @@ export default function TrackingPage() {
         </CardHeader>
         <CardContent>
           <div className="relative">
-            {/* Route */}
-            <div className="relative h-32 bg-gradient-to-r from-muted via-muted/50 to-muted rounded-lg overflow-hidden">
-              {/* Ligne de route */}
-              <div className="absolute top-1/2 left-0 right-0 h-1 bg-border transform -translate-y-1/2">
+            {/* Route avec design amélioré */}
+            <div className="relative h-40 md:h-48 bg-gradient-to-br from-muted/80 via-muted/60 to-muted/80 rounded-xl overflow-hidden border border-border/50 shadow-inner">
+              {/* Effet de profondeur */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
+              
+              {/* Ligne de route avec ombre */}
+              <div className="absolute top-1/2 left-0 right-0 h-2 bg-border/50 transform -translate-y-1/2 rounded-full shadow-sm">
+                {/* Barre de progression avec gradient */}
                 <div 
-                  className="h-full bg-primary transition-all duration-1000 ease-out"
+                  className="h-full bg-gradient-to-r from-primary via-primary/90 to-primary transition-all duration-[2000ms] ease-out rounded-full shadow-lg relative overflow-hidden"
                   style={{ width: `${progress}%` }}
-                />
-              </div>
-              
-              {/* Points d'étapes */}
-              <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1/2">
-                <div className={`w-4 h-4 rounded-full border-2 ${progress >= 0 ? 'bg-primary border-primary' : 'bg-background border-muted-foreground'}`} />
-                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xs text-center whitespace-nowrap">
-                  <TranslatedText fr="Commande" en="Order">Bestellung</TranslatedText>
+                >
+                  {/* Effet de brillance animé */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
                 </div>
               </div>
               
-              <div className="absolute top-1/2 left-1/4 transform -translate-y-1/2 -translate-x-1/2">
-                <div className={`w-4 h-4 rounded-full border-2 ${progress >= 20 ? 'bg-primary border-primary' : 'bg-background border-muted-foreground'}`} />
-                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xs text-center whitespace-nowrap">
-                  <TranslatedText fr="Expédié" en="Shipped">Versandt</TranslatedText>
+              {/* Points d'étapes améliorés */}
+              {[
+                { position: 0, label: { fr: 'Commande', en: 'Order', de: 'Bestellung' }, threshold: 0 },
+                { position: 25, label: { fr: 'Expédié', en: 'Shipped', de: 'Versandt' }, threshold: 20 },
+                { position: 66, label: { fr: 'En transit', en: 'In Transit', de: 'Unterwegs' }, threshold: 60 },
+                { position: 100, label: { fr: 'Livré', en: 'Delivered', de: 'Geliefert' }, threshold: 100 },
+              ].map((step, idx) => (
+                <div 
+                  key={idx}
+                  className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-500"
+                  style={{ 
+                    left: `${step.position}%`,
+                    transform: `translate(-50%, -50%)`
+                  }}
+                >
+                  {/* Point d'étape */}
+                  <div className="relative">
+                    <div 
+                      className={`w-5 h-5 rounded-full border-2 transition-all duration-500 ${
+                        progress >= step.threshold 
+                          ? 'bg-primary border-primary shadow-lg shadow-primary/50 scale-110' 
+                          : 'bg-background border-muted-foreground/40 scale-100'
+                      }`}
+                    >
+                      {progress >= step.threshold && (
+                        <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+                      )}
+                    </div>
+                    {/* Label */}
+                    <div className={`absolute top-7 left-1/2 transform -translate-x-1/2 text-xs font-medium text-center whitespace-nowrap transition-colors duration-500 ${
+                      progress >= step.threshold ? 'text-primary font-semibold' : 'text-muted-foreground'
+                    }`}>
+                      <TranslatedText fr={step.label.fr} en={step.label.en}>
+                        {step.label.de}
+                      </TranslatedText>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
               
-              <div className="absolute top-1/2 left-2/3 transform -translate-y-1/2 -translate-x-1/2">
-                <div className={`w-4 h-4 rounded-full border-2 ${progress >= 60 ? 'bg-primary border-primary' : 'bg-background border-muted-foreground'}`} />
-                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xs text-center whitespace-nowrap">
-                  <TranslatedText fr="En transit" en="In Transit">Unterwegs</TranslatedText>
-                </div>
-              </div>
-              
-              <div className="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2">
-                <div className={`w-4 h-4 rounded-full border-2 ${progress >= 100 ? 'bg-primary border-primary' : 'bg-background border-muted-foreground'}`} />
-                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-xs text-center whitespace-nowrap">
-                  <TranslatedText fr="Livré" en="Delivered">Geliefert</TranslatedText>
-                </div>
-              </div>
-              
-              {/* Voiture animée */}
+              {/* Voiture animée améliorée */}
               {order.shipping_status !== 'cancelled' && (
                 <div 
-                  className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 transition-all duration-1000 ease-out z-10"
+                  className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 transition-all duration-[2000ms] ease-out z-20"
                   style={{ left: `${carPosition}%` }}
                 >
                   <div className="relative">
-                    <div className="relative">
-                      <Truck className="h-8 w-8 text-primary drop-shadow-lg" />
-                      {/* Animation de mouvement subtile */}
-                      <div className="absolute inset-0 animate-pulse opacity-20">
-                        <Truck className="h-8 w-8 text-primary" />
+                    {/* Ombre de la voiture */}
+                    <div 
+                      className="absolute top-8 left-1/2 transform -translate-x-1/2 w-6 h-2 bg-black/20 blur-sm rounded-full"
+                      style={{ 
+                        transform: `translate(-50%, 0) scale(${1 + Math.sin(Date.now() / 500) * 0.1})`
+                      }}
+                    />
+                    {/* Voiture avec animation */}
+                    <div className="relative transform transition-transform duration-300 hover:scale-110">
+                      <Truck className="h-10 w-10 md:h-12 md:w-12 text-primary drop-shadow-2xl filter brightness-110" />
+                      {/* Effet de mouvement */}
+                      <div className="absolute inset-0 animate-pulse opacity-30">
+                        <Truck className="h-10 w-10 md:h-12 md:w-12 text-primary" />
                       </div>
                     </div>
-                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-primary bg-background/80 px-2 py-1 rounded whitespace-nowrap border border-primary/20">
-                      {Math.round(progress)}%
+                    {/* Badge de progression */}
+                    <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2">
+                      <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border-2 border-primary-foreground/20 whitespace-nowrap backdrop-blur-sm">
+                        {Math.round(progress)}%
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
             </div>
             
-            {/* Informations de progression */}
-            <div className="mt-6 flex justify-between text-sm text-muted-foreground">
-              <div>
-                <p className="font-medium">
+            {/* Informations de progression améliorées */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border/50">
+                <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wide">
                   <TranslatedText fr="Progression" en="Progress">Fortschritt</TranslatedText>
                 </p>
-                <p className="text-lg font-semibold text-foreground">{Math.round(progress)}%</p>
+                <p className="text-2xl font-bold text-foreground">{Math.round(progress)}%</p>
               </div>
-              <div className="text-right">
-                <p className="font-medium">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border/50">
+                <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wide">
                   <TranslatedText fr="Statut" en="Status">Status</TranslatedText>
                 </p>
                 <p className="text-lg font-semibold text-foreground">
@@ -393,15 +443,25 @@ export default function TrackingPage() {
                   </TranslatedText>
                 </p>
               </div>
+              <div className="p-4 rounded-lg bg-muted/50 border border-border/50">
+                <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wide">
+                  <TranslatedText fr="Commande" en="Order Date">Bestelldatum</TranslatedText>
+                </p>
+                <p className="text-sm font-semibold text-foreground">
+                  {format(new Date(order.created_at), 'PP', { locale })}
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {getStatusIcon(order.shipping_status)}
+      <Card className="mb-6 border-2 shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-xl">
+            <div className="p-2 rounded-lg bg-primary/10">
+              {getStatusIcon(order.shipping_status)}
+            </div>
             <TranslatedText
               fr={statusText.fr}
               en={statusText.en}
@@ -410,166 +470,228 @@ export default function TrackingPage() {
             </TranslatedText>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           {order.tracking_number && (
-            <div>
-              <p className="text-sm font-medium mb-1">
+            <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
                 <TranslatedText fr="Numéro de suivi" en="Tracking Number">
                   Sendungsnummer
                 </TranslatedText>
               </p>
-              <p className="text-lg font-mono">{order.tracking_number}</p>
+              <p className="text-xl font-mono font-bold text-foreground tracking-wider">
+                {order.tracking_number}
+              </p>
             </div>
           )}
 
-          {order.shipped_at && (
-            <div>
-              <p className="text-sm font-medium mb-1">
-                <TranslatedText fr="Date d'expédition" en="Shipped Date">
-                  Versanddatum
-                </TranslatedText>
-              </p>
-              <p>{format(new Date(order.shipped_at), 'PPpp', { locale })}</p>
-            </div>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {order.shipped_at && (
+              <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
+                <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
+                  <TranslatedText fr="Date d'expédition" en="Shipped Date">
+                    Versanddatum
+                  </TranslatedText>
+                </p>
+                <p className="text-sm font-semibold text-foreground">
+                  {format(new Date(order.shipped_at), 'PPpp', { locale })}
+                </p>
+              </div>
+            )}
 
-          {order.delivered_at && (
-            <div>
-              <p className="text-sm font-medium mb-1">
-                <TranslatedText fr="Date de livraison" en="Delivery Date">
-                  Lieferdatum
-                </TranslatedText>
-              </p>
-              <p>{format(new Date(order.delivered_at), 'PPpp', { locale })}</p>
-            </div>
-          )}
+            {order.delivered_at && (
+              <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
+                <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
+                  <TranslatedText fr="Date de livraison" en="Delivery Date">
+                    Lieferdatum
+                  </TranslatedText>
+                </p>
+                <p className="text-sm font-semibold text-foreground">
+                  {format(new Date(order.delivered_at), 'PPpp', { locale })}
+                </p>
+              </div>
+            )}
+          </div>
 
           <div className="pt-4 border-t">
-            <p className="text-sm font-medium mb-2">
-              <TranslatedText fr="Adresse de livraison" en="Delivery Address">
-                Lieferadresse
-              </TranslatedText>
-            </p>
-            <p className="text-sm">
-              {order.shipping_info.name}<br />
-              {order.shipping_info.address}<br />
-              {order.shipping_info.zip} {order.shipping_info.city}<br />
-              {order.shipping_info.country}
-            </p>
+            <div className="flex items-center gap-2 mb-3">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <p className="text-sm font-semibold text-foreground uppercase tracking-wide">
+                <TranslatedText fr="Adresse de livraison" en="Delivery Address">
+                  Lieferadresse
+                </TranslatedText>
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
+              <p className="text-sm leading-relaxed text-foreground">
+                <span className="font-semibold">{order.shipping_info.name}</span><br />
+                {order.shipping_info.address}<br />
+                {order.shipping_info.zip} {order.shipping_info.city}<br />
+                <span className="font-medium">{order.shipping_info.country}</span>
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
+      <Card className="border-2 shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl">
             <TranslatedText fr="Historique du statut" en="Status History">
               Statusverlauf
             </TranslatedText>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className={`mt-1 ${order.shipping_status === 'preparing' ? 'text-primary' : 'text-muted-foreground'}`}>
-                <Package className="h-5 w-5" />
+          <div className="relative">
+            {/* Ligne verticale de timeline */}
+            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-border" />
+            
+            <div className="space-y-6 relative">
+              {/* Étape: Préparation */}
+              <div className="flex items-start gap-4 relative">
+                <div className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-500 ${
+                  order.shipping_status === 'preparing' 
+                    ? 'bg-primary border-primary shadow-lg shadow-primary/50 scale-110' 
+                    : 'bg-background border-muted-foreground'
+                }`}>
+                  <Package className={`h-5 w-5 transition-colors duration-500 ${
+                    order.shipping_status === 'preparing' ? 'text-primary-foreground' : 'text-muted-foreground'
+                  }`} />
+                  {order.shipping_status === 'preparing' && (
+                    <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+                  )}
+                </div>
+                <div className="flex-1 pt-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className={`font-semibold transition-colors duration-500 ${
+                      order.shipping_status === 'preparing' ? 'text-primary' : 'text-foreground'
+                    }`}>
+                      <TranslatedText fr="En préparation" en="Preparing">
+                        Wird vorbereitet
+                      </TranslatedText>
+                    </p>
+                    {order.shipping_status === 'preparing' && (
+                      <Badge variant="default" className="animate-in fade-in zoom-in duration-300">
+                        <TranslatedText fr="Actuel" en="Current">Aktuell</TranslatedText>
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    <TranslatedText
+                      fr="Votre commande est en cours de préparation"
+                      en="Your order is being prepared"
+                    >
+                      Ihre Bestellung wird vorbereitet
+                    </TranslatedText>
+                  </p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">
+                    {format(new Date(order.created_at), 'PP', { locale })}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <p className="font-medium">
-                  <TranslatedText fr="En préparation" en="Preparing">
-                    Wird vorbereitet
-                  </TranslatedText>
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  <TranslatedText
-                    fr="Votre commande est en cours de préparation"
-                    en="Your order is being prepared"
-                  >
-                    Ihre Bestellung wird vorbereitet
-                  </TranslatedText>
-                </p>
-              </div>
-              {order.shipping_status === 'preparing' && (
-                <Badge variant="secondary">
-                  <TranslatedText fr="Actuel" en="Current">Aktuell</TranslatedText>
-                </Badge>
+
+              {/* Étape: Expédié */}
+              {(order.shipping_status === 'shipped' || order.shipping_status === 'in_transit' || order.shipping_status === 'delivered') && (
+                <div className="flex items-start gap-4 relative animate-in fade-in slide-in-from-left-4 duration-500">
+                  <div className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-500 ${
+                    order.shipping_status === 'shipped' || order.shipping_status === 'in_transit'
+                      ? 'bg-primary border-primary shadow-lg shadow-primary/50 scale-110' 
+                      : 'bg-background border-primary/50'
+                  }`}>
+                    <Truck className={`h-5 w-5 transition-colors duration-500 ${
+                      order.shipping_status === 'shipped' || order.shipping_status === 'in_transit'
+                        ? 'text-primary-foreground' 
+                        : 'text-primary'
+                    }`} />
+                    {(order.shipping_status === 'shipped' || order.shipping_status === 'in_transit') && (
+                      <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+                    )}
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className={`font-semibold transition-colors duration-500 ${
+                        order.shipping_status === 'shipped' || order.shipping_status === 'in_transit'
+                          ? 'text-primary' 
+                          : 'text-foreground'
+                      }`}>
+                        <TranslatedText fr="Expédié" en="Shipped">
+                          Versandt
+                        </TranslatedText>
+                      </p>
+                      {(order.shipping_status === 'shipped' || order.shipping_status === 'in_transit') && (
+                        <Badge variant="default" className="animate-in fade-in zoom-in duration-300">
+                          <TranslatedText fr="Actuel" en="Current">Aktuell</TranslatedText>
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {order.shipped_at ? (
+                        format(new Date(order.shipped_at), 'PP', { locale })
+                      ) : (
+                        <TranslatedText fr="En transit" en="In transit">
+                          Unterwegs
+                        </TranslatedText>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Étape: Livré */}
+              {order.shipping_status === 'delivered' && (
+                <div className="flex items-start gap-4 relative animate-in fade-in slide-in-from-left-4 duration-500">
+                  <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 bg-primary border-primary shadow-lg shadow-primary/50 scale-110">
+                    <CheckCircle className="h-5 w-5 text-primary-foreground" />
+                    <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-semibold text-primary">
+                        <TranslatedText fr="Livré" en="Delivered">
+                          Geliefert
+                        </TranslatedText>
+                      </p>
+                      <Badge variant="default" className="bg-green-600 hover:bg-green-700 animate-in fade-in zoom-in duration-300">
+                        <TranslatedText fr="Terminé" en="Completed">Abgeschlossen</TranslatedText>
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {order.delivered_at ? (
+                        format(new Date(order.delivered_at), 'PP', { locale })
+                      ) : (
+                        <TranslatedText fr="Livré avec succès" en="Delivered successfully">
+                          Erfolgreich geliefert
+                        </TranslatedText>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Étape: Annulé */}
+              {order.shipping_status === 'cancelled' && (
+                <div className="flex items-start gap-4 relative">
+                  <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 bg-destructive border-destructive shadow-lg">
+                    <XCircle className="h-5 w-5 text-destructive-foreground" />
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <p className="font-semibold text-destructive mb-1">
+                      <TranslatedText fr="Annulé" en="Cancelled">
+                        Storniert
+                      </TranslatedText>
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      <TranslatedText
+                        fr="Cette commande a été annulée"
+                        en="This order has been cancelled"
+                      >
+                        Diese Bestellung wurde storniert
+                      </TranslatedText>
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
-
-            {(order.shipping_status === 'shipped' || order.shipping_status === 'in_transit' || order.shipping_status === 'delivered') && (
-              <div className="flex items-start gap-4">
-                <div className={`mt-1 ${order.shipping_status === 'shipped' || order.shipping_status === 'in_transit' ? 'text-primary' : 'text-muted-foreground'}`}>
-                  <Truck className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">
-                    <TranslatedText fr="Expédié" en="Shipped">
-                      Versandt
-                    </TranslatedText>
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {order.shipped_at
-                      ? format(new Date(order.shipped_at), 'PP', { locale })
-                      : <TranslatedText fr="En transit" en="In transit">
-                          Unterwegs
-                        </TranslatedText>}
-                  </p>
-                </div>
-                {(order.shipping_status === 'shipped' || order.shipping_status === 'in_transit') && (
-                  <Badge variant="secondary">
-                    <TranslatedText fr="Actuel" en="Current">Aktuell</TranslatedText>
-                  </Badge>
-                )}
-              </div>
-            )}
-
-            {order.shipping_status === 'delivered' && (
-              <div className="flex items-start gap-4">
-                <div className="mt-1 text-primary">
-                  <CheckCircle className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">
-                    <TranslatedText fr="Livré" en="Delivered">
-                      Geliefert
-                    </TranslatedText>
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {order.delivered_at
-                      ? format(new Date(order.delivered_at), 'PP', { locale })
-                      : <TranslatedText fr="Livré avec succès" en="Delivered successfully">
-                          Erfolgreich geliefert
-                        </TranslatedText>}
-                  </p>
-                </div>
-                <Badge>
-                  <TranslatedText fr="Terminé" en="Completed">Abgeschlossen</TranslatedText>
-                </Badge>
-              </div>
-            )}
-
-            {order.shipping_status === 'cancelled' && (
-              <div className="flex items-start gap-4">
-                <div className="mt-1 text-destructive">
-                  <XCircle className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium text-destructive">
-                    <TranslatedText fr="Annulé" en="Cancelled">
-                      Storniert
-                    </TranslatedText>
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    <TranslatedText
-                      fr="Cette commande a été annulée"
-                      en="This order has been cancelled"
-                    >
-                      Diese Bestellung wurde storniert
-                    </TranslatedText>
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>

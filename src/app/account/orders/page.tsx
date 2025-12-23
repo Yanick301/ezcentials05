@@ -251,15 +251,19 @@ export default function OrdersPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-headline text-3xl">
+      <h1 className="mb-8 font-headline text-4xl md:text-5xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
         <TranslatedText fr="Historique des commandes" en="Order History">
           Bestellverlauf
         </TranslatedText>
       </h1>
       {orders && orders.length > 0 ? (
         <div className="space-y-6">
-          {orders.map((order) => (
-            <Card key={order.id}>
+          {orders.map((order, index) => (
+            <Card 
+              key={order.id} 
+              className="border-2 shadow-lg transition-all duration-300 hover:shadow-xl animate-in fade-in slide-in-from-bottom-4"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <CardHeader className="flex-row items-start justify-between">
                 <div>
                   <CardTitle className="text-lg">
@@ -453,15 +457,17 @@ export default function OrdersPage() {
           ))}
         </div>
       ) : (
-        <Card className="border-2 border-dashed shadow-none">
-          <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-            <ShoppingBag className="h-16 w-16 text-muted-foreground" />
-            <h3 className="mt-4 text-xl font-semibold">
+        <Card className="border-2 border-dashed shadow-lg animate-in fade-in zoom-in duration-500">
+          <CardContent className="flex flex-col items-center justify-center p-12 md:p-16 text-center">
+            <div className="p-4 rounded-full bg-muted/50 mb-4">
+              <ShoppingBag className="h-16 w-16 text-muted-foreground" />
+            </div>
+            <h3 className="mt-4 text-2xl font-headline font-semibold">
               <TranslatedText fr="Aucune commande pour le moment" en="No orders yet">
                 Noch keine Bestellungen
               </TranslatedText>
             </h3>
-            <p className="mt-2 text-muted-foreground">
+            <p className="mt-3 text-muted-foreground max-w-md">
               <TranslatedText
                 fr="Explorez nos collections et trouvez quelque chose qui vous plaît."
                 en="Explore our collections and find something you like."
@@ -469,7 +475,7 @@ export default function OrdersPage() {
                 Entdecken Sie unsere Kollektionen und finden Sie etwas, das Ihnen gefällt.
               </TranslatedText>
             </p>
-            <Button asChild className="mt-6">
+            <Button asChild className="mt-6" size="lg">
               <Link href="/products/all">
                 <TranslatedText fr="Continuer les achats" en="Continue Shopping">
                   Weiter einkaufen

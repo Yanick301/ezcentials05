@@ -133,6 +133,66 @@ export const perfumePrices: Record<string, Record<string, number>> = {
     '50ml': 100,  // 85 + 15
     '100ml': 135, // 120 + 15
   },
+  // NOUVEAUX PARFUMS DE LUXE
+  'creed-aventus': {
+    '30ml': 170,  // 155 + 15
+    '50ml': 195,  // 180 + 15
+    '100ml': 280, // 265 + 15
+    '240ml': 510, // 495 + 15
+  },
+  'baccarat-rouge-540-extrait': {
+    '70ml': 380,  // 365 + 15
+    '200ml': 730, // 715 + 15
+  },
+  'initio-oud-for-greatness': {
+    '50ml': 267,  // 252 + 15
+    '90ml': 440,  // 425 + 15
+  },
+  'tom-ford-oud-wood': {
+    '50ml': 415,  // 400 + 15
+    '100ml': 615, // 600 + 15
+  },
+  'parfums-de-marly-herod': {
+    '75ml': 400,  // 385 + 15
+    '125ml': 505, // 490 + 15
+  },
+  'by-kilian-black-phantom': {
+    '50ml': 405,  // 390 + 15
+    '100ml': 705, // 690 + 15
+  },
+  'amouage-interlude-man': {
+    '50ml': 315,  // 300 + 15
+    '100ml': 400, // 385 + 15 (ou 450+15=465 selon variation)
+  },
+  'creed-love-in-white': {
+    '100ml': 405, // 390 + 15
+    '250ml': 905, // 890 + 15
+  },
+  'mfk-oud-satin-mood': {
+    '70ml': 410,  // 395 + 15
+    '200ml': 825, // 810 + 15
+  },
+  'xerjoff-naxos': {
+    '50ml': 355,  // 340 + 15
+    '100ml': 440, // 425 + 15
+  },
+  'roja-enigma-pour-homme': {
+    '50ml': 410,  // 395 + 15
+    '100ml': 610, // 595 + 15
+  },
+  'frederic-malle-portrait-of-a-lady': {
+    '100ml': 440, // 425 + 15
+  },
+  'serge-lutens-borneo-1834': {
+    '100ml': 410, // 395 + 15
+  },
+  'parfums-de-marly-delina-exclusif': {
+    '75ml': 425,  // 410 + 15
+    '125ml': 605, // 590 + 15
+  },
+  'amouage-jubilation-xxv': {
+    '100ml': 465, // 450 + 15
+  },
 };
 
 /**
