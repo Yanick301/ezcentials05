@@ -426,13 +426,13 @@ export default function OrdersPage() {
                       </div>
                     </div>
                     <Button asChild className="w-full">
-                      <Link href={`/tracking/${order.id}`}>
-                        <Truck className="mr-2 h-4 w-4" />
+                        <Link href={`/tracking/${order.id}`}>
+                          <Truck className="mr-2 h-4 w-4" />
                         <TranslatedText fr="Suivre ma commande" en="Track my order">
                           Meine Bestellung verfolgen
-                        </TranslatedText>
-                      </Link>
-                    </Button>
+                          </TranslatedText>
+                        </Link>
+                      </Button>
                   </div>
                 )}
 

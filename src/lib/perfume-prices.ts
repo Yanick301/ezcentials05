@@ -133,6 +133,66 @@ export const perfumePrices: Record<string, Record<string, number>> = {
     '50ml': 100,  // 85 + 15
     '100ml': 135, // 120 + 15
   },
+  // NOUVEAUX PARFUMS LUXE
+  'creed-aventus': {
+    '30ml': 155,
+    '50ml': 180,
+    '100ml': 265,
+    '240ml': 495,
+  },
+  'baccarat-rouge-540-extrait': {
+    '70ml': 365,
+    '200ml': 715,
+  },
+  'initio-oud-for-greatness': {
+    '50ml': 252,
+    '90ml': 425,
+  },
+  'tom-ford-oud-wood': {
+    '50ml': 400,
+    '100ml': 600,
+  },
+  'parfums-de-marly-herod': {
+    '75ml': 385,
+    '125ml': 490,
+  },
+  'by-kilian-black-phantom': {
+    '50ml': 390,
+    '100ml': 690,
+  },
+  'amouage-interlude-man': {
+    '50ml': 300,
+    '100ml': 385,
+  },
+  'creed-love-in-white': {
+    '100ml': 390,
+    '250ml': 890,
+  },
+  'mfk-oud-satin-mood': {
+    '70ml': 395,
+    '200ml': 810,
+  },
+  'xerjoff-naxos': {
+    '50ml': 340,
+    '100ml': 425,
+  },
+  'roja-enigma-pour-homme': {
+    '50ml': 395,
+    '100ml': 595,
+  },
+  'frederic-malle-portrait-of-a-lady': {
+    '100ml': 425,
+  },
+  'serge-lutens-borneo-1834': {
+    '100ml': 395,
+  },
+  'parfums-de-marly-delina-exclusif': {
+    '75ml': 410,
+    '125ml': 590,
+  },
+  'amouage-jubilation-xxv': {
+    '100ml': 450,
+  },
 };
 
 /**
@@ -158,5 +218,7 @@ export function getProductPrice(product: { slug: string; price: number; category
   }
   return product.price;
 }
+
+
 
 

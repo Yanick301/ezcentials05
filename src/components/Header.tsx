@@ -104,20 +104,20 @@ export function Header() {
                       
                       return (
                         <li key={category.id} className="space-y-0">
-                          <div className="flex items-center justify-between group">
-                            <Link
-                              href={`/products/${category.slug}`}
+                        <div className="flex items-center justify-between group">
+                          <Link
+                            href={`/products/${category.slug}`}
                               className="text-lg font-semibold text-foreground/90 transition-all hover:text-foreground hover:translate-x-1 flex-1 py-2"
-                              onClick={handleLinkClick}
-                              prefetch={true}
+                            onClick={handleLinkClick}
+                            prefetch={true}
+                          >
+                            <TranslatedText
+                              fr={category.name_fr}
+                              en={category.name_en}
                             >
-                              <TranslatedText
-                                fr={category.name_fr}
-                                en={category.name_en}
-                              >
-                                {category.name}
-                              </TranslatedText>
-                            </Link>
+                              {category.name}
+                            </TranslatedText>
+                          </Link>
                             {hasSubcategories && (
                               <button
                                 onClick={(e) => {
@@ -135,29 +135,29 @@ export function Header() {
                                 )}
                               </button>
                             )}
-                          </div>
+                        </div>
                           {hasSubcategories && isOpen && (
                             <ul className="ml-2 mt-1 mb-2 flex flex-col space-y-0.5 border-l-2 border-primary/30 pl-4 animate-in slide-in-from-top-1 duration-200">
-                              {category.subcategories.map((subcategory) => (
-                                <li key={subcategory.id}>
-                                  <Link
-                                    href={`/products/${category.slug}/${subcategory.slug}`}
+                            {category.subcategories.map((subcategory) => (
+                              <li key={subcategory.id}>
+                                <Link
+                                  href={`/products/${category.slug}/${subcategory.slug}`}
                                     className="text-sm text-foreground/70 transition-all hover:text-foreground hover:translate-x-1 hover:font-medium block py-2 px-2 rounded-md hover:bg-accent/30"
-                                    onClick={handleLinkClick}
-                                    prefetch={true}
+                                  onClick={handleLinkClick}
+                                  prefetch={true}
+                                >
+                                  <TranslatedText
+                                    fr={subcategory.name_fr}
+                                    en={subcategory.name_en}
                                   >
-                                    <TranslatedText
-                                      fr={subcategory.name_fr}
-                                      en={subcategory.name_en}
-                                    >
-                                      {subcategory.name}
-                                    </TranslatedText>
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </li>
+                                    {subcategory.name}
+                                  </TranslatedText>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
                       );
                     })}
                   </ul>
