@@ -2,7 +2,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Menu, Heart, ChevronDown, Plus, Minus } from 'lucide-react';
 import { useState } from 'react';
 
@@ -85,13 +84,6 @@ export function Header() {
                   className="flex items-center space-x-2"
                   onClick={handleLinkClick}
                 >
-                  <Image
-                    src="/images/logo.png"
-                    alt="EZCENTIALS Logo"
-                    width={32}
-                    height={32}
-                    className="h-8 w-8 object-contain"
-                  />
                   <span className="font-bold font-headline text-2xl">
                     EZCENTIALS
                   </span>
@@ -183,13 +175,6 @@ export function Header() {
 
           <div className="hidden lg:flex lg:items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <Image
-                src="/images/logo.png"
-                alt="EZCENTIALS Logo"
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain"
-              />
               <span className="font-bold font-headline text-2xl tracking-wider">
                 EZCENTIALS
               </span>
@@ -199,13 +184,6 @@ export function Header() {
 
         <div className="flex flex-1 items-center justify-center lg:hidden">
           <Link href="/" className="flex items-center space-x-2">
-            <Image
-              src="/images/logo.png"
-              alt="EZCENTIALS Logo"
-              width={32}
-              height={32}
-              className="h-8 w-8 object-contain"
-            />
             <span className="font-bold font-headline text-2xl tracking-wider">
               EZCENTIALS
             </span>
