@@ -294,15 +294,15 @@ export default function TrackingPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-headline text-4xl md:text-5xl mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              <TranslatedText fr="Suivi de livraison" en="Delivery Tracking">
-                Lieferverfolgung
-              </TranslatedText>
-            </h1>
+          <TranslatedText fr="Suivi de livraison" en="Delivery Tracking">
+            Lieferverfolgung
+          </TranslatedText>
+        </h1>
             <p className="text-muted-foreground text-lg">
               <TranslatedText fr="Commande" en="Order">Bestellung</TranslatedText>{' '}
               <span className="font-mono font-semibold text-foreground">#{order.id.slice(0, 8).toUpperCase()}</span>
-            </p>
-          </div>
+        </p>
+      </div>
           <Badge 
             variant={getStatusVariant(order.shipping_status)} 
             className="hidden md:flex items-center gap-2 px-4 py-2 text-sm h-auto"
@@ -485,49 +485,49 @@ export default function TrackingPage() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {order.shipped_at && (
+          {order.shipped_at && (
               <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
                 <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                  <TranslatedText fr="Date d'expédition" en="Shipped Date">
-                    Versanddatum
-                  </TranslatedText>
-                </p>
+                <TranslatedText fr="Date d'expédition" en="Shipped Date">
+                  Versanddatum
+                </TranslatedText>
+              </p>
                 <p className="text-sm font-semibold text-foreground">
                   {format(new Date(order.shipped_at), 'PPpp', { locale })}
                 </p>
-              </div>
-            )}
+            </div>
+          )}
 
-            {order.delivered_at && (
+          {order.delivered_at && (
               <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
                 <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                  <TranslatedText fr="Date de livraison" en="Delivery Date">
-                    Lieferdatum
-                  </TranslatedText>
-                </p>
+                <TranslatedText fr="Date de livraison" en="Delivery Date">
+                  Lieferdatum
+                </TranslatedText>
+              </p>
                 <p className="text-sm font-semibold text-foreground">
                   {format(new Date(order.delivered_at), 'PPpp', { locale })}
                 </p>
-              </div>
-            )}
+            </div>
+          )}
           </div>
 
           <div className="pt-4 border-t">
             <div className="flex items-center gap-2 mb-3">
               <MapPin className="h-4 w-4 text-muted-foreground" />
               <p className="text-sm font-semibold text-foreground uppercase tracking-wide">
-                <TranslatedText fr="Adresse de livraison" en="Delivery Address">
-                  Lieferadresse
-                </TranslatedText>
-              </p>
+              <TranslatedText fr="Adresse de livraison" en="Delivery Address">
+                Lieferadresse
+              </TranslatedText>
+            </p>
             </div>
             <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
               <p className="text-sm leading-relaxed text-foreground">
                 <span className="font-semibold">{order.shipping_info.name}</span><br />
-                {order.shipping_info.address}<br />
-                {order.shipping_info.zip} {order.shipping_info.city}<br />
+              {order.shipping_info.address}<br />
+              {order.shipping_info.zip} {order.shipping_info.city}<br />
                 <span className="font-medium">{order.shipping_info.country}</span>
-              </p>
+            </p>
             </div>
           </div>
         </CardContent>
@@ -560,16 +560,16 @@ export default function TrackingPage() {
                   {order.shipping_status === 'preparing' && (
                     <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
                   )}
-                </div>
+              </div>
                 <div className="flex-1 pt-1">
                   <div className="flex items-center justify-between mb-1">
                     <p className={`font-semibold transition-colors duration-500 ${
                       order.shipping_status === 'preparing' ? 'text-primary' : 'text-foreground'
                     }`}>
-                      <TranslatedText fr="En préparation" en="Preparing">
-                        Wird vorbereitet
-                      </TranslatedText>
-                    </p>
+                  <TranslatedText fr="En préparation" en="Preparing">
+                    Wird vorbereitet
+                  </TranslatedText>
+                </p>
                     {order.shipping_status === 'preparing' && (
                       <Badge variant="default" className="animate-in fade-in zoom-in duration-300">
                         <TranslatedText fr="Actuel" en="Current">Aktuell</TranslatedText>
@@ -577,13 +577,13 @@ export default function TrackingPage() {
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    <TranslatedText
-                      fr="Votre commande est en cours de préparation"
-                      en="Your order is being prepared"
-                    >
-                      Ihre Bestellung wird vorbereitet
-                    </TranslatedText>
-                  </p>
+                  <TranslatedText
+                    fr="Votre commande est en cours de préparation"
+                    en="Your order is being prepared"
+                  >
+                    Ihre Bestellung wird vorbereitet
+                  </TranslatedText>
+                </p>
                   <p className="text-xs text-muted-foreground/70 mt-1">
                     {format(new Date(order.created_at), 'PP', { locale })}
                   </p>
@@ -605,8 +605,8 @@ export default function TrackingPage() {
                     }`} />
                     {(order.shipping_status === 'shipped' || order.shipping_status === 'in_transit') && (
                       <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
-                    )}
-                  </div>
+              )}
+            </div>
                   <div className="flex-1 pt-1">
                     <div className="flex items-center justify-between mb-1">
                       <p className={`font-semibold transition-colors duration-500 ${
@@ -614,16 +614,16 @@ export default function TrackingPage() {
                           ? 'text-primary' 
                           : 'text-foreground'
                       }`}>
-                        <TranslatedText fr="Expédié" en="Shipped">
-                          Versandt
-                        </TranslatedText>
-                      </p>
-                      {(order.shipping_status === 'shipped' || order.shipping_status === 'in_transit') && (
+                    <TranslatedText fr="Expédié" en="Shipped">
+                      Versandt
+                    </TranslatedText>
+                  </p>
+                {(order.shipping_status === 'shipped' || order.shipping_status === 'in_transit') && (
                         <Badge variant="default" className="animate-in fade-in zoom-in duration-300">
-                          <TranslatedText fr="Actuel" en="Current">Aktuell</TranslatedText>
-                        </Badge>
-                      )}
-                    </div>
+                    <TranslatedText fr="Actuel" en="Current">Aktuell</TranslatedText>
+                  </Badge>
+                )}
+              </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {order.shipped_at ? (
                         format(new Date(order.shipped_at), 'PP', { locale })
@@ -647,10 +647,10 @@ export default function TrackingPage() {
                   <div className="flex-1 pt-1">
                     <div className="flex items-center justify-between mb-1">
                       <p className="font-semibold text-primary">
-                        <TranslatedText fr="Livré" en="Delivered">
-                          Geliefert
-                        </TranslatedText>
-                      </p>
+                    <TranslatedText fr="Livré" en="Delivered">
+                      Geliefert
+                    </TranslatedText>
+                  </p>
                       <Badge variant="default" className="bg-green-600 hover:bg-green-700 animate-in fade-in zoom-in duration-300">
                         <TranslatedText fr="Terminé" en="Completed">Abgeschlossen</TranslatedText>
                       </Badge>
@@ -663,34 +663,34 @@ export default function TrackingPage() {
                           Erfolgreich geliefert
                         </TranslatedText>
                       )}
-                    </p>
-                  </div>
+                  </p>
                 </div>
-              )}
+              </div>
+            )}
 
               {/* Étape: Annulé */}
-              {order.shipping_status === 'cancelled' && (
+            {order.shipping_status === 'cancelled' && (
                 <div className="flex items-start gap-4 relative">
                   <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 bg-destructive border-destructive shadow-lg">
                     <XCircle className="h-5 w-5 text-destructive-foreground" />
-                  </div>
+                </div>
                   <div className="flex-1 pt-1">
                     <p className="font-semibold text-destructive mb-1">
-                      <TranslatedText fr="Annulé" en="Cancelled">
-                        Storniert
-                      </TranslatedText>
-                    </p>
+                    <TranslatedText fr="Annulé" en="Cancelled">
+                      Storniert
+                    </TranslatedText>
+                  </p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      <TranslatedText
-                        fr="Cette commande a été annulée"
-                        en="This order has been cancelled"
-                      >
-                        Diese Bestellung wurde storniert
-                      </TranslatedText>
-                    </p>
-                  </div>
+                    <TranslatedText
+                      fr="Cette commande a été annulée"
+                      en="This order has been cancelled"
+                    >
+                      Diese Bestellung wurde storniert
+                    </TranslatedText>
+                  </p>
                 </div>
-              )}
+              </div>
+            )}
             </div>
           </div>
         </CardContent>

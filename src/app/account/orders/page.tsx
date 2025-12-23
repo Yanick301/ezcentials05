@@ -460,7 +460,7 @@ export default function OrdersPage() {
         <Card className="border-2 border-dashed shadow-lg animate-in fade-in zoom-in duration-500">
           <CardContent className="flex flex-col items-center justify-center p-12 md:p-16 text-center">
             <div className="p-4 rounded-full bg-muted/50 mb-4">
-              <ShoppingBag className="h-16 w-16 text-muted-foreground" />
+            <ShoppingBag className="h-16 w-16 text-muted-foreground" />
             </div>
             <h3 className="mt-4 text-2xl font-headline font-semibold">
               <TranslatedText fr="Aucune commande pour le moment" en="No orders yet">
