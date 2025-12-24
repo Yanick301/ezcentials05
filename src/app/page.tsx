@@ -23,8 +23,9 @@ export default function HomePage() {
   const trendingProducts = useMemo(() => getTrendingProducts(products).slice(0, 9), []);
   
   // Get 5 products from each category on sale (with oldPrice) for end of year promotions
+  // Garmin watches first, then other categories
   const endOfYearPromoProducts = useMemo(() => {
-    const categories = ['mens-clothing', 'womens-clothing', 'accessories', 'shoes', 'sport', 'winter-clothing', 'perfume', 'garmin-watch'];
+    const categories = ['garmin-watch', 'mens-clothing', 'womens-clothing', 'accessories', 'shoes', 'sport', 'winter-clothing', 'perfume'];
     const promoByCategory: { [key: string]: typeof products } = {};
     
     categories.forEach(category => {
@@ -179,36 +180,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="relative h-[50vh] min-h-[400px] text-white overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/products/hiver.jpg"
-            alt="Winter Sale"
-            fill
-            sizes="100vw"
-            className="object-cover transition-transform duration-700 hover:scale-105"
-            loading="lazy"
-            quality={90}
-            onError={(e) => {
-              console.error('Failed to load winter sale image');
-              e.currentTarget.src = '/images/header.jpg';
-            }}
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-black/30"></div>
-        <div className="container relative z-10 mx-auto flex h-full flex-col items-center justify-center px-4 text-center">
-            <p className="text-sm uppercase tracking-widest text-white/90 animate-fade-in-up font-medium"><TranslatedText fr="Jusqu'à -40%" en="Up to -40%">Bis zu -40%</TranslatedText></p>
-            <h2 className="mt-4 font-headline text-4xl md:text-6xl lg:text-7xl animate-fade-in-up drop-shadow-lg" style={{ animationDelay: '0.2s' }}>
-                <TranslatedText fr="Soldes d'Hiver" en="Winter Sale">Winter-Schlussverkauf</TranslatedText>
-            </h2>
-            <p className="mt-6 max-w-xl text-lg text-white/95 animate-fade-in-up leading-relaxed" style={{ animationDelay: '0.4s' }}>
-                 <TranslatedText fr="Embrassez l'élégance de la saison avec des pièces d'exception à des prix irrésistibles." en="Embrace the elegance of the season with exceptional pieces at irresistible prices.">Umfassen Sie die Eleganz der Saison mit außergewöhnlichen Stücken zu unwiderstehlichen Preisen.</TranslatedText>
-            </p>
-            <Button size="lg" asChild className="mt-8 hover:scale-105 transition-all duration-300 shadow-lg animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-                <Link href="/products/winter-clothing" prefetch={true}><TranslatedText fr="Découvrir les Offres" en="Discover the Offers">Angebote entdecken</TranslatedText></Link>
-            </Button>
-        </div>
-      </section>
 
 
       <section className="w-full bg-muted/50 py-16 lg:py-24">
@@ -292,32 +263,45 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Produits par catégorie */}
+            {/* Produits par catégorie - Garmin en premier */}
             {Object.entries(endOfYearPromoProducts).map(([category, categoryProducts], categoryIndex) => {
               const categoryInfo = categories.find(c => c.slug === category);
               if (!categoryInfo || categoryProducts.length === 0) return null;
 
+              const isGarmin = category === 'garmin-watch';
+
               return (
-                <div key={category} className="mb-16 last:mb-0">
+                <div key={category} className={`mb-16 last:mb-0 ${isGarmin ? 'bg-gradient-to-br from-amber-50/50 via-red-50/30 to-green-50/50 dark:from-amber-950/30 dark:via-red-950/20 dark:to-green-950/30 rounded-3xl p-8 md:p-12 border-2 border-amber-300/50 shadow-2xl' : ''}`}>
                   <div className="flex items-center justify-center mb-8">
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-300 to-transparent"></div>
-                    <h3 className="mx-6 text-2xl md:text-3xl font-bold text-foreground">
+                    <h3 className={`mx-6 text-2xl md:text-3xl font-bold ${isGarmin ? 'bg-gradient-to-r from-red-600 via-amber-600 to-green-600 bg-clip-text text-transparent text-3xl md:text-4xl' : 'text-foreground'}`}>
+                      {isGarmin && <span className="mr-2 text-3xl">⌚</span>}
                       <TranslatedText fr={categoryInfo.name_fr} en={categoryInfo.name_en}>
                         {categoryInfo.name}
                       </TranslatedText>
+                      {isGarmin && <span className="ml-2 text-3xl">✨</span>}
                     </h3>
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-green-300 to-transparent"></div>
                   </div>
-                  <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                  {isGarmin && (
+                    <div className="text-center mb-6">
+                      <p className="text-lg font-semibold bg-gradient-to-r from-red-600 to-amber-600 bg-clip-text text-transparent">
+                        <TranslatedText fr="⭐ Collection Premium en Promotion ⭐" en="⭐ Premium Collection on Sale ⭐">
+                          ⭐ Premium-Kollektion im Angebot ⭐
+                        </TranslatedText>
+                      </p>
+                    </div>
+                  )}
+                  <div className={`grid grid-cols-1 gap-x-6 gap-y-8 ${isGarmin ? 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5' : 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'}`}>
                     {categoryProducts.map((product, index) => (
                       <div 
                         key={product.id} 
-                        className="animate-fade-in-up transform transition-all duration-300 hover:scale-105 hover:shadow-2xl" 
+                        className={`animate-fade-in-up transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${isGarmin ? 'hover:border-amber-400 border-2 border-transparent rounded-lg' : ''}`}
                         style={{ animationDelay: `${(categoryIndex * 0.5) + (index * 0.1)}s` }}
                       >
                         <div className="relative">
-                          {/* Badge promotion */}
-                          <div className="absolute -top-2 -right-2 z-20 bg-gradient-to-r from-red-600 to-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                          {/* Badge promotion - spécial pour Garmin */}
+                          <div className={`absolute -top-2 -right-2 z-20 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse ${isGarmin ? 'bg-gradient-to-r from-red-600 via-amber-600 to-green-600 text-lg px-4 py-2' : 'bg-gradient-to-r from-red-600 to-amber-600'}`}>
                             <TranslatedText fr="PROMO" en="SALE">ANGEBOT</TranslatedText>
                           </div>
                           <ProductCard product={product} />
@@ -326,7 +310,7 @@ export default function HomePage() {
                     ))}
                   </div>
                   <div className="mt-8 text-center">
-                    <Button asChild variant="outline" className="border-2 border-red-500 text-red-600 hover:bg-red-500 hover:text-white">
+                    <Button asChild variant="outline" className={`border-2 ${isGarmin ? 'border-amber-500 text-amber-600 hover:bg-amber-500 hover:text-white bg-gradient-to-r from-red-50 to-green-50 dark:from-red-950/30 dark:to-green-950/30' : 'border-red-500 text-red-600 hover:bg-red-500 hover:text-white'}`}>
                       <Link href={`/products/${category}`} prefetch={true}>
                         <TranslatedText fr={`Voir tous les produits ${categoryInfo.name_fr}`} en={`View All ${categoryInfo.name_en} Products`}>
                           Alle {categoryInfo.name} Produkte anzeigen
