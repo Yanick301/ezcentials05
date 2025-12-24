@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { getTrendingProducts, products } from '@/lib/data';
+import { getTrendingProducts, products, getProductsByCategory, getWinterSaleProducts } from '@/lib/data';
 import { ProductCard } from '@/components/ProductCard';
 import { TranslatedText } from '@/components/TranslatedText';
 import { CategoryCard } from '@/components/CategoryCard';
@@ -21,6 +21,22 @@ import { useMemo } from 'react';
 export default function HomePage() {
   // We want 9 products in total on the homepage sale section - memoize to avoid recalculation
   const trendingProducts = useMemo(() => getTrendingProducts(products).slice(0, 9), []);
+  
+  // Get 5 products from each category on sale (with oldPrice) for end of year promotions
+  const endOfYearPromoProducts = useMemo(() => {
+    const categories = ['mens-clothing', 'womens-clothing', 'accessories', 'shoes', 'sport', 'winter-clothing', 'perfume', 'garmin-watch'];
+    const promoByCategory: { [key: string]: typeof products } = {};
+    
+    categories.forEach(category => {
+      const categoryProducts = getProductsByCategory(products, category);
+      const promoProducts = categoryProducts.filter(p => p.oldPrice).slice(0, 5);
+      if (promoProducts.length > 0) {
+        promoByCategory[category] = promoProducts;
+      }
+    });
+    
+    return promoByCategory;
+  }, []);
   
   const testimonials = useMemo(() => [
     {
@@ -227,6 +243,111 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Section Promotions de fin d'année - Design Fêtes */}
+      {Object.keys(endOfYearPromoProducts).length > 0 && (
+        <section className="relative w-full py-20 lg:py-32 overflow-hidden">
+          {/* Background avec effet de fêtes */}
+          <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-green-50 to-amber-50 dark:from-red-950/20 dark:via-green-950/20 dark:to-amber-950/20"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(220,38,38,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(34,197,94,0.1),transparent_50%),radial-gradient(circle_at_50%_50%,rgba(251,191,36,0.1),transparent_50%)]"></div>
+          
+          {/* Étoiles animées */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute animate-ping"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 2}s`,
+                  animationDuration: `${2 + Math.random() * 2}s`,
+                }}
+              >
+                <div className="w-1 h-1 bg-amber-400 rounded-full"></div>
+              </div>
+            ))}
+          </div>
+
+          <div className="container relative z-10 mx-auto px-4">
+            <div className="text-center mb-16">
+              <div className="inline-block mb-4">
+                <span className="text-4xl animate-bounce inline-block" style={{ animationDelay: '0s' }}>🎄</span>
+                <span className="text-4xl animate-bounce inline-block mx-2" style={{ animationDelay: '0.2s' }}>🎁</span>
+                <span className="text-4xl animate-bounce inline-block" style={{ animationDelay: '0.4s' }}>✨</span>
+              </div>
+              <p className="text-sm uppercase tracking-widest font-bold mb-4 bg-gradient-to-r from-red-600 via-green-600 to-amber-600 bg-clip-text text-transparent">
+                <TranslatedText fr="PROMOTIONS DE FIN D'ANNÉE" en="END OF YEAR PROMOTIONS">JAHRESENDPROMOTIONEN</TranslatedText>
+              </p>
+              <h2 className="font-headline text-4xl md:text-6xl lg:text-7xl mb-6 bg-gradient-to-r from-red-600 via-green-600 to-amber-600 bg-clip-text text-transparent">
+                <TranslatedText fr="Soldes Exceptionnels" en="Exceptional Sales">Außergewöhnliche Angebote</TranslatedText>
+              </h2>
+              <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
+                <TranslatedText 
+                  fr="Célébrez les fêtes avec nos promotions exclusives ! Jusqu'à -20% sur une sélection de produits de toutes les catégories." 
+                  en="Celebrate the holidays with our exclusive promotions! Up to -20% off on a selection of products from all categories."
+                >
+                  Feiern Sie die Feiertage mit unseren exklusiven Aktionen! Bis zu -20% Rabatt auf eine Auswahl von Produkten aus allen Kategorien.
+                </TranslatedText>
+              </p>
+            </div>
+
+            {/* Produits par catégorie */}
+            {Object.entries(endOfYearPromoProducts).map(([category, categoryProducts], categoryIndex) => {
+              const categoryInfo = categories.find(c => c.slug === category);
+              if (!categoryInfo || categoryProducts.length === 0) return null;
+
+              return (
+                <div key={category} className="mb-16 last:mb-0">
+                  <div className="flex items-center justify-center mb-8">
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-300 to-transparent"></div>
+                    <h3 className="mx-6 text-2xl md:text-3xl font-bold text-foreground">
+                      <TranslatedText fr={categoryInfo.name_fr} en={categoryInfo.name_en}>
+                        {categoryInfo.name}
+                      </TranslatedText>
+                    </h3>
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-green-300 to-transparent"></div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                    {categoryProducts.map((product, index) => (
+                      <div 
+                        key={product.id} 
+                        className="animate-fade-in-up transform transition-all duration-300 hover:scale-105 hover:shadow-2xl" 
+                        style={{ animationDelay: `${(categoryIndex * 0.5) + (index * 0.1)}s` }}
+                      >
+                        <div className="relative">
+                          {/* Badge promotion */}
+                          <div className="absolute -top-2 -right-2 z-20 bg-gradient-to-r from-red-600 to-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                            <TranslatedText fr="PROMO" en="SALE">ANGEBOT</TranslatedText>
+                          </div>
+                          <ProductCard product={product} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-8 text-center">
+                    <Button asChild variant="outline" className="border-2 border-red-500 text-red-600 hover:bg-red-500 hover:text-white">
+                      <Link href={`/products/${category}`} prefetch={true}>
+                        <TranslatedText fr={`Voir tous les produits ${categoryInfo.name_fr}`} en={`View All ${categoryInfo.name_en} Products`}>
+                          Alle {categoryInfo.name} Produkte anzeigen
+                        </TranslatedText>
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+
+            <div className="mt-16 text-center">
+              <Button asChild size="lg" className="bg-gradient-to-r from-red-600 via-green-600 to-amber-600 hover:from-red-700 hover:via-green-700 hover:to-amber-700 text-white shadow-xl transform transition-all duration-300 hover:scale-105">
+                <Link href="/products/all" prefetch={true}>
+                  <TranslatedText fr="Voir toutes les promotions" en="View All Promotions">Alle Angebote anzeigen</TranslatedText>
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
 
       <CollectionHighlight 
         supertitle={<TranslatedText fr="COLLECTION HIVER" en="WINTER COLLECTION">WINTER KOLLEKTION</TranslatedText>}
