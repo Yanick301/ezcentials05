@@ -14,7 +14,7 @@ export const categories: Category[] = [
       { id: 'sub-homme-5', name: 'Oberteile', name_fr: 'Hauts', name_en: 'Tops', slug: 'sweat-and-tops-homme' },
       { id: 'sub-homme-2', name: 'Hosen', name_fr: 'Pantalons', name_en: 'Trousers', slug: 'pantalons-homme' },
       { id: 'sub-homme-3', name: 'Jacken', name_fr: 'Vestes', name_en: 'Jackets', slug: 'vestes-homme' },
-      { id: 'sub-homme-4', name: 'Accessoires', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessoires-homme' },
+      { id: 'sub-homme-4', name: 'Zubehör', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessoires-homme' },
     ]
   },
   { 
@@ -29,11 +29,11 @@ export const categories: Category[] = [
       { id: 'sub-femme-2', name: 'Oberteile', name_fr: 'Tops', name_en: 'Tops', slug: 'tops-femme' },
       { id: 'sub-femme-3', name: 'Hosen', name_fr: 'Pantalons', name_en: 'Trousers', slug: 'pantalons-femme' },
       { id: 'sub-femme-4', name: 'Röcke', name_fr: 'Jupes', name_en: 'Skirts', slug: 'jupes-femme' },
-      { id: 'sub-femme-5', name: 'Accessoires', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessoires-femme' },
+      { id: 'sub-femme-5', name: 'Zubehör', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessoires-femme' },
       { id: 'sub-femme-6', name: 'Schuhe', name_fr: 'Chaussures', name_en: 'Shoes', slug: 'chaussures-femme' },
     ]
   },
-  { id: 'cat-3', name: 'Accessoires', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessories', imageId: 'accessories-category' },
+  { id: 'cat-3', name: 'Zubehör', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessories', imageId: 'accessories-category' },
   { id: 'cat-7', name: 'Parfüm', name_fr: 'Parfum', name_en: 'Perfume', slug: 'perfume', imageId: 'perfume-category' },
   { id: 'cat-8', name: 'Garmin Uhren', name_fr: 'Montre Garmin', name_en: 'Garmin Watch', slug: 'garmin-watch', imageId: 'garmin-watch-category' },
   { id: 'cat-5', name: 'Schuhe', name_fr: 'Chaussures', name_en: 'Shoes', slug: 'shoes', imageId: 'shoes-category' },
@@ -61,7 +61,7 @@ export const categories: Category[] = [
     subcategories: [
       { id: 'sub-sport-1', name: 'Sportbekleidung', name_fr: 'Vêtements', name_en: 'Clothing', slug: 'vetements-sport' },
       { id: 'sub-sport-2', name: 'Schuhe', name_fr: 'Chaussures', name_en: 'Shoes', slug: 'chaussures-sport' },
-      { id: 'sub-sport-3', name: 'Accessoires', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessoires-sport' },
+      { id: 'sub-sport-3', name: 'Zubehör', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessoires-sport' },
     ]
   },
 ];
@@ -1722,7 +1722,7 @@ export const products: Product[] = [
     description_en: 'A luxurious cable-knit wool beanie to keep you warm in style.',
     category: 'accessories',
     images: ['bonnet-laine-torsadee-noir-nordic-luxe'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' },{ name_de: 'Gelb', name_fr: 'Jaune', name_en: 'YEllow' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' },{ name_de: 'Gelb', name_fr: 'Jaune', name_en: 'Yellow' }],
   },
   {
     id: 'acc-113',

@@ -173,16 +173,16 @@ function ResetPasswordForm() {
 
       // Vérifier que le mot de passe a bien été mis à jour
       if (updateData?.user) {
-        toast({
-          title: <TranslatedText fr="Mot de passe mis à jour" en="Password Updated">Passwort aktualisiert</TranslatedText>,
-          description: <TranslatedText fr="Votre mot de passe a été mis à jour avec succès." en="Your password has been successfully updated.">Ihr Passwort wurde erfolgreich aktualisiert.</TranslatedText>,
-        });
+      toast({
+        title: <TranslatedText fr="Mot de passe mis à jour" en="Password Updated">Passwort aktualisiert</TranslatedText>,
+        description: <TranslatedText fr="Votre mot de passe a été mis à jour avec succès." en="Your password has been successfully updated.">Ihr Passwort wurde erfolgreich aktualisiert.</TranslatedText>,
+      });
 
         // Déconnecter l'utilisateur pour qu'il se reconnecte avec le nouveau mot de passe
         await supabase.auth.signOut();
 
-        // Rediriger vers la page de connexion
-        router.push('/login');
+      // Rediriger vers la page de connexion
+      router.push('/login');
       } else {
         throw new Error('Failed to update password');
       }

@@ -1,6 +1,7 @@
 
 import type { Metadata } from 'next';
 import { Inter, Cormorant_Garamond } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { AppProviders } from '@/components/AppProviders';
 import { Header } from '@/components/Header';
@@ -70,6 +71,40 @@ export default function RootLayout({
           cormorantGaramond.variable
         )}
       >
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17302770158"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17302770158');
+          `}
+        </Script>
+        
+        {/* Smartsupp Live Chat script */}
+        <Script id="smartsupp" strategy="afterInteractive">
+          {`
+            var _smartsupp = _smartsupp || {};
+            _smartsupp.key = '73deeb9e22e9bc7276f5316b34659d885fe1b613';
+            window.smartsupp||(function(d) {
+              var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+              s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+              c.type='text/javascript';c.charset='utf-8';c.async=true;
+              c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+            })(document);
+          `}
+        </Script>
+        <noscript>
+          {' '}Powered by{' '}
+          <a href="https://www.smartsupp.com" target="_blank" rel="noopener noreferrer">
+            Smartsupp
+          </a>
+        </noscript>
+        
         <AppProviders>
           <AccessibilityEnhancer />
           <Analytics 
