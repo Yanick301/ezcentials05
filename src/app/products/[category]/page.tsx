@@ -46,8 +46,31 @@ export default function CategoryPage() {
   const { language } = useLanguage();
   const categorySlug = params.category as string;
   
-  const [sortOption, setSortOption] = useState<SortOption>('name-asc');
-  const [filters, setFilters] = useState<FilterState>({
+  // Try to restore page state from sessionStorage
+  const getInitialState = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = sessionStorage.getItem('productReturnState');
+        if (stored) {
+          const state = JSON.parse(stored);
+          // Only restore if it's recent (within 5 minutes) and for the same category
+          if (state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+            // Clear it after reading
+            sessionStorage.removeItem('productReturnState');
+            return state;
+          }
+        }
+      } catch (e) {
+        // Ignore errors
+      }
+    }
+    return null;
+  };
+
+  const restoredState = getInitialState();
+  
+  const [sortOption, setSortOption] = useState<SortOption>(restoredState?.sortOption || 'name-asc');
+  const [filters, setFilters] = useState<FilterState>(restoredState?.filters || {
     priceRange: [0, 1000],
     selectedSizes: [],
     selectedColors: [],
@@ -189,6 +212,21 @@ export default function CategoryPage() {
     items: products,
     itemsPerPage: ITEMS_PER_PAGE,
   });
+
+  // Store page state in sessionStorage when it changes (for return navigation)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && categorySlug) {
+      const pageState = {
+        url: window.location.pathname + window.location.search,
+        currentPage,
+        sortOption,
+        filters,
+        categorySlug,
+        timestamp: Date.now(),
+      };
+      sessionStorage.setItem('categoryPageState', JSON.stringify(pageState));
+    }
+  }, [currentPage, sortOption, filters, categorySlug]);
 
   return (
     <>

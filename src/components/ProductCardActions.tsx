@@ -10,7 +10,7 @@ import { useCart } from '@/context/CartContext';
 import { TranslatedText } from './TranslatedText';
 import { useLanguage } from '@/context/LanguageContext';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 export function ProductCardActions({ product }: { product: Product }) {
   const { toast } = useToast();
@@ -25,6 +25,13 @@ export function ProductCardActions({ product }: { product: Product }) {
     const params = searchParams.toString();
     return pathname + (params ? `?${params}` : '');
   }, [pathname, searchParams]);
+
+  // Store current URL in sessionStorage when clicking on product
+  const handleProductClick = useCallback(() => {
+    if (typeof window !== 'undefined' && currentUrl) {
+      sessionStorage.setItem('productReturnUrl', currentUrl);
+    }
+  }, [currentUrl]);
 
   const getTranslatedName = () => {
     if (language === 'fr') return product.name_fr;
@@ -63,6 +70,7 @@ export function ProductCardActions({ product }: { product: Product }) {
         <Link 
           href={`/product/${product.slug}${currentUrl ? `?returnUrl=${encodeURIComponent(currentUrl)}` : ''}`} 
           prefetch={true}
+          onClick={handleProductClick}
         >
             <Eye className="h-5 w-5 text-muted-foreground" />
         </Link>

@@ -38,6 +38,25 @@ export function ProductCard({ product }: ProductCardProps) {
     const params = searchParams.toString();
     return pathname + (params ? `?${params}` : '');
   }, [pathname, searchParams]);
+
+  // Store current URL and page state in sessionStorage when clicking on product
+  const handleProductClick = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      // Store URL
+      if (currentUrl) {
+        sessionStorage.setItem('productReturnUrl', currentUrl);
+      }
+      // Also try to get category page state if available
+      try {
+        const categoryState = sessionStorage.getItem('categoryPageState');
+        if (categoryState) {
+          sessionStorage.setItem('productReturnState', categoryState);
+        }
+      } catch (e) {
+        // Ignore errors
+      }
+    }
+  }, [currentUrl]);
   const [reviewCount, setReviewCount] = useState(0);
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -82,6 +101,7 @@ export function ProductCard({ product }: ProductCardProps) {
               href={`/product/${product.slug}${currentUrl ? `?returnUrl=${encodeURIComponent(currentUrl)}` : ''}`} 
               className="block" 
               prefetch={true}
+              onClick={handleProductClick}
             >
                 <div className="relative block aspect-[3/4] w-full overflow-hidden bg-muted">
                     {productImage ? (
@@ -127,6 +147,7 @@ export function ProductCard({ product }: ProductCardProps) {
                       className="hover:text-primary transition-colors" 
                       prefetch={true} 
                       aria-label={getTranslatedName()}
+                      onClick={handleProductClick}
                     >
                         <TranslatedText fr={product.name_fr} en={product.name_en}>{product.name}</TranslatedText>
                     </Link>

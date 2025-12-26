@@ -62,22 +62,46 @@ export default function ProductPage() {
   const { user } = useUser();
   const { supabase } = useSupabase();
 
-  // Get return URL from search params or referrer
+  // Get return URL from search params, sessionStorage, or referrer
   useEffect(() => {
     const returnUrlParam = searchParams.get('returnUrl');
     if (returnUrlParam) {
       setReturnUrl(decodeURIComponent(returnUrlParam));
-    } else if (typeof window !== 'undefined' && document.referrer) {
-      // Extract path from referrer (remove domain)
+    } else if (typeof window !== 'undefined') {
+      // Try to get from sessionStorage first (more reliable)
+      // First check for stored category page state (includes pagination, filters, etc.)
       try {
-        const referrerUrl = new URL(document.referrer);
-        const referrerPath = referrerUrl.pathname + referrerUrl.search;
-        // Only use referrer if it's from our site and not the product page itself
-        if (referrerPath && !referrerPath.startsWith('/product/')) {
-          setReturnUrl(referrerPath);
+        const categoryState = sessionStorage.getItem('categoryPageState');
+        if (categoryState) {
+          const state = JSON.parse(categoryState);
+          // Use the stored URL if available and recent (within 5 minutes)
+          if (state.url && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+            setReturnUrl(state.url);
+            return; // Don't check other sources
+          }
         }
       } catch (e) {
-        // If referrer is not a valid URL, ignore it
+        // Ignore errors
+      }
+      
+      // Fallback to productReturnUrl
+      const storedUrl = sessionStorage.getItem('productReturnUrl');
+      if (storedUrl) {
+        setReturnUrl(storedUrl);
+        // Clear it after use
+        sessionStorage.removeItem('productReturnUrl');
+      } else if (document.referrer) {
+        // Fallback to referrer
+        try {
+          const referrerUrl = new URL(document.referrer);
+          const referrerPath = referrerUrl.pathname + referrerUrl.search;
+          // Only use referrer if it's from our site and not the product page itself
+          if (referrerPath && !referrerPath.startsWith('/product/')) {
+            setReturnUrl(referrerPath);
+          }
+        } catch (e) {
+          // If referrer is not a valid URL, ignore it
+        }
       }
     }
   }, [searchParams]);
