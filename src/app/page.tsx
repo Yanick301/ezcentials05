@@ -200,14 +200,14 @@ export default function HomePage() {
               <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-red-500/15 rounded-full blur-[100px] animate-pulse"></div>
               <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-amber-500/15 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '3s' }}></div>
-            </div>
+        </div>
             
             {/* Motif décoratif élégant */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-full h-full" style={{
                 backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,0.03) 35px, rgba(255,255,255,0.03) 70px)`
               }}></div>
-            </div>
+        </div>
 
             {/* Étoiles scintillantes élégantes */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -224,7 +224,7 @@ export default function HomePage() {
                 >
                   <div className="w-1.5 h-1.5 bg-amber-300 rounded-full shadow-lg shadow-amber-300/60 animate-ping"></div>
                   <div className="absolute inset-0 w-3 h-3 border border-amber-400/30 rounded-full animate-ping" style={{ animationDelay: `${Math.random() * 2}s` }}></div>
-                </div>
+          </div>
               ))}
             </div>
             
@@ -444,13 +444,13 @@ export default function HomePage() {
                           Alle Angebote anzeigen
                         </TranslatedText>
                       </Link>
-                    </Button>
+            </Button>
                   </div>
                 </div>
               </div>
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
       )}
 
       <CollectionHighlight 

@@ -98,7 +98,7 @@ export default function RootLayout({
           <div className="relative z-10 flex min-h-screen flex-col">
             <Header />
             <Suspense fallback={null}>
-              <main id="main-content" className="flex-grow" tabIndex={-1}>{children}</main>
+            <main id="main-content" className="flex-grow" tabIndex={-1}>{children}</main>
             </Suspense>
             <Footer />
           </div>

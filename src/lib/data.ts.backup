@@ -194,7 +194,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-24',
-    name: 'Gucci T-Shirt mit -Stickerei',
+    name: 'T-Shirt mit GUCCI-Stickerei',
     name_fr: 'T-shirt brodé GUCCI',
     name_en: 'GUCCI Embroidered T-shirt',
     slug: 't-shirt-brode-logo-gucci',
@@ -210,7 +210,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-25',
-    name: 'On U-Boot-Ausschnitt-Pullover mit Ballärmeln',
+    name: 'U-Boot-Ausschnitt-Pullover mit Ballonärmeln',
     name_fr: 'Pull col bateau à manches ballon',
     name_en: 'Balloon-Sleeve Boatneck Sweater',
     slug: 'pull-col-bateau-manches-ballon-chloe',
@@ -242,7 +242,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-27',
-    name: 'Gucci Palazzo-Hose aus Wolle',
+    name: 'Palazzo-Hose aus Wolle GUCCI',
     name_fr: 'Pantalon palazzo en laine GUCCI',
     name_en: 'Wool Palazzo Pants GUCCI',
     slug: 'pantalon-palazzo-en-laine-max-mara',
@@ -274,7 +274,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-29',
-    name: 'Valentino Langes Samtkleid',
+    name: 'Langes Samtkleid valentino',
     name_fr: 'Robe longue en velours valentino',
     name_en: 'Long Velvet Dress valentino',
     slug: 'robe-longue-en-velours-valentino',
@@ -385,7 +385,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-36',
-    name: 'On Nyl-Bomberjacke mcler',
+    name: 'Nylon-Bomberjacke moncler',
     name_fr: 'Bomber en nylon moncler ',
     name_en: 'Nylon Bomber Jacket moncler',
     slug: 'bomber-nylon-moncler',
@@ -446,7 +446,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-40',
-    name: 'Versace Seidenhemd',
+    name: 'versace Seidenhemd',
     name_fr: 'Chemise en soie versace',
     name_en: 'versace Silk Shirt',
     slug: 'chemise-soie-versace',
@@ -538,7 +538,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-46',
-    name: 'On Cargo-Shorts ste-island',
+    name: 'Cargo-Shorts stone-island',
     name_fr: 'Short Cargo stone-island',
     name_en: 'Cargo Shorts stone-island',
     slug: 'short-cargo-stone-island',
@@ -600,7 +600,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-50',
-    name: 'Prada Chunky-Derby-Schuhe mit Plateausohle',
+    name: 'PRADA Chunky-Derby-Schuhe mit Plateausohle',
     name_fr: 'PRADA Derby chunky à plateforme Street-Luxe',
     name_en: 'PRADA Chunky Platform Derby Shoes',
     slug: 'derby-chunky-platform-street-luxe',
@@ -724,7 +724,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-59',
-    name: 'On Expeditisparka',
+    name: 'Expeditionsparka',
     name_fr: 'Parka d\'Expédition',
     name_en: 'Expedition Parka',
     slug: 'parka-expedition-the-north-face-black-series',
@@ -756,7 +756,7 @@ export const products: Product[] = [
   },
   {
     id: 'doudoune-matelassee-moncler',
-    name: 'On Gesteppte Daunenjacke Mcler',
+    name: 'Gesteppte Daunenjacke Moncler',
     name_fr: 'Doudoune Matelassée Moncler',
     name_en: 'Quilted Down Jacket Moncler',
     slug: 'doudoune-matelassee-moncler',
@@ -807,7 +807,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-81',
-    name: 'On Mcler Gesteppter Kapuzenparka',
+    name: 'Moncler Gesteppter Kapuzenparka',
     name_fr: 'Parka à Capuche Matelassé Moncler',
     name_en: 'Moncler Quilted Hooded Parka',
     slug: 'moncler-quilted-hooded-parka',
@@ -921,7 +921,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-88',
-    name: 'On Fjällräven Expediti Langer Daunenparka',
+    name: 'Fjällräven Expedition Langer Daunenparka',
     name_fr: 'Longue Parka en Duvet Expedition Fjällräven',
     name_en: 'Fjällräven Expedition Long Down Parka',
     slug: 'fjallraven-expedition-long-down-parka',
@@ -954,7 +954,7 @@ export const products: Product[] = [
   },
   {
     id: 'prod-90',
-    name: 'On Patagia Frozen Range 3-in-1 Parka',
+    name: 'Patagonia Frozen Range 3-in-1 Parka',
     name_fr: 'Parka 3-en-1 Frozen Range Patagonia',
     name_en: 'Patagonia Frozen Range 3-in-1 Parka',
     slug: 'patagonia-frozen-range-3-in-1-parka',
@@ -1036,7 +1036,7 @@ export const products: Product[] = [
   },
   {
     id: 'sport-101',
-    name: 'Stella McCartney Adidas by Jacke',
+    name: 'Adidas by Stella McCartney Jacke',
     name_fr: 'Veste Adidas by Stella McCartney',
     name_en: 'Adidas by Stella McCartney Jacket',
     slug: 'adidas-stella-mccartney-veste',
@@ -1053,7 +1053,7 @@ export const products: Product[] = [
   },
   {
     id: 'sport-102',
-    name: 'Stella McCartney Adidas by Legging',
+    name: 'Adidas by Stella McCartney Legging',
     name_fr: 'Legging Adidas by Stella McCartney',
     name_en: 'Adidas by Stella McCartney Legging',
     slug: 'adidas-stella-mccartney-legging',
@@ -1182,7 +1182,7 @@ export const products: Product[] = [
   },
   {
     id: 'sport-110',
-    name: 'On Under Armour Halo Bded Legging',
+    name: 'Under Armour Halo Bonded Legging',
     name_fr: 'Legging Halo Bonded Under Armour',
     name_en: 'Under Armour Halo Bonded Legging',
     slug: 'under-armour-halo-bonded-legging',
@@ -1231,7 +1231,7 @@ export const products: Product[] = [
   },
   {
     id: 'sport-113',
-    name: 'On Lululem Premium Jacke',
+    name: 'Lululemon Premium Jacke',
     name_fr: 'Veste Premium Lululemon',
     name_en: 'Lululemon Premium Jacket',
     slug: 'lululemon-veste-premium',
@@ -1265,7 +1265,7 @@ export const products: Product[] = [
   },
   {
     id: 'sport-115',
-    name: 'Craft Lauf-Tech-Hemd',
+    name: 'Craft Running Tech Shirt',
     name_fr: 'T-shirt Technique de Course Craft',
     name_en: 'Craft Running Tech Shirt',
     slug: 'craft-running-tech-shirt',
@@ -1494,7 +1494,7 @@ export const products: Product[] = [
   },
   {
     id: 'sac_de_couchage1',
-    name: 'On Expeditis-Schlafsack -10°C',
+    name: 'Expeditions-Schlafsack -10°C',
     name_fr: 'Sac de Couchage Expédition -10°C',
     name_en: 'Expedition Sleeping Bag -10°C',
     slug: 'sac-de-couchage-expedition-10c',
@@ -1625,7 +1625,7 @@ export const products: Product[] = [
   },
     {
     id: 'acc-101',
-    name: 'On Silik-Sportuhr',
+    name: 'Silikon-Sportuhr',
     name_fr: 'Montre Sport en Silicone',
     name_en: 'Silicone Sport Watch',
     slug: 'montre-sport-silicone-hydrosport-5-atm',
@@ -1697,7 +1697,7 @@ export const products: Product[] = [
   },
   {
     id: 'acc-106',
-    name: 'On Titan-Stahl-Chrograph',
+    name: 'Titan-Stahl-Chronograph',
     name_fr: 'Chronographe Titan Steel',
     name_en: 'Titanium Steel Chronograph',
     slug: 'montre-chronographe-titan-steel-pro',
@@ -1754,7 +1754,7 @@ export const products: Product[] = [
   },
   {
     id: 'acc-115',
-    name: 'On Slimfold Lederportemnaie',
+    name: 'Slimfold Lederportemonnaie',
     name_fr: 'Portefeuille en Cuir Slimfold',
     name_en: 'Slimfold Leather Wallet',
     slug: 'portefeuille-cuir-veritable-slimfold-premium',
@@ -1918,7 +1918,7 @@ export const products: Product[] = [
   },
   {
     id: 'acc-120',
-    name: 'GANT Elee Goldene Uhr',
+    name: 'Elegante Goldene Uhr',
     name_fr: 'Montre Élégante Dorée',
     name_en: 'Elegant Golden Watch',
     slug: 'montre-elegante-doree-golden-lady',
@@ -1960,7 +1960,7 @@ export const products: Product[] = [
   },
   {
     id: 'acc-123',
-    name: 'GANT Eleer Wickelschal',
+    name: 'Eleganter Wickelschal',
     name_fr: 'Châle Élégant',
     name_en: 'Elegant Wrap Shawl',
     slug: 'chale-hiver-motif-elegant-elegant-wrap',
@@ -2145,7 +2145,7 @@ export const products: Product[] = [
   },
   {
     id: 'shoe-12',
-    name: 'Air Jordan 1 High"University Blue"',
+    name: 'Air Jordan 1 High "University Blue"',
     name_fr: 'Air Jordan 1 High "University Blue"',
     name_en: 'Air Jordan 1 High "University Blue"',
     slug: 'air-jordan-1-high-university-blue',
@@ -2160,7 +2160,7 @@ export const products: Product[] = [
   },
   {
     id: 'shoe-13',
-    name: 'Air Jordan 1 Mid"Violett"',
+    name: 'Air Jordan 1 Mid "Violett"',
     name_fr: 'Air Jordan 1 Mid "Violet"',
     name_en: 'Air Jordan 1 Mid "Violet"',
     slug: 'air-jordan-1-mid-violet',
@@ -2176,7 +2176,7 @@ export const products: Product[] = [
   },
   {
     id: 'shoe-14',
-    name: 'Air Jordan 1 Mid"Blassrosa"',
+    name: 'Air Jordan 1 Mid "Blassrosa"',
     name_fr: 'Air Jordan 1 Mid "Rose Pâle"',
     name_en: 'Air Jordan 1 Mid "Pale Pink"',
     slug: 'air-jordan-1-mid-rose-pale',
@@ -2191,7 +2191,7 @@ export const products: Product[] = [
   },
   {
     id: 'shoe-15',
-    name: 'Air Jordan 4"Military Black"',
+    name: 'Air Jordan 4 "Military Black"',
     name_fr: 'Air Jordan 4 "Military Black"',
     name_en: 'Air Jordan 4 "Military Black"',
     slug: 'air-jordan-4-military-black',
@@ -2206,7 +2206,7 @@ export const products: Product[] = [
   },
   {
     id: 'shoe-16',
-    name: 'Air Jordan 4"Military Blue"',
+    name: 'Air Jordan 4 "Military Blue"',
     name_fr: 'Air Jordan 4 "Military Blue"',
     name_en: 'Air Jordan 4 "Military Blue"',
     slug: 'air-jordan-4-military-blue',
@@ -2221,7 +2221,7 @@ export const products: Product[] = [
   },
   {
     id: 'shoe-17',
-    name: 'Air Jordan 1 High"Heritage"',
+    name: 'Air Jordan 1 High "Heritage"',
     name_fr: 'Air Jordan 1 High "Heritage"',
     name_en: 'Air Jordan 1 High "Heritage"',
     slug: 'air-jordan-1-high-heritage',
@@ -2266,7 +2266,7 @@ export const products: Product[] = [
   },
   {
     id: 'shoe-20',
-    name: 'Air Force 1"Weiß/Rosa Spitze"',
+    name: 'Air Force 1 "Weiß/Rosa Spitze"',
     name_fr: 'Air Force 1 "Lacet Blanc/Rose"',
     name_en: 'Air Force 1 "White/Pink Lace"',
     slug: 'air-force-1-white-pink-lace',
@@ -2816,7 +2816,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-vivienne-westwood',
-    name: 'Vivienne Westwood Rotes Kleid',
+    name: 'Rotes Kleid Vivienne Westwood',
     name_fr: 'Robe rouge Vivienne Westwood',
     name_en: 'Vivienne Westwood Red Dress',
     slug: 'robe-vivienne-westwood',
@@ -2831,7 +2831,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-elisabetta-franchi-rose',
-    name: 'Elisabetta Franchi Rosa Viskose-Kleid',
+    name: 'Rosa Viskose-Kleid Elisabetta Franchi',
     name_fr: 'Robe rose viscose Elisabetta Franchi',
     name_en: 'Elisabetta Franchi Rose Viscose Dress',
     slug: 'robe-elisabetta-franchi-rose',
@@ -2846,7 +2846,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-elisabetta-franchi-coeur',
-    name: 'Elisabetta Franchi Rosa Midikleid',
+    name: 'Rosa Midikleid Elisabetta Franchi',
     name_fr: 'Robe rose midi Elisabetta Franchi',
     name_en: 'Elisabetta Franchi Rose Midi Dress',
     slug: 'robe-elisabetta-franchi-coeur',
@@ -2861,7 +2861,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-gucci-chiffon',
-    name: 'Gucci Luxus-Chiffon-Kleid',
+    name: 'Luxus-Chiffon-Kleid Gucci',
     name_fr: 'Robe luxe chiffon Gucci',
     name_en: 'Gucci Luxury Chiffon Dress',
     slug: 'robe-gucci-chiffon',
@@ -2876,7 +2876,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-gucci-imprime-noir',
-    name: 'Gucci Schwarzes bedrucktes Kleid',
+    name: 'Schwarzes bedrucktes Kleid Gucci',
     name_fr: 'Robe Gucci imprimé noir',
     name_en: 'Gucci Black Printed Dress',
     slug: 'robe-gucci-imprime-noir',
@@ -2891,7 +2891,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-the-row-chemise',
-    name: 'The Row Hemdblusenkleid',
+    name: 'Hemdblusenkleid The Row',
     name_fr: 'Robe chemise The Row',
     name_en: 'The Row Shirt Dress',
     slug: 'robe-the-row-chemise',
@@ -2906,7 +2906,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-rodarte-soie',
-    name: 'Rodarte Seiden-Midikleid',
+    name: 'Seiden-Midikleid Rodarte',
     name_fr: 'Robe midi Rodarte en soie',
     name_en: 'Rodarte Silk Midi Dress',
     slug: 'robe-rodarte-soie',
@@ -2921,7 +2921,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-johanna-ortiz-imprimee',
-    name: 'Johanna Ortiz Langes bedrucktes Kleid',
+    name: 'Langes bedrucktes Kleid Johanna Ortiz',
     name_fr: 'Robe longue Johanna Ortiz imprimée',
     name_en: 'Johanna Ortiz Long Printed Dress',
     slug: 'robe-johanna-ortiz-imprimee',
@@ -2966,7 +2966,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-johanna-ortiz-brodee',
-    name: 'Johanna Ortiz Gesticktes Midikleid',
+    name: 'Gesticktes Midikleid Johanna Ortiz',
     name_fr: 'Robe midi Johanna Ortiz brodée',
     name_en: 'Johanna Ortiz Embroidered Midi Dress',
     slug: 'robe-johanna-ortiz-brodee',
@@ -2981,7 +2981,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-etro-imprimee',
-    name: 'Etro Bedrucktes Midikleid',
+    name: 'Bedrucktes Midikleid Etro',
     name_fr: 'Robe midi Etro imprimée',
     name_en: 'Etro Printed Midi Dress',
     slug: 'robe-etro-imprimee',
@@ -3176,7 +3176,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-valentino-jersey',
-    name: 'Valentino Top aus Baumwoll-Jersey',
+    name: 'Top cotton jersey Valentino',
     name_fr: 'Top cotton jersey Valentino',
     name_en: 'Valentino Cotton Jersey Top',
     slug: 'top-valentino-jersey',
@@ -3191,7 +3191,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-balenciaga-cityofangels',
-    name: 'Balenciaga Top imprimé"City of Angels"',
+    name: 'Top imprimé Balenciaga "City of Angels"',
     name_fr: 'Top imprimé Balenciaga "City of Angels"',
     name_en: 'Balenciaga "City of Angels" Printed Top',
     slug: 'top-balenciaga-cityofangels',
@@ -3206,7 +3206,7 @@ export const products: Product[] = [
   },
   {
     id: 'blouse-valentino-silk',
-    name: 'Valentino Bluse aus gerüschtem Seiden-Crêpe',
+    name: 'Blouse ruffled silk crêpe Valentino',
     name_fr: 'Blouse ruffled silk crêpe Valentino',
     name_en: 'Valentino Ruffled Silk Crêpe Blouse',
     slug: 'blouse-valentino-silk',
@@ -3221,7 +3221,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-valentino-bow',
-    name: 'Valentino Top aus Baumwoll-Mix mit Schleifendetail',
+    name: 'Top coton‑blend Valentino bow‑detail',
     name_fr: 'Top coton‑blend Valentino bow‑detail',
     name_en: 'Valentino Cotton-Blend Bow-Detail Top',
     slug: 'top-valentino-bow',
@@ -3236,7 +3236,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-givenchy-offshoulder',
-    name: 'Givenchy Top mit Rippenstruktur und freien Schultern',
+    name: 'Top ribbed off‑shoulder Givenchy',
     name_fr: 'Top ribbed off‑shoulder Givenchy',
     name_en: 'Givenchy Ribbed Off-Shoulder Top',
     slug: 'top-givenchy-offshoulder',
@@ -3251,7 +3251,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-givenchy-cashmere',
-    name: 'Givenchy Strick-Kaschmir-Top',
+    name: 'Knitted cashmere top Givenchy',
     name_fr: 'Knitted cashmere top Givenchy',
     name_en: 'Givenchy Knitted Cashmere Top',
     slug: 'top-givenchy-cashmere',
@@ -3266,7 +3266,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-etro-ruched',
-    name: 'Etro bedrucktes gerafftes Seiden-Top',
+    name: 'Printed ruched silk top Etro',
     name_fr: 'Printed ruched silk top Etro',
     name_en: 'Etro Printed Ruched Silk Top',
     slug: 'top-etro-ruched',
@@ -3281,7 +3281,7 @@ export const products: Product[] = [
   },
   {
     id: 'blouse-etro-chiffon',
-    name: 'Etro Bluse aus floralem transparentem Seiden-Chiffon',
+    name: 'Floral sheer silk chiffon blouse Etro',
     name_fr: 'Floral sheer sheer silk chiffon blouse Etro',
     name_en: 'Etro Floral Sheer Silk Chiffon Blouse',
     slug: 'blouse-etro-chiffon',
@@ -3296,7 +3296,7 @@ export const products: Product[] = [
   },
   {
     id: 'blouse-etro-tie-neck',
-    name: 'Etro bedruckte Bluse mit Schleifenkragen',
+    name: 'Printed tie‑neck blouse Etro',
     name_fr: 'Printed tie‑neck blouse Etro',
     name_en: 'Etro Printed Tie-Neck Blouse',
     slug: 'blouse-etro-tie-neck',
@@ -3311,7 +3311,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-calvinklein-silk',
-    name: 'Calvin Klein Seiden-Top mit Schleifenkragen',
+    name: 'Silk tie‑neck top Calvin Klein Collection',
     name_fr: 'Silk tie‑neck top Calvin Klein Collection',
     name_en: 'Calvin Klein Collection Silk Tie-Neck Top',
     slug: 'top-calvinklein-silk',
@@ -3326,7 +3326,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-saintlaurent-bow',
-    name: 'Saint Laurent Hemd mit Schleifenkragen aus Taft',
+    name: 'Saint Laurent pussy‑bow taffeta shirt',
     name_fr: 'Saint Laurent pussy‑bow taffeta shirt',
     name_en: 'Saint Laurent Pussy-Bow Taffeta Shirt',
     slug: 'top-saintlaurent-bow',
@@ -3386,7 +3386,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-saintlaurent-jersey',
-    name: 'Saint Laurent Tank-Top aus Seiden-Jersey',
+    name: 'Saint Laurent silk‑jersey tank',
     name_fr: 'Saint Laurent silk‑jersey tank',
     name_en: 'Saint Laurent Silk-Jersey Tank',
     slug: 'top-saintlaurent-jersey',
@@ -3401,7 +3401,7 @@ export const products: Product[] = [
   },
   {
     id: 'blouse-chloe-lace',
-    name: 'Chloé Bluse mit Rüschen und Spitzenbesatz',
+    name: 'Blouse Chloé gathered lace‑trimmed',
     name_fr: 'Blouse Chloé gathered lace‑trimmed',
     name_en: 'Chloé Gathered Lace-Trimmed Blouse',
     slug: 'blouse-chloe-lace',
@@ -3416,7 +3416,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-rosie-assoulin',
-    name: 'Rosie Assoulin drapiertes Seiden-Top',
+    name: 'Rosie Assoulin draped silk top',
     name_fr: 'Rosie Assoulin draped silk top',
     name_en: 'Rosie Assoulin Draped Silk Top',
     slug: 'top-rosie-assoulin',
@@ -3431,7 +3431,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-dolcegabbana-floral',
-    name: 'Gabbana Dolce & floraler Rundhals-Top',
+    name: 'Dolce & Gabbana floral roundneck top',
     name_fr: 'Dolce & Gabbana floral roundneck top',
     name_en: 'Dolce & Gabbana Floral Roundneck Top',
     slug: 'top-dolcegabbana-floral',
@@ -3446,7 +3446,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-dolcegabbana-collared',
-    name: 'Gabbana Dolce & Baumwoll-Top mit Kragen und langen Ärmeln',
+    name: 'Dolce & Gabbana cotton collared long sleeve top',
     name_fr: 'Dolce & Gabbana cotton collared long sleeve top',
     name_en: 'Dolce & Gabbana Cotton Collared Long Sleeve Top',
     slug: 'top-dolcegabbana-collared',
@@ -3461,7 +3461,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-barbarabui-twill',
-    name: 'Barbara Bui Top aus Seiden-Köper bedruckt',
+    name: 'Barbara Bui top twill de soie imprimé',
     name_fr: 'Barbara Bui top twill de soie imprimé',
     name_en: 'Barbara Bui Printed Silk Twill Top',
     slug: 'top-barbarabui-twill',
@@ -3491,7 +3491,7 @@ export const products: Product[] = [
   },
   {
     id: 'body-mm6-margiela',
-    name: 'Maison Margiela MM6 Body-Top',
+    name: 'MM6 Maison Margiela body top',
     name_fr: 'MM6 Maison Margiela body top',
     name_en: 'MM6 Maison Margiela Body Top',
     slug: 'body-mm6-margiela',
@@ -3506,7 +3506,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-maxmara',
-    name: 'Max Mara Damen-Top',
+    name: 'Max Mara femme top',
     name_fr: 'Max Mara femme top',
     name_en: 'Max Mara Women\'s Top',
     slug: 'top-maxmara',
@@ -3521,7 +3521,7 @@ export const products: Product[] = [
   },
   {
     id: 'top-twinset',
-    name: 'Twinset Damen-Top',
+    name: 'Twinset top femme',
     name_fr: 'Twinset top femme',
     name_en: 'Twinset Women\'s Top',
     slug: 'top-twinset',
@@ -3536,7 +3536,7 @@ export const products: Product[] = [
   },
   {
     id: 'tshirt-rickowens',
-    name: 'Rick Owens T‑Shirt Damen',
+    name: 'Rick Owens T‑shirt femme',
     name_fr: 'Rick Owens T‑shirt femme',
     name_en: 'Rick Owens Women\'s T-shirt',
     slug: 'tshirt-rickowens',
@@ -3566,7 +3566,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-valentino-cotton-linen',
-    name: 'Valentino Hose aus Baumwolle & Leinen mit hohem Bund',
+    name: 'Valentino high‑rise cotton & linen straight pants',
     name_fr: 'Valentino high‑rise cotton & linen straight pants',
     name_en: 'Valentino High-Rise Cotton & Linen Straight Pants',
     slug: 'pantalon-valentino-cotton-linen',
@@ -3581,7 +3581,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-balenciaga-flared',
-    name: 'Balenciaga Hose aus Baumwoll-Köper mit Schlag',
+    name: 'Balenciaga cotton twill flared pants',
     name_fr: 'Balenciaga cotton twill flared pants',
     name_en: 'Balenciaga Cotton Twill Flared Pants',
     slug: 'pantalon-balenciaga-flared',
@@ -3596,7 +3596,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-miros',
-    name: 'The Row Miros gerade Hose aus Cady',
+    name: 'The Row Miros cady straight pants',
     name_fr: 'The Row Miros cady straight pants',
     name_en: 'The Row Miros Cady Straight Pants',
     slug: 'pantalon-the-row-miros',
@@ -3611,7 +3611,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-yayah',
-    name: 'The Row Yayah gestreifte Seiden-Hose mit weiten Beinen',
+    name: 'The Row Yayah striped silk wide‑leg pants',
     name_fr: 'The Row Yayah striped silk wide‑leg pants',
     name_en: 'The Row Yayah Striped Silk Wide-Leg Pants',
     slug: 'pantalon-the-row-yayah',
@@ -3626,7 +3626,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-ukira',
-    name: 'The Row Ukira Baumwoll-Hose mit mittlerem Bund und weiten Beinen',
+    name: 'The Row Ukira mid‑rise cotton wide‑leg pants',
     name_fr: 'The Row Ukira mid‑rise cotton wide‑leg pants',
     name_en: 'The Row Ukira Mid-Rise Cotton Wide-Leg Pants',
     slug: 'pantalon-the-row-ukira',
@@ -3641,7 +3641,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-enea',
-    name: 'The Row Enea Hose mit weiten Beinen',
+    name: 'The Row Enea wide‑leg pants',
     name_fr: 'The Row Enea wide‑leg pants',
     name_en: 'The Row Enea Wide-Leg Pants',
     slug: 'pantalon-the-row-enea',
@@ -3656,7 +3656,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-zuzana',
-    name: 'The Row Zuzana gerade Hose aus Baumwoll-Köper mit mittlerem Bund',
+    name: 'The Row Zuzana mid‑rise cotton twill straight pants',
     name_fr: 'The Row Zuzana mid‑rise cotton twill straight pants',
     name_en: 'The Row Zuzana Mid-Rise Cotton Twill Straight Pants',
     slug: 'pantalon-the-row-zuzana',
@@ -3671,7 +3671,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-bryce',
-    name: 'The Row Bryce gerade Hose aus Wolle & Seide',
+    name: 'The Row Bryce wool & silk straight pants',
     name_fr: 'The Row Bryce wool & silk straight pants',
     name_en: 'The Row Bryce Wool & Silk Straight Pants',
     slug: 'pantalon-the-row-bryce',
@@ -3701,7 +3701,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-hypnosta',
-    name: 'The Row Hypnosta Baumwoll-Hose mit weiten Beinen',
+    name: 'The Row Hypnosta cotton wide‑leg pants',
     name_fr: 'The Row Hypnosta cotton wide‑leg pants',
     name_en: 'The Row Hypnosta Cotton Wide-Leg Pants',
     slug: 'pantalon-the-row-hypnosta',
@@ -3731,7 +3731,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-hypnosta-poplin',
-    name: 'The Row Hypnosta Popeline-Hose mit weiten Beinen',
+    name: 'The Row Hypnosta cotton poplin wide‑leg pants',
     name_fr: 'The Row Hypnosta cotton poplin wide‑leg pants',
     name_en: 'The Row Hypnosta Cotton Poplin Wide-Leg Pants',
     slug: 'pantalon-the-row-hypnosta-poplin',
@@ -3791,7 +3791,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-bonnette',
-    name: 'The Row Bonnette gerade Hose aus Woll-Mix-Crêpe',
+    name: 'The Row Bonnette wool‑blend crêpe straight pants',
     name_fr: 'The Row Bonnette wool‑blend crêpe straight pants',
     name_en: 'The Row Bonnette Wool-Blend Crêpe Straight Pants',
     slug: 'pantalon-the-row-bonnette',
@@ -3806,7 +3806,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-bonnette-cotton',
-    name: 'The Row Bonnette Baumwoll-Hose mit weiten Beinen',
+    name: 'The Row Bonnette cotton wide‑leg pants',
     name_fr: 'The Row Bonnette cotton wide‑leg pants',
     name_en: 'The Row Bonnette Cotton Wide-Leg Pants',
     slug: 'pantalon-the-row-bonnette-cotton',
@@ -3821,7 +3821,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-helphine',
-    name: 'The Row Helphine Kaschmir-Hose mit weiten Beinen',
+    name: 'The Row Helphine cashmere wide‑leg pants',
     name_fr: 'The Row Helphine cashmere wide‑leg pants',
     name_en: 'The Row Helphine Cashmere Wide-Leg Pants',
     slug: 'pantalon-the-row-helphine',
@@ -3836,7 +3836,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-valentino-cady-couture',
-    name: 'Valentino Cady Couture Hose mit weiten Beinen',
+    name: 'Valentino Cady Couture wide‑leg pants',
     name_fr: 'Valentino Cady Couture wide‑leg pants',
     name_en: 'Valentino Cady Couture Wide-Leg Pants',
     slug: 'pantalon-valentino-cady-couture',
@@ -3851,7 +3851,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-vendula',
-    name: 'The Row Vendula gerade Baumwoll-Hose mit mittlerem Bund',
+    name: 'The Row Vendula mid‑rise cotton straight pants',
     name_fr: 'The Row Vendula mid‑rise cotton straight pants',
     name_en: 'The Row Vendula Mid-Rise Cotton Straight Pants',
     slug: 'pantalon-the-row-vendula',
@@ -3866,7 +3866,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-valentino-crepe',
-    name: 'Valentino Crêpe Couture Hose mit weiten Beinen',
+    name: 'Valentino crêpe couture wide‑leg pants',
     name_fr: 'Valentino crêpe couture wide‑leg pants',
     name_en: 'Valentino Crêpe Couture Wide-Leg Pants',
     slug: 'pantalon-valentino-crepe',
@@ -3896,7 +3896,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-the-row-everhart',
-    name: 'The Row Everhart gerade Hose aus Woll-Mix-Gabardine',
+    name: 'The Row Everhart wool‑blend gabardine straight pants',
     name_fr: 'The Row Everhart wool‑blend gabardine straight pants',
     name_en: 'The Row Everhart Wool-Blend Gabardine Straight Pants',
     slug: 'pantalon-the-row-everhart',
@@ -3926,7 +3926,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-ulla-johnson-plissee',
-    name: 'Ulla Johnson Midi-Rock mit Plissee',
+    name: 'Jupe midi plissée Ulla Johnson',
     name_fr: 'Jupe midi plissée Ulla Johnson',
     name_en: 'Ulla Johnson Pleated Midi Skirt',
     slug: 'jupe-ulla-johnson-plissee',
@@ -3941,7 +3941,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-pucci-laine',
-    name: 'PUCCI Mini-Rock aus lockiger Wolle',
+    name: 'Jupe mini PUCCI en laine bouclée',
     name_fr: 'Jupe mini PUCCI en laine bouclée',
     name_en: 'PUCCI Mini Skirt in Curly Wool',
     slug: 'jupe-pucci-laine',
@@ -3956,7 +3956,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-chloe-satin',
-    name: 'Chloé Midi-Rock drapiert',
+    name: 'Jupe midi drapée Chloé',
     name_fr: 'Jupe midi drapée Chloé',
     name_en: 'Chloé Draped Midi Skirt',
     slug: 'jupe-chloe-satin',
@@ -3971,7 +3971,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-gucci-boucle',
-    name: 'Gucci Mini-Rock aus Bouclé',
+    name: 'Jupe mini Gucci bouclé',
     name_fr: 'Jupe mini Gucci bouclé',
     name_en: 'Gucci Bouclé Mini Skirt',
     slug: 'jupe-gucci-boucle',
@@ -3986,7 +3986,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-toteme-cuir',
-    name: 'Totême Maxi-Rock aus strukturiertem Leder',
+    name: 'Jupe maxi Totême cuir texturé',
     name_fr: 'Jupe maxi Totême cuir texturé',
     name_en: 'Totême Textured Leather Maxi Skirt',
     slug: 'jupe-toteme-cuir',
@@ -4001,7 +4001,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-stellamccartney-jacquard',
-    name: 'Stella McCartney Midi-Rock',
+    name: 'Jupe midi Stella McCartney',
     name_fr: 'Jupe midi Stella McCartney',
     name_en: 'Stella McCartney Midi Skirt',
     slug: 'jupe-stellamccartney-jacquard',
@@ -4016,7 +4016,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-frame-cuir',
-    name: 'Frame Midi-Rock aus Leder',
+    name: 'Jupe midi Frame cuir',
     name_fr: 'Jupe midi Frame cuir',
     name_en: 'Frame Leather Midi Skirt',
     slug: 'jupe-frame-cuir',
@@ -4031,7 +4031,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-ulla-johnson-volants',
-    name: 'Ulla Johnson Midi-Rock aus Satin',
+    name: 'Jupe midi satinée Ulla Johnson',
     name_fr: 'Jupe midi satinée Ulla Johnson',
     name_en: 'Ulla Johnson Satin Midi Skirt',
     slug: 'jupe-ulla-johnson-volants',
@@ -4046,7 +4046,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-calvinklein-laine',
-    name: 'Calvin Klein Midi-Rock Collection',
+    name: 'Jupe midi Calvin Klein Collection',
     name_fr: 'Jupe midi Calvin Klein Collection',
     name_en: 'Calvin Klein Collection Midi Skirt',
     slug: 'jupe-calvinklein-laine',
@@ -4061,7 +4061,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-dolcegabbana-floral',
-    name: 'Gabbana Dolce & Midi-Rock',
+    name: 'Jupe midi Dolce & Gabbana',
     name_fr: 'Jupe midi Dolce & Gabbana',
     name_en: 'Dolce & Gabbana Midi Skirt',
     slug: 'jupe-dolcegabbana-floral',
@@ -4076,7 +4076,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-etro-leopard',
-    name: 'Etro Rock aus Satin mit Leopardenmuster',
+    name: 'Jupe satin‑léopard Etro',
     name_fr: 'Jupe satin‑léopard Etro',
     name_en: 'Etro Leopard Satin Skirt',
     slug: 'jupe-etro-leopard',
@@ -4091,7 +4091,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-dries-van-noten-maxi',
-    name: 'Dries Van Noten Maxi-Rock drapiert',
+    name: 'Jupe maxi drapée Dries Van Noten',
     name_fr: 'Jupe maxi drapée Dries Van Noten',
     name_en: 'Dries Van Noten Draped Maxi Skirt',
     slug: 'jupe-dries-van-noten-maxi',
@@ -4121,7 +4121,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-leset-satin',
-    name: 'Leset Rock aus Satin',
+    name: 'Jupe satinée Leset Barb',
     name_fr: 'Jupe satinée Leset Barb',
     name_en: 'Leset Barb Satin Skirt',
     slug: 'jupe-leset-satin',
@@ -4136,7 +4136,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-veronica-beard',
-    name: 'Veronica Beard Maxi-Rock',
+    name: 'Jupe maxi Veronica Beard',
     name_fr: 'Jupe maxi Veronica Beard',
     name_en: 'Veronica Beard Maxi Skirt',
     slug: 'jupe-veronica-beard',
@@ -4151,7 +4151,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-zimmermann-print',
-    name: 'Zimmermann bedruckter Midi-Rock',
+    name: 'Jupe midi Zimmermann printed',
     name_fr: 'Jupe midi Zimmermann printed',
     name_en: 'Zimmermann Printed Midi Skirt',
     slug: 'jupe-zimmermann-print',
@@ -4166,7 +4166,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-self-portrait',
-    name: 'Self-Portrait Midi-Rock',
+    name: 'Jupe midi Self‑Portrait',
     name_fr: 'Jupe midi Self‑Portrait',
     name_en: 'Self-Portrait Midi Skirt',
     slug: 'jupe-self-portrait',
@@ -4181,7 +4181,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-faithfull-maxi',
-    name: 'Faithfull Maxi-Rock',
+    name: 'Jupe maxi Faithfull',
     name_fr: 'Jupe maxi Faithfull',
     name_en: 'Faithfull Maxi Skirt',
     slug: 'jupe-faithfull-maxi',
@@ -4196,7 +4196,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-ami-paris',
-    name: 'Ami Paris Midi-Rock',
+    name: 'Jupe midi Ami Paris',
     name_fr: 'Jupe midi Ami Paris',
     name_en: 'Ami Paris Midi Skirt',
     slug: 'jupe-ami-paris',
@@ -4211,7 +4211,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-bally-coton',
-    name: 'Bally Midi-Rock aus Baumwoll-Cord',
+    name: 'Jupe midi Bally cotton‑cord',
     name_fr: 'Jupe midi Bally cotton‑cord',
     name_en: 'Bally Cotton-Cord Midi Skirt',
     slug: 'jupe-bally-coton',
@@ -4226,7 +4226,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-khaite-satin',
-    name: 'Khaite Midi-Rock aus Satin-Köper',
+    name: 'Jupe midi Khaite satin‑twill',
     name_fr: 'Jupe midi Khaite satin‑twill',
     name_en: 'Khaite Satin-Twill Midi Skirt',
     slug: 'jupe-khaite-satin',
@@ -4241,7 +4241,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-gabriela-hearst',
-    name: 'Gabriela Hearst Midi-Rock',
+    name: 'Jupe midi Gabriela Hearst',
     name_fr: 'Jupe midi Gabriela Hearst',
     name_en: 'Gabriela Hearst Midi Skirt',
     slug: 'jupe-gabriela-hearst',
@@ -4256,7 +4256,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-dries-van-noten-twist',
-    name: 'Dries Van Noten Midi-Rock mit Twist',
+    name: 'Jupe midi Dries Van Noten twist',
     name_fr: 'Jupe midi Dries Van Noten twist',
     name_en: 'Dries Van Noten Twist Midi Skirt',
     slug: 'jupe-dries-van-noten-twist',
@@ -4271,7 +4271,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-maxmara-laine',
-    name: 'Max Mara Midi-Rock aus Woll-Mix',
+    name: 'Jupe midi Max Mara wool‑blend',
     name_fr: 'Jupe midi Max Mara wool‑blend',
     name_en: 'Max Mara Wool-Blend Midi Skirt',
     slug: 'jupe-maxmara-laine',
@@ -4286,7 +4286,7 @@ export const products: Product[] = [
   },
   {
     id: 'jupe-burberry-checked',
-    name: 'Burberry karierter Midi-Rock',
+    name: 'Jupe midi Burberry checked',
     name_fr: 'Jupe midi Burberry checked',
     name_en: 'Burberry Checked Midi Skirt',
     slug: 'jupe-burberry-checked',
@@ -4301,7 +4301,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-boss-liam',
-    name: 'On Boss H Liam Lg‑Sleeve Shirt',
+    name: 'Boss H Liam Long‑Sleeve Shirt',
     name_fr: 'Boss H Liam Long‑Sleeve Shirt',
     name_en: 'Boss H Liam Long-Sleeve Shirt',
     slug: 'chemise-boss-liam',
@@ -4316,7 +4316,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-barbour-edderton',
-    name: 'Barbour Edderton Langarm-Hemd',
+    name: 'Barbour Edderton Long Sleeve',
     name_fr: 'Barbour Edderton Long Sleeve',
     name_en: 'Barbour Edderton Long Sleeve',
     slug: 'chemise-barbour-edderton',
@@ -4331,7 +4331,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-prl-check',
-    name: 'Polo Ralph Lauren Karo-Pony',
+    name: 'Polo Ralph Lauren Check Pony',
     name_fr: 'Polo Ralph Lauren Check Pony',
     name_en: 'Polo Ralph Lauren Check Pony',
     slug: 'chemise-prl-check',
@@ -4346,7 +4346,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-tedbaker-floral',
-    name: 'On Ted Baker Floral Lg Sleeve',
+    name: 'Ted Baker Floral Long Sleeve',
     name_fr: 'Ted Baker Floral Long Sleeve',
     name_en: 'Ted Baker Floral Long Sleeve',
     slug: 'chemise-tedbaker-floral',
@@ -4466,7 +4466,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-studio-nicholson',
-    name: 'On Studio Nichols Cott Twill',
+    name: 'Studio Nicholson Cotton Twill',
     name_fr: 'Studio Nicholson Cotton Twill',
     name_en: 'Studio Nicholson Cotton Twill',
     slug: 'chemise-studio-nicholson',
@@ -4481,7 +4481,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-ps-chambray',
-    name: 'On Paul Smith Cott‑Chambray',
+    name: 'Paul Smith Cotton‑Chambray',
     name_fr: 'Paul Smith Cotton‑Chambray',
     name_en: 'Paul Smith Cotton-Chambray',
     slug: 'chemise-ps-chambray',
@@ -4496,7 +4496,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-ragbone-checked',
-    name: 'On Rag & Be Checked Shirt',
+    name: 'Rag & Bone Checked Shirt',
     name_fr: 'Rag & Bone Checked Shirt',
     name_en: 'Rag & Bone Checked Shirt',
     slug: 'chemise-ragbone-checked',
@@ -4526,7 +4526,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-missoni-jersey',
-    name: 'On Missi Space‑Dyed Jersey',
+    name: 'Missoni Space‑Dyed Jersey',
     name_fr: 'Missoni Space‑Dyed Jersey',
     name_en: 'Missoni Space-Dyed Jersey',
     slug: 'chemise-missoni-jersey',
@@ -4601,7 +4601,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-margiela-checked',
-    name: 'Maison Margiela kariertes Hemd',
+    name: 'Maison Margiela Checked Shirt',
     name_fr: 'Maison Margiela Checked Shirt',
     name_en: 'Maison Margiela Checked Shirt',
     slug: 'chemise-margiela-checked',
@@ -4661,7 +4661,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-ragbone-jack',
-    name: 'On Rag & Be Jack Wool‑Jersey',
+    name: 'Rag & Bone Jack Wool‑Jersey',
     name_fr: 'Rag & Bone Jack Wool‑Jersey',
     name_en: 'Rag & Bone Jack Wool-Jersey',
     slug: 'chemise-ragbone-jack',
@@ -5006,7 +5006,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-brioni-madeira',
-    name: 'On Brii Madeira Hose aus Baumwolle & Seide',
+    name: 'Brioni Madeira Hose aus Baumwolle & Seide',
     name_fr: 'Pantalon Brioni Madeira coton & soie',
     name_en: 'Brioni Madeira Cotton & Silk Pants',
     slug: 'pantalon-brioni-madeira',
@@ -5066,7 +5066,7 @@ export const products: Product[] = [
   },
   {
     id: 'carré-de-soie-imprimé',
-    name: 'GANT Seidenschal mit Eleem Druck',
+    name: 'Seidenschal mit Elegantem Druck',
     name_fr: 'Carré de Soie à Imprimé Élégant',
     name_en: 'Silk Scarf with Elegant Print',
     slug: 'carre-de-soie-imprime',
@@ -5096,7 +5096,7 @@ export const products: Product[] = [
   },
   {
     id: 'lunettes-de-soleil-oeil-de-chat',
-    name: 'On Snenbrille Cat-Eye Design',
+    name: 'Sonnenbrille Cat-Eye Design',
     name_fr: 'Lunettes de Soleil Style Cat-Eye',
     name_en: 'Cat-Eye Style Sunglasses',
     slug: 'lunettes-de-soleil-oeil-de-chat',
@@ -5141,7 +5141,7 @@ export const products: Product[] = [
   },
   {
     id: 'sac-iconique-en-cuir',
-    name: 'On Ike Ledertasche',
+    name: 'Ikone Ledertasche',
     name_fr: 'Sac Iconique en Cuir',
     name_en: 'Iconic Leather Bag',
     slug: 'sac-iconique-en-cuir',
@@ -5186,7 +5186,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-portefeuille-en-soie-diane-von-furstenberg',
-    name: 'On Damenskleidung robe portefeuille en soie diane v furstenberg',
+    name: 'Damenskleidung robe portefeuille en soie diane von furstenberg',
     name_fr: 'Robe Portefeuille en Soie Diane Von Furstenberg',
     name_en: 'Robe Portefeuille en Soie Diane Von Furstenberg',
     slug: 'robe-portefeuille-en-soie-diane-von-furstenberg',
@@ -5217,7 +5217,7 @@ export const products: Product[] = [
   },
   {
     id: 'cardigan-long-en-cachemire-brunello-cucinelli',
-    name: 'On Herrenkleidung cardigan lg en cachemire brunello cucinelli',
+    name: 'Herrenkleidung cardigan long en cachemire brunello cucinelli',
     name_fr: 'Cardigan Long en Cachemire Brunello Cucinelli',
     name_en: 'Cardigan Long en Cachemire Brunello Cucinelli',
     slug: 'cardigan-long-en-cachemire-brunello-cucinelli',
@@ -5233,7 +5233,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-en-coton-premium-burberry',
-    name: 'On Herrenkleidung chemise en cot premium burberry',
+    name: 'Herrenkleidung chemise en coton premium burberry',
     name_fr: 'Chemise en Coton Premium Burberry',
     name_en: 'Chemise en Coton Premium Burberry',
     slug: 'chemise-en-coton-premium-burberry',
@@ -5249,7 +5249,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-oversize-balenciaga',
-    name: 'Balenciaga Herrenkleidung chemise oversize',
+    name: 'Herrenkleidung chemise oversize balenciaga',
     name_fr: 'Chemise Oversize Balenciaga',
     name_en: 'Chemise Oversize Balenciaga',
     slug: 'chemise-oversize-balenciaga-v2',
@@ -5265,7 +5265,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemise-slim-fit-tom-ford',
-    name: 'Tom Ford Herrenkleidung chemise slim fit',
+    name: 'Herrenkleidung chemise slim fit tom ford',
     name_fr: 'Chemise Slim Fit Tom Ford',
     name_en: 'Chemise Slim Fit Tom Ford',
     slug: 'chemise-slim-fit-tom-ford-v2',
@@ -5281,7 +5281,7 @@ export const products: Product[] = [
   },
   {
     id: 'chemisier-en-soie-imprimee-saint-laurent',
-    name: 'Saint Laurent Damenskleidung chemisier en soie imprimee',
+    name: 'Damenskleidung chemisier en soie imprimee saint laurent',
     name_fr: 'Chemisier en Soie Imprimée Saint Laurent',
     name_en: 'Chemisier en Soie Imprimée Saint Laurent',
     slug: 'chemisier-en-soie-imprimee-saint-laurent',
@@ -5297,7 +5297,7 @@ export const products: Product[] = [
   },
   {
     id: 'combinaison-pantalon-balenciaga',
-    name: 'Balenciaga Damenskleidung combinaison pantalon',
+    name: 'Damenskleidung combinaison pantalon balenciaga',
     name_fr: 'Combinaison Pantalon Balenciaga',
     name_en: 'Combinaison Pantalon Balenciaga',
     slug: 'combinaison-pantalon-balenciaga',
@@ -5328,7 +5328,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-asymetrique-givenchy',
-    name: 'Givenchy Damenskleidung robe asymetrique',
+    name: 'Damenskleidung robe asymetrique givenchy',
     name_fr: 'Robe Asymetrique Givenchy',
     name_en: 'Robe Asymetrique Givenchy',
     slug: 'robe-asymetrique-givenchy',
@@ -5344,7 +5344,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-courte-en-laine-prada',
-    name: 'Prada Damenskleidung robe courte en laine',
+    name: 'Damenskleidung robe courte en laine prada',
     name_fr: 'Robe Courte en Laine Prada',
     name_en: 'Robe Courte en Laine Prada',
     slug: 'robe-courte-en-laine-prada',
@@ -5360,7 +5360,7 @@ export const products: Product[] = [
   },
   {
     id: 'robe-longue-plissee-valentino',
-    name: 'Valentino Damenskleidung robe longue plissee',
+    name: 'Damenskleidung robe longue plissee valentino',
     name_fr: 'Robe Longue Plissee Valentino',
     name_en: 'Robe Longue Plissee Valentino',
     slug: 'robe-longue-plissee-valentino',
@@ -5393,7 +5393,7 @@ export const products: Product[] = [
   // Produits été - Catégorie femme
   {
     id: 'tshirt-polo-ralph-lauren-ete',
-    name: 'Polo Ralph Lauren T-Shirt',
+    name: 'T-Shirt Polo Ralph Lauren',
     name_fr: 'T-shirt Polo Ralph Lauren',
     name_en: 'Polo Ralph Lauren T-Shirt',
     slug: 'tshirt-polo-ralph-lauren-ete',
@@ -5473,7 +5473,7 @@ export const products: Product[] = [
   },
   {
     id: 'maillot-saison1865-ete',
-    name: 'On Badeanzug Sais 1865',
+    name: 'Badeanzug Saison 1865',
     name_fr: 'Maillot de bain Saison 1865',
     name_en: 'Saison 1865 Swimsuit',
     slug: 'maillot-saison1865-ete',
@@ -5650,7 +5650,7 @@ export const products: Product[] = [
   },
   {
     id: 'pantalon-saison1865-printemps',
-    name: 'On Sais 1865 Hose',
+    name: 'Saison 1865 Hose',
     name_fr: 'Pantalon Saison 1865',
     name_en: 'Saison 1865 Trousers',
     slug: 'pantalon-saison1865-printemps',
@@ -5780,7 +5780,7 @@ export const products: Product[] = [
   },
   {
     id: 'longines-conquest-classic',
-    name: 'On Lgines Cquest Classic',
+    name: 'Longines Conquest Classic',
     name_fr: 'Longines Conquest Classic',
     name_en: 'Longines Conquest Classic',
     slug: 'longines-conquest-classic',
@@ -5977,7 +5977,7 @@ export const products: Product[] = [
   },
   {
     id: 'sac-longchamp-le-pliage-cuir',
-    name: 'On Lgchamp Le Pliage Leder Tasche',
+    name: 'Longchamp Le Pliage Leder Tasche',
     name_fr: 'Sac Longchamp Le Pliage Cuir',
     name_en: 'Longchamp Le Pliage Leather Bag',
     slug: 'sac-longchamp-le-pliage-cuir',
@@ -6318,7 +6318,7 @@ export const products: Product[] = [
   },
   {
     id: 'amina-muaddi-lena-90-sandals',
-    name: 'Amina Muaddi Lena 90 Sandalen',
+    name: 'Amina Muaddi Lena 90 Sandals',
     name_fr: 'Amina Muaddi Lena 90 Sandals',
     name_en: 'Amina Muaddi Lena 90 Sandals',
     slug: 'amina-muaddi-lena-90-sandals',
@@ -6350,7 +6350,7 @@ export const products: Product[] = [
   },
   {
     id: 'gianvito-rossi-eloise-55-slingbacks',
-    name: 'Gianvito Rossi Eloise 55 Leder-Slingbacks',
+    name: 'Gianvito Rossi Eloise 55 Leather Slingbacks',
     name_fr: 'Gianvito Rossi Eloise 55 Leather Slingbacks',
     name_en: 'Gianvito Rossi Eloise 55 Leather Slingbacks',
     slug: 'gianvito-rossi-eloise-55-slingbacks',
@@ -6366,7 +6366,7 @@ export const products: Product[] = [
   },
   {
     id: 'paris-texas-helena-suede-ankle-boots',
-    name: 'Paris Texas Helena Wildleder-Stiefeletten',
+    name: 'Paris Texas Helena Suede Ankle Boots',
     name_fr: 'Paris Texas Helena Suede Ankle Boots',
     name_en: 'Paris Texas Helena Suede Ankle Boots',
     slug: 'paris-texas-helena-suede-ankle-boots',
@@ -6398,7 +6398,7 @@ export const products: Product[] = [
   },
   {
     id: 'paris-texas-jane-100-suede-knee-boots',
-    name: 'Paris Texas Jane 100 Wildleder-Kniehohe Stiefel',
+    name: 'Paris Texas Jane 100 Suede Knee-High Boots',
     name_fr: 'Paris Texas Jane 100 Suede Knee-High Boots',
     name_en: 'Paris Texas Jane 100 Suede Knee-High Boots',
     slug: 'paris-texas-jane-100-suede-knee-boots',
@@ -6446,7 +6446,7 @@ export const products: Product[] = [
   },
   {
     id: 'paris-texas-lidia-105-satin-slingback',
-    name: 'Paris Texas Lidia 105 Satin-Slingback',
+    name: 'Paris Texas Lidia 105 Satin Slingback',
     name_fr: 'Paris Texas Lidia 105 Satin Slingback',
     name_en: 'Paris Texas Lidia 105 Satin Slingback',
     slug: 'paris-texas-lidia-105-satin-slingback',
@@ -6462,7 +6462,7 @@ export const products: Product[] = [
   },
   {
     id: 'birkenstock-1774-222-west-suede-clogs',
-    name: 'Birkenstock 1774 222 West Wildleder-Clogs',
+    name: 'Birkenstock 1774 222 West Suede Clogs',
     name_fr: 'Birkenstock 1774 222 West Suede Clogs',
     name_en: 'Birkenstock 1774 222 West Suede Clogs',
     slug: 'birkenstock-1774-222-west-suede-clogs',
@@ -6478,7 +6478,7 @@ export const products: Product[] = [
   },
   {
     id: 'birkenstock-1774-arizona-velvet-sandals',
-    name: 'Birkenstock 1774 Arizona Samt-Sandalen',
+    name: 'Birkenstock 1774 Arizona Velvet Sandals',
     name_fr: 'Birkenstock 1774 Arizona Velvet Sandals',
     name_en: 'Birkenstock 1774 Arizona Velvet Sandals',
     slug: 'birkenstock-1774-arizona-velvet-sandals',
@@ -6735,7 +6735,7 @@ export const products: Product[] = [
   },
   {
     id: 'corde-sauter-professionnel',
-    name: 'On Professielles Springseil',
+    name: 'Professionelles Springseil',
     name_fr: 'Corde à sauter professionnel',
     name_en: 'Professional Jump Rope',
     slug: 'corde-sauter-professionnel',
@@ -6928,7 +6928,7 @@ export const products: Product[] = [
   },
   {
     id: 'bottines-saison1865-automne',
-    name: 'On Sais 1865 Stiefeletten',
+    name: 'Saison 1865 Stiefeletten',
     name_fr: 'Bottines Saison 1865',
     name_en: 'Saison 1865 Ankle Boots',
     slug: 'bottines-saison1865-automne',
@@ -8289,7 +8289,7 @@ export const products: Product[] = [
   // PARFUMS HOMME
   {
     id: 'bleu-de-chanel',
-    name: 'Chanel Bleu de',
+    name: 'Bleu de Chanel',
     name_fr: 'Bleu de Chanel',
     name_en: 'Bleu de Chanel',
     slug: 'bleu-de-chanel',
@@ -8360,7 +8360,7 @@ export const products: Product[] = [
   },
   {
     id: 'one-million',
-    name: 'Paco Rabanne 1 Million',
+    name: '1 Million (Paco Rabanne)',
     name_fr: '1 Million (Paco Rabanne)',
     name_en: '1 Million (Paco Rabanne)',
     slug: 'one-million',
@@ -8402,7 +8402,7 @@ export const products: Product[] = [
   },
   {
     id: 'boss-bottled-beyond',
-    name: 'On Boss Bottled Beyd',
+    name: 'Boss Bottled Beyond',
     name_fr: 'Boss Bottled Beyond',
     name_en: 'Boss Bottled Beyond',
     slug: 'boss-bottled-beyond',
@@ -8416,7 +8416,7 @@ export const products: Product[] = [
   },
   {
     id: 'montblanc-legend-red',
-    name: 'On Mtblanc Legend Red',
+    name: 'Montblanc Legend Red',
     name_fr: 'Montblanc Legend Red',
     name_en: 'Montblanc Legend Red',
     slug: 'montblanc-legend-red',
@@ -8559,7 +8559,7 @@ export const products: Product[] = [
   },
   {
     id: 'miss-dior',
-    name: 'Dior Miss',
+    name: 'Miss Dior',
     name_fr: 'Miss Dior',
     name_en: 'Miss Dior',
     slug: 'miss-dior',
