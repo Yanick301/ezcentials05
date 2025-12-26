@@ -9,11 +9,22 @@ import { useToast } from '@/hooks/use-toast';
 import { useCart } from '@/context/CartContext';
 import { TranslatedText } from './TranslatedText';
 import { useLanguage } from '@/context/LanguageContext';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
 
 export function ProductCardActions({ product }: { product: Product }) {
   const { toast } = useToast();
   const { addToCart } = useCart();
   const { language } = useLanguage();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Get current URL with search params for return navigation
+  const currentUrl = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    const params = searchParams.toString();
+    return pathname + (params ? `?${params}` : '');
+  }, [pathname, searchParams]);
 
   const getTranslatedName = () => {
     if (language === 'fr') return product.name_fr;
@@ -49,7 +60,10 @@ export function ProductCardActions({ product }: { product: Product }) {
         <ShoppingCart className="h-5 w-5 text-muted-foreground" />
       </Button>
       <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted">
-        <Link href={`/product/${product.slug}`} prefetch={true}>
+        <Link 
+          href={`/product/${product.slug}${currentUrl ? `?returnUrl=${encodeURIComponent(currentUrl)}` : ''}`} 
+          prefetch={true}
+        >
             <Eye className="h-5 w-5 text-muted-foreground" />
         </Link>
       </Button>

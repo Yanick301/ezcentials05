@@ -2,7 +2,7 @@
 
 'use client';
 
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { Star, ShoppingCart, MessageCircle, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -44,11 +44,13 @@ import { getProductPrice } from '@/lib/perfume-prices';
 export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { language } = useLanguage();
   const slug = params.slug as string;
   const [product, setProduct] = useState<Product | undefined>(undefined);
   const [relatedProducts, setRelatedProducts] = useState<ReturnType<typeof getProductsByCategory>>([]);
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
+  const [returnUrl, setReturnUrl] = useState<string | null>(null);
 
   const [selectedSize, setSelectedSize] = useState<string | undefined>();
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
@@ -59,6 +61,26 @@ export default function ProductPage() {
   const { addToCart } = useCart();
   const { user } = useUser();
   const { supabase } = useSupabase();
+
+  // Get return URL from search params or referrer
+  useEffect(() => {
+    const returnUrlParam = searchParams.get('returnUrl');
+    if (returnUrlParam) {
+      setReturnUrl(decodeURIComponent(returnUrlParam));
+    } else if (typeof window !== 'undefined' && document.referrer) {
+      // Extract path from referrer (remove domain)
+      try {
+        const referrerUrl = new URL(document.referrer);
+        const referrerPath = referrerUrl.pathname + referrerUrl.search;
+        // Only use referrer if it's from our site and not the product page itself
+        if (referrerPath && !referrerPath.startsWith('/product/')) {
+          setReturnUrl(referrerPath);
+        }
+      } catch (e) {
+        // If referrer is not a valid URL, ignore it
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     setIsLoadingProduct(true);
@@ -78,6 +100,14 @@ export default function ProductPage() {
     
     setIsLoadingProduct(false);
   }, [slug]);
+
+  const handleBack = () => {
+    if (returnUrl) {
+      router.push(returnUrl);
+    } else {
+      router.back();
+    }
+  };
 
   // Supabase query for reviews (DB row shape)
   type DbReview = {
@@ -239,7 +269,7 @@ export default function ProductPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.back()}
+            onClick={handleBack}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />

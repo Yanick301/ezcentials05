@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { AddToFavoritesButton } from './favorites/AddToFavoritesButton';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 type ProductCardProps = {
   product: Product;
@@ -23,11 +24,20 @@ type ProductCardProps = {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { language } = useLanguage();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const productImage = useMemo(() => 
     findProductImage(product.images[0]), 
     [product.images]
   );
   const averageRating = 5;
+
+  // Get current URL with search params for return navigation
+  const currentUrl = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    const params = searchParams.toString();
+    return pathname + (params ? `?${params}` : '');
+  }, [pathname, searchParams]);
   const [reviewCount, setReviewCount] = useState(0);
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -68,7 +78,11 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group flex h-full flex-col transition-all duration-300 hover:shadow-lg rounded-lg overflow-hidden bg-card border border-border">
         <div className="relative block overflow-hidden">
-            <Link href={`/product/${product.slug}`} className="block" prefetch={true}>
+            <Link 
+              href={`/product/${product.slug}${currentUrl ? `?returnUrl=${encodeURIComponent(currentUrl)}` : ''}`} 
+              className="block" 
+              prefetch={true}
+            >
                 <div className="relative block aspect-[3/4] w-full overflow-hidden bg-muted">
                     {productImage ? (
                     <Image
@@ -108,7 +122,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="pt-4 px-4 pb-4 text-left flex-grow flex flex-col">
             <div className="flex justify-between items-start">
                 <h3 className="font-headline text-lg md:text-xl text-foreground flex-grow pr-2 line-clamp-2">
-                    <Link href={`/product/${product.slug}`} className="hover:text-primary transition-colors" prefetch={true} aria-label={getTranslatedName()}>
+                    <Link 
+                      href={`/product/${product.slug}${currentUrl ? `?returnUrl=${encodeURIComponent(currentUrl)}` : ''}`} 
+                      className="hover:text-primary transition-colors" 
+                      prefetch={true} 
+                      aria-label={getTranslatedName()}
+                    >
                         <TranslatedText fr={product.name_fr} en={product.name_en}>{product.name}</TranslatedText>
                     </Link>
                 </h3>
