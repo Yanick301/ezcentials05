@@ -53,8 +53,13 @@ export default function CategoryPage() {
         const stored = sessionStorage.getItem('productReturnState');
         if (stored) {
           const state = JSON.parse(stored);
-          // Only restore if it's recent (within 5 minutes) and for the same category
-          if (state.categorySlug === categorySlug && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+          // Restore if it's recent (within 5 minutes) and for the same category
+          // Also check if URL matches or categorySlug matches
+          const statePath = state.url?.split('?')[0] || '';
+          const isSamePath = statePath === `/products/${categorySlug}`;
+          const isSameCategory = state.categorySlug === categorySlug;
+          
+          if ((isSamePath || isSameCategory) && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
             // Clear it after reading
             sessionStorage.removeItem('productReturnState');
             return state;
@@ -65,7 +70,11 @@ export default function CategoryPage() {
         const categoryState = sessionStorage.getItem('categoryPageState');
         if (categoryState) {
           const state = JSON.parse(categoryState);
-          if (state.categorySlug === categorySlug && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+          const statePath = state.url?.split('?')[0] || '';
+          const isSamePath = statePath === `/products/${categorySlug}`;
+          const isSameCategory = state.categorySlug === categorySlug;
+          
+          if ((isSamePath || isSameCategory) && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
             return state;
           }
         }

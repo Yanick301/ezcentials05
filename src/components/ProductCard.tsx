@@ -39,16 +39,21 @@ export function ProductCard({ product }: ProductCardProps) {
     return pathname + (params ? `?${params}` : '');
   }, [pathname, searchParams]);
 
-  // Derive category slug from the current path if available
-  const derivedCategorySlug = useMemo(() => {
+  // Get category slug from product or derive from pathname
+  const getCategorySlug = useMemo(() => {
+    // First, try to use the product's category
+    if (product.category) {
+      return product.category;
+    }
+    // Fallback: derive from pathname
     if (!pathname) return null;
     const parts = pathname.split('/').filter(Boolean);
-    // Expecting /products/:category
+    // Expecting /products/:category or /products/:category/:subcategory
     if (parts[0] === 'products' && parts[1]) {
       return parts[1];
     }
     return null;
-  }, [pathname]);
+  }, [pathname, product.category]);
 
   // Store current URL, page state, and product position when clicking on product
   const handleProductClick = useCallback(() => {
@@ -62,14 +67,19 @@ export function ProductCard({ product }: ProductCardProps) {
       sessionStorage.setItem('productReturnProductId', product.id);
       sessionStorage.setItem('productReturnScroll', scrollPosition.toString());
       
-      // Also try to get category page state if available
+      // Try to get category page state if available
       try {
         const categoryState = sessionStorage.getItem('categoryPageState');
         if (categoryState) {
           const state = JSON.parse(categoryState);
+          // Update with product return info
           state.returnProductId = product.id;
           state.returnScroll = scrollPosition;
-          state.timestamp = Date.now(); // Update timestamp
+          state.timestamp = Date.now();
+          // Ensure categorySlug is set
+          if (!state.categorySlug && getCategorySlug) {
+            state.categorySlug = getCategorySlug;
+          }
           sessionStorage.setItem('productReturnState', JSON.stringify(state));
         } else {
           // Create a minimal state if categoryPageState doesn't exist
@@ -77,7 +87,7 @@ export function ProductCard({ product }: ProductCardProps) {
             url: currentUrl,
             returnProductId: product.id,
             returnScroll: scrollPosition,
-            categorySlug: derivedCategorySlug,
+            categorySlug: getCategorySlug,
             timestamp: Date.now(),
           };
           sessionStorage.setItem('productReturnState', JSON.stringify(minimalState));
@@ -86,7 +96,7 @@ export function ProductCard({ product }: ProductCardProps) {
         // Ignore errors
       }
     }
-  }, [currentUrl, product.id]);
+  }, [currentUrl, product.id, getCategorySlug]);
   const [reviewCount, setReviewCount] = useState(0);
   const { addToCart } = useCart();
   const { toast } = useToast();

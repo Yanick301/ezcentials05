@@ -30,8 +30,44 @@ export default function SubCategoryPage() {
   const categorySlug = params.category as string;
   const subcategorySlug = params.subcategory as string;
   
-  const [sortOption, setSortOption] = useState<SortOption>('name-asc');
-  const [filters, setFilters] = useState<FilterState>({
+  // Try to restore page state from sessionStorage
+  const getInitialState = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = sessionStorage.getItem('productReturnState');
+        if (stored) {
+          const state = JSON.parse(stored);
+          // Only restore if it's recent (within 5 minutes) and for the same category/subcategory
+          const statePath = state.url?.split('?')[0] || '';
+          const isSamePath = statePath === `/products/${categorySlug}/${subcategorySlug}`;
+          if (isSamePath && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+            // Clear it after reading
+            sessionStorage.removeItem('productReturnState');
+            return state;
+          }
+        }
+
+        // Fallback to categoryPageState (without removing it)
+        const categoryState = sessionStorage.getItem('categoryPageState');
+        if (categoryState) {
+          const state = JSON.parse(categoryState);
+          const statePath = state.url?.split('?')[0] || '';
+          const isSamePath = statePath === `/products/${categorySlug}/${subcategorySlug}`;
+          if (isSamePath && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+            return state;
+          }
+        }
+      } catch (e) {
+        // Ignore errors
+      }
+    }
+    return null;
+  };
+
+  const restoredState = getInitialState();
+  
+  const [sortOption, setSortOption] = useState<SortOption>(restoredState?.sortOption || 'name-asc');
+  const [filters, setFilters] = useState<FilterState>(restoredState?.filters || {
     priceRange: [0, 1000],
     selectedSizes: [],
     selectedColors: [],
@@ -190,7 +226,88 @@ export default function SubCategoryPage() {
   } = usePagination({
     items: products,
     itemsPerPage: ITEMS_PER_PAGE,
+    initialPage: restoredState?.currentPage || 1,
   });
+
+  // Store page state in sessionStorage when it changes (for return navigation)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && categorySlug && subcategorySlug) {
+      const pageState = {
+        url: window.location.pathname + window.location.search,
+        currentPage,
+        sortOption,
+        filters,
+        categorySlug,
+        subcategorySlug,
+        timestamp: Date.now(),
+      };
+      sessionStorage.setItem('categoryPageState', JSON.stringify(pageState));
+    }
+  }, [currentPage, sortOption, filters, categorySlug, subcategorySlug]);
+
+  // Restore scroll position and highlight product when returning from product page
+  useEffect(() => {
+    if (typeof window !== 'undefined' && restoredState) {
+      // Check if we're returning from a product page
+      const returnProductId = restoredState.returnProductId;
+      const returnScroll = restoredState.returnScroll;
+      
+      if (returnProductId) {
+        // Wait for products to render, then position elegantly
+        const positionProduct = () => {
+          const productElement = document.getElementById(`product-${returnProductId}`);
+          if (productElement) {
+            // Calculate position with header offset
+            const headerHeight = 100;
+            const elementRect = productElement.getBoundingClientRect();
+            const absoluteElementTop = elementRect.top + window.pageYOffset;
+            const offsetPosition = absoluteElementTop - headerHeight;
+            
+            // Instant, invisible scroll - no animation
+            window.scrollTo({
+              top: Math.max(0, offsetPosition),
+              behavior: 'auto'
+            });
+            
+            // Elegant, subtle highlight - very professional
+            requestAnimationFrame(() => {
+              productElement.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+              productElement.style.opacity = '1';
+              productElement.style.transform = 'translateY(0)';
+              
+              // Very subtle shadow and slight elevation
+              productElement.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
+              
+              // Remove highlight gracefully after 1.2 seconds
+              setTimeout(() => {
+                productElement.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                productElement.style.boxShadow = '';
+                setTimeout(() => {
+                  productElement.style.transition = '';
+                }, 500);
+              }, 1200);
+            });
+          } else if (returnScroll) {
+            // Fallback: restore scroll position instantly
+            window.scrollTo({
+              top: Math.max(0, parseInt(returnScroll, 10)),
+              behavior: 'auto'
+            });
+          }
+        };
+        
+        // Wait for DOM to be ready
+        if (paginatedItems.length > 0) {
+          // Use double requestAnimationFrame for reliable execution
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              positionProduct();
+            });
+          });
+        }
+      }
+    }
+  }, [restoredState, paginatedItems]);
 
   return (
     <>
@@ -239,7 +356,13 @@ export default function SubCategoryPage() {
           <>
             <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
               {paginatedItems.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <div 
+                  key={product.id} 
+                  id={`product-${product.id}`}
+                  className="transition-all duration-500 ease-out"
+                >
+                  <ProductCard product={product} />
+                </div>
               ))}
             </div>
             <Pagination

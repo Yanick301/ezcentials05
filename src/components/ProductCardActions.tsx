@@ -26,13 +26,18 @@ export function ProductCardActions({ product }: { product: Product }) {
     return pathname + (params ? `?${params}` : '');
   }, [pathname, searchParams]);
 
-  // Derive category slug from path if present
-  const derivedCategorySlug = useMemo(() => {
+  // Get category slug from product or derive from pathname
+  const getCategorySlug = useMemo(() => {
+    // First, try to use the product's category
+    if (product.category) {
+      return product.category;
+    }
+    // Fallback: derive from pathname
     if (!pathname) return null;
     const parts = pathname.split('/').filter(Boolean);
     if (parts[0] === 'products' && parts[1]) return parts[1];
     return null;
-  }, [pathname]);
+  }, [pathname, product.category]);
 
   // Store URL + state on click
   const handleProductClick = useCallback(() => {
@@ -43,15 +48,35 @@ export function ProductCardActions({ product }: { product: Product }) {
     }
     // Store minimal state including category and scroll
     const scrollPosition = window.scrollY || window.pageYOffset;
-    const minimalState = {
-      url: currentUrl,
-      returnProductId: product.id,
-      returnScroll: scrollPosition,
-      categorySlug: derivedCategorySlug,
-      timestamp: Date.now(),
-    };
-    sessionStorage.setItem('productReturnState', JSON.stringify(minimalState));
-  }, [currentUrl, derivedCategorySlug, product.id]);
+    
+    // Try to get category page state if available
+    try {
+      const categoryState = sessionStorage.getItem('categoryPageState');
+      if (categoryState) {
+        const state = JSON.parse(categoryState);
+        // Update with product return info
+        state.returnProductId = product.id;
+        state.returnScroll = scrollPosition;
+        state.timestamp = Date.now();
+        // Ensure categorySlug is set
+        if (!state.categorySlug && getCategorySlug) {
+          state.categorySlug = getCategorySlug;
+        }
+        sessionStorage.setItem('productReturnState', JSON.stringify(state));
+      } else {
+        const minimalState = {
+          url: currentUrl,
+          returnProductId: product.id,
+          returnScroll: scrollPosition,
+          categorySlug: getCategorySlug,
+          timestamp: Date.now(),
+        };
+        sessionStorage.setItem('productReturnState', JSON.stringify(minimalState));
+      }
+    } catch (e) {
+      // Ignore errors
+    }
+  }, [currentUrl, getCategorySlug, product.id]);
 
   const getTranslatedName = () => {
     if (language === 'fr') return product.name_fr;
