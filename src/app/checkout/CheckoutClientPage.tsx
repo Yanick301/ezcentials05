@@ -299,8 +299,8 @@ export function CheckoutClientPage() {
                     className="flex items-center space-x-2 text-sm text-muted-foreground"
                   >
                     <li>
-                      <Link href="/cart" className="hover:text-foreground transition-colors">
-                        <TranslatedText fr="Panier" en="Cart">Warenkorb</TranslatedText>
+                      <Link href="/products/all" className="hover:text-foreground transition-colors">
+                        <TranslatedText fr="Produits" en="Products">Produkte</TranslatedText>
                       </Link>
                     </li>
                     <li className="flex items-center">
@@ -483,11 +483,11 @@ export function CheckoutClientPage() {
 
                 <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
                   <Link
-                    href="/cart"
+                    href="/products/all"
                     className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    <TranslatedText fr="Retour au panier" en="Return to cart">Zum Warenkorb zurück</TranslatedText>
+                    <TranslatedText fr="Retour aux produits" en="Return to products">Zurück zu den Produkten</TranslatedText>
                   </Link>
                 </div>
               </div>

@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     default: 'EZCENTIALS',
     template: '%s | EZCENTIALS',
   },
-  description: 'Understated elegance and sophistication. Luxury fashion boutique offering premium clothing, accessories, and seasonal collections.',
-  keywords: ['luxury fashion', 'premium clothing', 'boutique', 'elegance', 'sophistication'],
+  description: 'Zurückhaltende Eleganz und Raffinesse. Luxus-Modeboutique mit hochwertiger Kleidung, Accessoires und saisonalen Kollektionen.',
+  keywords: ['Luxusmode', 'Premium-Kleidung', 'Boutique', 'Eleganz', 'Raffinesse', 'luxury fashion', 'premium clothing', 'boutique', 'elegance', 'sophistication'],
   icons: {
     icon: '/images/logo.png',
     shortcut: '/images/logo.png',
@@ -45,12 +45,12 @@ export const metadata: Metadata = {
     alternateLocale: ['fr_FR', 'en_GB'],
     siteName: 'EZCENTIALS',
     title: 'EZCENTIALS',
-    description: 'Understated elegance and sophistication.',
+    description: 'Zurückhaltende Eleganz und Raffinesse.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'EZCENTIALS',
-    description: 'Understated elegance and sophistication.',
+    description: 'Zurückhaltende Eleganz und Raffinesse.',
   },
   robots: {
     index: true,
