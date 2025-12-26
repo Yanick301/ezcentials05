@@ -4718,6 +4718,12 @@ export const products: Product[] = [
     subcategory: 'pantalons-homme',
     images: ['pantalon_fearofgod_sweat'],
     sizes: ['IT 44', 'IT 46', 'IT 48', 'IT 50', 'IT 52', 'IT 54'],
+    colors: [
+      { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },
+      { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },
+      { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' },
+      { name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }
+    ],
   },
   {
     id: 'pantalon-jacquemus-coton-lin',
