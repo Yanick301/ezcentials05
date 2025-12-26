@@ -86,13 +86,13 @@ export default function RootLayout({
           `}
         </Script>
         
+        <SmartsuppChat />
         <AppProviders>
           <AccessibilityEnhancer />
           <Analytics 
             gaId={process.env.NEXT_PUBLIC_GA_ID}
             plausibleDomain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
           />
-          <SmartsuppChat />
           <DynamicLang />
           <div className="relative z-10 flex min-h-screen flex-col">
             <Header />
