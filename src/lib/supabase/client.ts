@@ -20,7 +20,32 @@ export function getSupabasePublicEnv() {
 export function createClient(): BrowserSupabaseClient | null {
   const { url, anonKey, isConfigured } = getSupabasePublicEnv();
   if (!isConfigured) return null;
-  return createBrowserClient<Database>(url, anonKey);
+  
+  // Configuration pour garantir la persistance de session
+  const authOptions: any = {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  };
+  
+  // Utiliser localStorage si disponible (client-side uniquement)
+  if (typeof window !== 'undefined') {
+    try {
+      // Tester si localStorage est disponible
+      const test = '__localStorage_test__';
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      authOptions.storage = window.localStorage;
+      authOptions.storageKey = 'sb-auth-token';
+    } catch (e) {
+      // localStorage non disponible (mode privé, restrictions, etc.)
+      console.warn('localStorage not available, session may not persist:', e);
+    }
+  }
+  
+  return createBrowserClient<Database>(url, anonKey, {
+    auth: authOptions,
+  });
 }
 
 

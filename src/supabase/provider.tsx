@@ -65,10 +65,23 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     // Écouter les changements d'authentification
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsUserLoading(false);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // Gérer les différents événements d'authentification
+      if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsUserLoading(false);
+        setUserError(null);
+      } else if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsUserLoading(false);
+        setUserError(null);
+      } else {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsUserLoading(false);
+      }
     });
 
     return () => {
