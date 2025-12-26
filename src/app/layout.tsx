@@ -11,6 +11,7 @@ import { DynamicLang } from '@/components/DynamicLang';
 import { CookieConsent } from '@/components/CookieConsent';
 import { Analytics } from '@/components/Analytics';
 import { AccessibilityEnhancer } from '@/components/Accessibility';
+import { SmartsuppChat } from '@/components/SmartsuppChat';
 import { cn } from '@/lib/utils';
 
 const inter = Inter({
@@ -85,32 +86,13 @@ export default function RootLayout({
           `}
         </Script>
         
-        {/* Smartsupp Live Chat script */}
-        <Script id="smartsupp" strategy="afterInteractive">
-          {`
-            var _smartsupp = _smartsupp || {};
-            _smartsupp.key = '73deeb9e22e9bc7276f5316b34659d885fe1b613';
-            window.smartsupp||(function(d) {
-              var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-              s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-              c.type='text/javascript';c.charset='utf-8';c.async=true;
-              c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-            })(document);
-          `}
-        </Script>
-        <noscript>
-          {' '}Powered by{' '}
-          <a href="https://www.smartsupp.com" target="_blank" rel="noopener noreferrer">
-            Smartsupp
-          </a>
-        </noscript>
-        
         <AppProviders>
           <AccessibilityEnhancer />
           <Analytics 
             gaId={process.env.NEXT_PUBLIC_GA_ID}
             plausibleDomain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
           />
+          <SmartsuppChat />
           <DynamicLang />
           <div className="relative z-10 flex min-h-screen flex-col">
             <Header />
@@ -120,6 +102,12 @@ export default function RootLayout({
           <Toaster />
           <CookieConsent />
         </AppProviders>
+        <noscript>
+          {' '}Powered by{' '}
+          <a href="https://www.smartsupp.com" target="_blank" rel="noopener noreferrer">
+            Smartsupp
+          </a>
+        </noscript>
       </body>
     </html>
   );
