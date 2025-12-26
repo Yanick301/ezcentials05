@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter, Cormorant_Garamond } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
+import { Suspense } from 'react';
 import { AppProviders } from '@/components/AppProviders';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -96,7 +97,9 @@ export default function RootLayout({
           <DynamicLang />
           <div className="relative z-10 flex min-h-screen flex-col">
             <Header />
-            <main id="main-content" className="flex-grow" tabIndex={-1}>{children}</main>
+            <Suspense fallback={null}>
+              <main id="main-content" className="flex-grow" tabIndex={-1}>{children}</main>
+            </Suspense>
             <Footer />
           </div>
           <Toaster />
