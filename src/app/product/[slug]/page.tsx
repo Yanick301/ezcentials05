@@ -71,6 +71,17 @@ export default function ProductPage() {
       // Try to get from sessionStorage first (more reliable)
       // First check for stored category page state (includes pagination, filters, etc.)
       try {
+        const returnState = sessionStorage.getItem('productReturnState');
+        if (returnState) {
+          const state = JSON.parse(returnState);
+          // Use the stored URL if available and recent (within 5 minutes)
+          if (state.url && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+            setReturnUrl(state.url);
+            return; // Don't check other sources
+          }
+        }
+        
+        // Also check categoryPageState
         const categoryState = sessionStorage.getItem('categoryPageState');
         if (categoryState) {
           const state = JSON.parse(categoryState);

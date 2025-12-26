@@ -39,24 +39,32 @@ export function ProductCard({ product }: ProductCardProps) {
     return pathname + (params ? `?${params}` : '');
   }, [pathname, searchParams]);
 
-  // Store current URL and page state in sessionStorage when clicking on product
+  // Store current URL, page state, and product position when clicking on product
   const handleProductClick = useCallback(() => {
     if (typeof window !== 'undefined') {
       // Store URL
       if (currentUrl) {
         sessionStorage.setItem('productReturnUrl', currentUrl);
       }
+      // Store product ID and scroll position for return navigation
+      const scrollPosition = window.scrollY || window.pageYOffset;
+      sessionStorage.setItem('productReturnProductId', product.id);
+      sessionStorage.setItem('productReturnScroll', scrollPosition.toString());
+      
       // Also try to get category page state if available
       try {
         const categoryState = sessionStorage.getItem('categoryPageState');
         if (categoryState) {
-          sessionStorage.setItem('productReturnState', categoryState);
+          const state = JSON.parse(categoryState);
+          state.returnProductId = product.id;
+          state.returnScroll = scrollPosition;
+          sessionStorage.setItem('productReturnState', JSON.stringify(state));
         }
       } catch (e) {
         // Ignore errors
       }
     }
-  }, [currentUrl]);
+  }, [currentUrl, product.id]);
   const [reviewCount, setReviewCount] = useState(0);
   const { addToCart } = useCart();
   const { toast } = useToast();

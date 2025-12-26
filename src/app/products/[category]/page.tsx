@@ -54,7 +54,7 @@ export default function CategoryPage() {
         if (stored) {
           const state = JSON.parse(stored);
           // Only restore if it's recent (within 5 minutes) and for the same category
-          if (state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+          if (state.categorySlug === categorySlug && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
             // Clear it after reading
             sessionStorage.removeItem('productReturnState');
             return state;
@@ -228,6 +228,45 @@ export default function CategoryPage() {
     }
   }, [currentPage, sortOption, filters, categorySlug]);
 
+  // Restore scroll position and highlight product when returning from product page
+  useEffect(() => {
+    if (typeof window !== 'undefined' && restoredState) {
+      // Check if we're returning from a product page
+      const returnProductId = restoredState.returnProductId;
+      const returnScroll = restoredState.returnScroll;
+      
+      if (returnProductId) {
+        // Wait for products to render, then scroll to the product
+        setTimeout(() => {
+          const productElement = document.getElementById(`product-${returnProductId}`);
+          if (productElement) {
+            // Scroll to product with offset for header
+            const headerHeight = 80; // Approximate header height
+            const elementPosition = productElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+            
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+            
+            // Highlight the product briefly
+            productElement.classList.add('ring-2', 'ring-primary', 'ring-offset-2', 'transition-all', 'duration-500');
+            setTimeout(() => {
+              productElement.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
+            }, 2000);
+          } else if (returnScroll) {
+            // Fallback to stored scroll position
+            window.scrollTo({
+              top: parseInt(returnScroll, 10),
+              behavior: 'smooth'
+            });
+          }
+        }, 100);
+      }
+    }
+  }, [restoredState, paginatedItems]);
+
   return (
     <>
       {category && <SEOHead category={category} type="category" />}
@@ -275,7 +314,9 @@ export default function CategoryPage() {
         <>
           <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             {paginatedItems.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div key={product.id} id={`product-${product.id}`}>
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
           <Pagination
