@@ -2,9 +2,9 @@
 
 'use client';
 
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Star, ShoppingCart, MessageCircle, Edit, Trash2 } from 'lucide-react';
+import { Star, ShoppingCart, MessageCircle, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -43,6 +43,7 @@ import { getProductPrice } from '@/lib/perfume-prices';
 
 export default function ProductPage() {
   const params = useParams();
+  const router = useRouter();
   const { language } = useLanguage();
   const slug = params.slug as string;
   const [product, setProduct] = useState<Product | undefined>(undefined);
@@ -234,7 +235,18 @@ export default function ProductPage() {
     <>
       {product && <SEOHead product={product} type="product" />}
       <div className="container mx-auto px-4 py-12">
-        <Breadcrumbs items={breadcrumbs} />
+        <div className="flex items-center gap-4 mb-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <TranslatedText fr="Retour" en="Back">Zurück</TranslatedText>
+          </Button>
+          <Breadcrumbs items={breadcrumbs} className="flex-1" />
+        </div>
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
         {/* Image Gallery */}
         <div className="flex flex-col gap-4">
