@@ -58,7 +58,17 @@ export function ProductCard({ product }: ProductCardProps) {
           const state = JSON.parse(categoryState);
           state.returnProductId = product.id;
           state.returnScroll = scrollPosition;
+          state.timestamp = Date.now(); // Update timestamp
           sessionStorage.setItem('productReturnState', JSON.stringify(state));
+        } else {
+          // Create a minimal state if categoryPageState doesn't exist
+          const minimalState = {
+            url: currentUrl,
+            returnProductId: product.id,
+            returnScroll: scrollPosition,
+            timestamp: Date.now(),
+          };
+          sessionStorage.setItem('productReturnState', JSON.stringify(minimalState));
         }
       } catch (e) {
         // Ignore errors

@@ -236,33 +236,58 @@ export default function CategoryPage() {
       const returnScroll = restoredState.returnScroll;
       
       if (returnProductId) {
-        // Wait for products to render, then scroll to the product
-        setTimeout(() => {
+        // Wait for products to render, then position elegantly
+        const positionProduct = () => {
           const productElement = document.getElementById(`product-${returnProductId}`);
           if (productElement) {
-            // Scroll to product with offset for header
-            const headerHeight = 80; // Approximate header height
-            const elementPosition = productElement.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+            // Calculate position with header offset
+            const headerHeight = 100;
+            const elementRect = productElement.getBoundingClientRect();
+            const absoluteElementTop = elementRect.top + window.pageYOffset;
+            const offsetPosition = absoluteElementTop - headerHeight;
             
+            // Instant, invisible scroll - no animation
             window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
+              top: Math.max(0, offsetPosition),
+              behavior: 'auto'
             });
             
-            // Highlight the product briefly
-            productElement.classList.add('ring-2', 'ring-primary', 'ring-offset-2', 'transition-all', 'duration-500');
-            setTimeout(() => {
-              productElement.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
-            }, 2000);
+            // Elegant, subtle highlight - very professional
+            requestAnimationFrame(() => {
+              productElement.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+              productElement.style.opacity = '1';
+              productElement.style.transform = 'translateY(0)';
+              
+              // Very subtle shadow and slight elevation
+              productElement.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
+              
+              // Remove highlight gracefully after 1.2 seconds
+              setTimeout(() => {
+                productElement.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                productElement.style.boxShadow = '';
+                setTimeout(() => {
+                  productElement.style.transition = '';
+                }, 500);
+              }, 1200);
+            });
           } else if (returnScroll) {
-            // Fallback to stored scroll position
+            // Fallback: restore scroll position instantly
             window.scrollTo({
-              top: parseInt(returnScroll, 10),
-              behavior: 'smooth'
+              top: Math.max(0, parseInt(returnScroll, 10)),
+              behavior: 'auto'
             });
           }
-        }, 100);
+        };
+        
+        // Wait for DOM to be ready
+        if (paginatedItems.length > 0) {
+          // Use double requestAnimationFrame for reliable execution
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              positionProduct();
+            });
+          });
+        }
       }
     }
   }, [restoredState, paginatedItems]);
@@ -314,7 +339,11 @@ export default function CategoryPage() {
         <>
           <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             {paginatedItems.map((product) => (
-              <div key={product.id} id={`product-${product.id}`}>
+              <div 
+                key={product.id} 
+                id={`product-${product.id}`}
+                className="transition-all duration-500 ease-out"
+              >
                 <ProductCard product={product} />
               </div>
             ))}
