@@ -60,6 +60,15 @@ export default function CategoryPage() {
             return state;
           }
         }
+
+        // Fallback to categoryPageState (without removing it)
+        const categoryState = sessionStorage.getItem('categoryPageState');
+        if (categoryState) {
+          const state = JSON.parse(categoryState);
+          if (state.categorySlug === categorySlug && state.timestamp && Date.now() - state.timestamp < 5 * 60 * 1000) {
+            return state;
+          }
+        }
       } catch (e) {
         // Ignore errors
       }
@@ -211,6 +220,7 @@ export default function CategoryPage() {
   } = usePagination({
     items: products,
     itemsPerPage: ITEMS_PER_PAGE,
+    initialPage: restoredState?.currentPage || 1,
   });
 
   // Store page state in sessionStorage when it changes (for return navigation)

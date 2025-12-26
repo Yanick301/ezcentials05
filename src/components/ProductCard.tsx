@@ -39,6 +39,17 @@ export function ProductCard({ product }: ProductCardProps) {
     return pathname + (params ? `?${params}` : '');
   }, [pathname, searchParams]);
 
+  // Derive category slug from the current path if available
+  const derivedCategorySlug = useMemo(() => {
+    if (!pathname) return null;
+    const parts = pathname.split('/').filter(Boolean);
+    // Expecting /products/:category
+    if (parts[0] === 'products' && parts[1]) {
+      return parts[1];
+    }
+    return null;
+  }, [pathname]);
+
   // Store current URL, page state, and product position when clicking on product
   const handleProductClick = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -66,6 +77,7 @@ export function ProductCard({ product }: ProductCardProps) {
             url: currentUrl,
             returnProductId: product.id,
             returnScroll: scrollPosition,
+            categorySlug: derivedCategorySlug,
             timestamp: Date.now(),
           };
           sessionStorage.setItem('productReturnState', JSON.stringify(minimalState));
