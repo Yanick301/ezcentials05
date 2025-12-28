@@ -76,9 +76,9 @@ export default function RootLayout({
         {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17302770158"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
         />
-        <Script id="google-ads" strategy="afterInteractive">
+        <Script id="google-ads-config" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -86,7 +86,6 @@ export default function RootLayout({
             gtag('config', 'AW-17302770158');
           `}
         </Script>
-        
         <SmartsuppChat />
         <AppProviders>
           <AccessibilityEnhancer />
