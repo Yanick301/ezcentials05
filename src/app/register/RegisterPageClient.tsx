@@ -87,7 +87,7 @@ export default function RegisterPageClient() {
             first_name: firstName,
             last_name: lastName,
           },
-          emailRedirectTo: `${siteUrl}/auth/callback?next=/account`,
+          emailRedirectTo: `${siteUrl}/auth/callback?next=/email-confirmed&type=signup`,
         },
       });
 
