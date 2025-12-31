@@ -7,14 +7,27 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { CheckCircle, MailCheck } from 'lucide-react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 export default function EmailConfirmedPage() {
   const router = useRouter();
+  const { toast } = useToast();
 
   // Afficher un message de succès immédiatement après le chargement
   useEffect(() => {
-    // Optionnel: Ajouter un toast de succès si le système de toast est disponible
-  }, []);
+    // Afficher un toast de succès
+    toast({
+      title: <TranslatedText fr="Email confirmé !" en="Email Confirmed!">E-Mail erfolgreich bestätigt!</TranslatedText>,
+      description: <TranslatedText fr="Votre email a été validé avec succès et vous êtes maintenant connecté à votre compte." en="Your email has been successfully validated and you are now logged into your account.">Ihre E-Mail-Adresse wurde erfolgreich bestätigt und Sie sind jetzt in Ihrem Konto angemeldet.</TranslatedText>,
+    });
+    
+    // Rediriger automatiquement vers le compte après 3 secondes
+    const timer = setTimeout(() => {
+      router.push('/account');
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, [router, toast]);
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center bg-background px-4">
@@ -44,22 +57,32 @@ export default function EmailConfirmedPage() {
             </p>
             <p className="text-muted-foreground">
               <TranslatedText 
-                fr="Vous pouvez maintenant vous connecter à votre compte." 
-                en="You can now log in to your account."
+                fr="Vous êtes maintenant connecté à votre compte." 
+                en="You are now logged into your account."
               >
-                Sie können sich jetzt in Ihr Konto einloggen.
+                Sie sind jetzt in Ihrem Konto angemeldet.
               </TranslatedText>
             </p>
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-md">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                <TranslatedText 
+                  fr="Redirection vers votre compte dans quelques instants..." 
+                  en="Redirecting to your account shortly..."
+                >
+                  Weiterleitung zu Ihrem Konto erfolgt in Kürze...
+                </TranslatedText>
+              </p>
+            </div>
           </div>
           
           <div className="flex flex-col gap-3">
-            <Button asChild className="w-full">
-              <Link href="/login">
+            <Button asChild className="w-full" variant="outline">
+              <Link href="/account">
                 <TranslatedText 
-                  fr="Se connecter à mon compte" 
-                  en="Log In to My Account"
+                  fr="Accéder à mon compte maintenant" 
+                  en="Access My Account Now"
                 >
-                  In mein Konto einloggen
+                  Jetzt auf mein Konto zugreifen
                 </TranslatedText>
               </Link>
             </Button>
