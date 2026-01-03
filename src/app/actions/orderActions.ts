@@ -23,7 +23,7 @@ const createOrderInput = z.object({
 
 export async function createOrder(input: z.infer<typeof createOrderInput>) {
   try {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const validatedInput = createOrderInput.parse(input)
 
     const { data, error } = await supabase
