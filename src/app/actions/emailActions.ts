@@ -69,20 +69,20 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
     const { data, error } = await resend.emails.send({
       from: fromEmail,
       to: [adminEmail],
-      subject: `Nouveau reçu pour la commande ${orderId}`,
+      subject: `Neue Zahlungsbestätigung für Bestellung ${orderId}`,
       html: `
-        <h1>Nouveau reçu de paiement pour la commande ${escapeHtml(orderId)}</h1>
-        <p><strong>Email du client:</strong> ${escapeHtml(userEmail)}</p>
+        <h1>Neue Zahlungsbestätigung für Bestellung ${escapeHtml(orderId)}</h1>
+        <p><strong>Kunden-E-Mail:</strong> ${escapeHtml(userEmail)}</p>
 
-        <h2>Détails de la commande:</h2>
+        <h2>Bestelldetails:</h2>
         ${orderDetailsHtml}
 
-        <p>Le reçu est attaché à cet e-mail.</p>
+        <p>Der Beleg ist dieser E-Mail beigefügt.</p>
 
         <hr>
 
-        <h2>Actions de la commande :</h2>
-        <p>Veuillez confirmer ou rejeter cette commande. Le client sera notifié par e-mail.</p>
+        <h2>Bestellaktionen:</h2>
+        <p>Bitte bestätigen oder lehnen Sie diese Bestellung ab. Der Kunde wird per E-Mail benachrichtigt.</p>
         <table width="100%" cellspacing="0" cellpadding="0">
           <tr>
             <td>
@@ -90,13 +90,13 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
                 <tr>
                   <td align="center" width="200" height="40" bgcolor="#28a745" style="border-radius: 5px; color: #ffffff; display: block;">
                     <a href="${escapeHtml(confirmUrl)}" target="_blank" style="font-size: 16px; font-weight: bold; font-family: sans-serif; text-decoration: none; line-height: 40px; width: 100%; display: inline-block;">
-                      <span style="color: #ffffff;">Confirmer la commande</span>
+                      <span style="color: #ffffff;">Bestellung bestätigen</span>
                     </a>
                   </td>
                   <td width="20"></td>
                   <td align="center" width="200" height="40" bgcolor="#dc3545" style="border-radius: 5px; color: #ffffff; display: block;">
                      <a href="${escapeHtml(rejectUrl)}" target="_blank" style="font-size: 16px; font-weight: bold; font-family: sans-serif; text-decoration: none; line-height: 40px; width: 100%; display: inline-block;">
-                      <span style="color: #ffffff;">Rejeter la commande</span>
+                      <span style="color: #ffffff;">Bestellung ablehnen</span>
                     </a>
                   </td>
                 </tr>
@@ -104,9 +104,9 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
             </td>
           </tr>
         </table>
-        <p style="font-size: 12px; color: #666;">Si les boutons ne fonctionnent pas, copiez-collez les liens suivants :<br>
-           Confirmer : ${escapeHtml(confirmUrl)}<br>
-           Rejeter : ${escapeHtml(rejectUrl)}
+        <p style="font-size: 12px; color: #666;">Falls die Buttons nicht funktionieren, kopieren Sie bitte die folgenden Links:<br>
+           Bestätigen: ${escapeHtml(confirmUrl)}<br>
+           Ablehnen: ${escapeHtml(rejectUrl)}
         </p>
       `,
       attachments: [
@@ -157,16 +157,16 @@ export async function sendCustomerConfirmationEmail(
     await resend.emails.send({
       from: fromEmail,
       to: userEmail,
-      subject: `Votre commande EZCENTIALS #${orderId} est confirmée !`,
+      subject: `Ihre EZCENTIALS Bestellung #${orderId} wurde bestätigt!`,
       html: `
-                <h1>Votre commande a été validée !</h1>
-                <p>Bonjour,</p>
-                <p>Bonne nouvelle ! Votre commande <strong>#${orderId}</strong> a été validée par notre équipe.</p>
-                <p>Elle sera préparée et expédiée dans les plus brefs délais. Vous pouvez consulter le statut mis à jour dans votre historique de commandes.</p>
-                <p>Merci pour votre confiance.</p>
+                <h1>Ihre Bestellung wurde bestätigt!</h1>
+                <p>Hallo,</p>
+                <p>Gute Neuigkeiten! Ihre Bestellung <strong>#${orderId}</strong> wurde von unserem Team bestätigt.</p>
+                <p>Sie wird so schnell wie möglich vorbereitet und versendet. Sie können den aktuellen Status in Ihrer Bestellübersicht einsehen.</p>
+                <p>Vielen Dank für Ihr Vertrauen.</p>
                 <br>
-                <p>Cordialement,</p>
-                <p>L'équipe EZCENTIALS</p>
+                <p>Mit freundlichen Grüßen,</p>
+                <p>Ihr EZCENTIALS Team</p>
             `,
     })
     return { success: true, error: null }
@@ -198,17 +198,17 @@ export async function sendCustomerRejectionEmail(
     await resend.emails.send({
       from: fromEmail,
       to: userEmail,
-      subject: `Information concernant votre commande EZCENTIALS #${orderId}`,
+      subject: `Information zu Ihrer EZCENTIALS Bestellung #${orderId}`,
       html: `
-                <h1>Un problème est survenu avec votre commande</h1>
-                <p>Bonjour,</p>
-                <p>Nous vous contactons concernant votre commande <strong>#${orderId}</strong>.</p>
-                <p>Malheureusement, nous n'avons pas pu valider votre paiement et votre commande a été rejetée. Vous pouvez consulter le statut mis à jour dans votre historique de commandes.</p>
-                <p>Nous vous invitons à contacter notre support client à <a href="mailto:contact-support@ezcentials.com">contact-support@ezcentials.com</a> pour plus d'informations ou pour tenter de finaliser votre commande à nouveau.</p>
-                <p>Nous nous excusons pour ce désagrément.</p>
+                <h1>Es gibt ein Problem mit Ihrer Bestellung</h1>
+                <p>Hallo,</p>
+                <p>Wir kontaktieren Sie bezüglich Ihrer Bestellung <strong>#${orderId}</strong>.</p>
+                <p>Leider konnten wir Ihre Zahlung nicht validieren und Ihre Bestellung wurde abgelehnt. Sie können den aktuellen Status in Ihrer Bestellübersicht einsehen.</p>
+                <p>Wir laden Sie ein, unseren Kundensupport unter <a href="mailto:contact-support@ezcentials.com">contact-support@ezcentials.com</a> zu kontaktieren, um weitere Informationen zu erhalten oder zu versuchen, Ihre Bestellung erneut abzuschließen.</p>
+                <p>Wir entschuldigen uns für die Unannehmlichkeiten.</p>
                 <br>
-                <p>Cordialement,</p>
-                <p>L'équipe EZCENTIALS</p>
+                <p>Mit freundlichen Grüßen,</p>
+                <p>Ihr EZCENTIALS Team</p>
             `,
     })
     return { success: true, error: null }

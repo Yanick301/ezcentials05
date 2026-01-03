@@ -1,7 +1,13 @@
 
 'use client';
 
-import Link from 'next/link';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useSupabase } from '@/supabase';
+import { useToast } from '@/hooks/use-toast';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Card,
   CardContent,
@@ -10,139 +16,170 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { TranslatedText } from '@/components/TranslatedText';
-import { useSupabase, useUser } from '@/supabase';
-import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/context/LanguageContext';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { MailCheck } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { MailCheck, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
-export default function VerifyEmailPage() {
+const otpSchemaDE = z.object({
+  otp: z.string().length(6, { message: 'Der Code muss genau 6 Ziffern lang sein.' }),
+});
+
+type OtpFormValues = z.infer<typeof otpSchemaDE>;
+
+function VerifyEmailForm() {
   const { supabase } = useSupabase();
-  const { user, isUserLoading } = useUser();
-  const { toast } = useToast();
-  const { language } = useLanguage();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
   const [isResending, setIsResending] = useState(false);
+  const email = searchParams.get('email') || '';
 
-  // This effect will run when the user's auth state changes.
-  // If their email becomes verified, it will redirect them.
-  useEffect(() => {
-    // We check `user` directly. If it exists and email_confirmed_at is set, we redirect.
-    if (user?.email_confirmed_at) {
-      toast({
-        title: <TranslatedText fr="Compte vérifié !" en="Account Verified!">Konto bestätigt!</TranslatedText>,
-        description: <TranslatedText fr="Vous allez être redirigé..." en="Redirecting...">Sie werden weitergeleitet...</TranslatedText>,
-      });
-      router.push('/account');
-    }
-  }, [user, language, router, toast]);
+  const form = useForm<OtpFormValues>({
+    resolver: zodResolver(otpSchemaDE),
+    defaultValues: {
+      otp: '',
+    },
+  });
 
-  const handleResendEmail = async () => {
-    if (!supabase) {
-        toast({
-            variant: "destructive",
-            title: <TranslatedText fr="Erreur de configuration" en="Configuration Error">Konfigurationsfehler</TranslatedText>,
-            description: <TranslatedText fr="Les services Supabase ne sont pas disponibles." en="Supabase services are not available.">Supabase-Dienste sind nicht verfügbar.</TranslatedText>,
-        });
-        return;
-    }
-    
-    if (!user || !user.email) {
-        toast({
-            variant: "destructive",
-            title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,
-            description: <TranslatedText fr="Aucun utilisateur connecté." en="No user logged in.">Kein Benutzer angemeldet.</TranslatedText>,
-        });
-        return;
-    }
-    
-    setIsResending(true);
+  const onSubmit: SubmitHandler<OtpFormValues> = async (data) => {
+    if (!supabase) return;
+
     try {
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-      const { error } = await supabase.auth.resend({
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: data.otp,
         type: 'signup',
-        email: user.email,
-        options: {
-          emailRedirectTo: `${siteUrl}/auth/callback?next=/account`,
-        },
       });
-      
-      if (error) {
-        throw error;
-      }
-      
+
+      if (error) throw error;
+
       toast({
-        title: <TranslatedText fr="E-mail renvoyé" en="Email Resent">E-Mail erneut gesendet</TranslatedText>,
-        description: <TranslatedText fr="Un nouveau lien de vérification a été envoyé à votre adresse e-mail." en="A new verification link has been sent to your email address.">Ein neuer Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.</TranslatedText>,
+        title: "Konto bestätigt!",
+        description: "Ihre E-Mail wurde erfolgreich verifiziert.",
       });
+
+      router.push('/account');
     } catch (error: any) {
-      console.error('Error resending confirmation email:', error);
-      const errorMessage = error.message || (
-        language === 'fr' ? 'Une erreur s\'est produite lors de l\'envoi de l\'e-mail.' : 
-        language === 'en' ? 'An error occurred while sending the email.' : 
-        'Beim Senden der E-Mail ist ein Fehler aufgetreten.'
-      );
+      console.error('OTP verification error:', error);
       toast({
         variant: 'destructive',
-        title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,
-        description: errorMessage,
+        title: "Verifizierung fehlgeschlagen",
+        description: "Der eingegebene Code ist ungültig oder abgelaufen.",
       });
-    } finally {
-        setIsResending(false);
     }
   };
 
-  // While supabase is checking auth state, we can show a simple loader.
-  if (isUserLoading) {
-      return (
-          <div className="flex min-h-[80vh] items-center justify-center">
-              <p>
-                <TranslatedText fr="Chargement..." en="Loading...">Laden...</TranslatedText>
-              </p>
-          </div>
-      )
-  }
+  const handleResend = async () => {
+    if (!supabase || !email) return;
 
-  // If user is already verified (e.g. they came back to this page), they'll be redirected by the useEffect.
-  // We can show a message while that happens.
-  if (user?.email_confirmed_at) {
-       return (
-          <div className="flex min-h-[80vh] items-center justify-center">
-              <p><TranslatedText fr="Compte déjà vérifié. Redirection..." en="Account already verified. Redirecting...">Konto bereits bestätigt. Weiterleitung...</TranslatedText></p>
-          </div>
-      )
-  }
+    setIsResending(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Code erneut gesendet",
+        description: "Ein neuer Verifizierungscode wurde an Ihre E-Mail gesendet.",
+      });
+    } catch (error: any) {
+      console.error('Resend error:', error);
+      toast({
+        variant: 'destructive',
+        title: "Fehler",
+        description: "Beim Senden des Codes ist un Fehler aufgetreten.",
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md text-center">
-        <CardHeader>
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+    <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-sm rounded-2xl border-none shadow-lg">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <MailCheck className="h-6 w-6" />
           </div>
-          <CardTitle className="mt-4 text-2xl font-headline">
-            <TranslatedText fr="Vérifiez votre adresse e-mail" en="Verify Your Email Address">Bestätigen Sie Ihre E-Mail-Adresse</TranslatedText>
-          </CardTitle>
+          <CardTitle className="text-2xl font-headline">Bestätigung</CardTitle>
           <CardDescription>
-            <TranslatedText fr="Nous avons envoyé un lien de vérification à votre adresse e-mail. Veuillez cliquer sur ce lien pour activer votre compte. Si vous n'avez rien reçu, vérifiez votre dossier de courrier indésirable." en="We've sent a verification link to your email address. Please click that link to activate your account. If you didn't receive anything, check your spam folder.">
-              Wir haben einen Bestätigungslink an Ihre E-Mail-Adresse gesendet. Bitte klicken Sie auf diesen Link, um Ihr Konto zu aktivieren. Wenn Sie nichts erhalten haben, überprüfen Sie Ihren Spam-Ordner.
-            </TranslatedText>
+            Geben Sie den 6-stelligen Code ein, den wir an <span className="font-semibold">{email}</span> gesendet haben.
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4">
-          <Button onClick={handleResendEmail} className="w-full" disabled={isResending}>
-            {isResending 
-                ? <TranslatedText fr="Envoi en cours..." en="Resending...">Erneutes Senden...</TranslatedText>
-                : <TranslatedText fr="Renvoyer l'e-mail de vérification" en="Resend Verification Email">Bestätigungs-E-Mail erneut senden</TranslatedText>
-            }
-          </Button>
-          <Button variant="ghost" asChild className="w-full">
-            <Link href="/login"><TranslatedText fr="Retour à la connexion" en="Back to Login">Zurück zum Login</TranslatedText></Link>
-          </Button>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="otp"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Verifizierungscode</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="000000"
+                        {...field}
+                        className="text-center text-2xl tracking-[1em]"
+                        maxLength={6}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="space-y-4">
+                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Wird überprüft...
+                    </>
+                  ) : (
+                    "Konto verifizieren"
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={handleResend}
+                  disabled={isResending}
+                >
+                  Code erneut senden
+                </Button>
+              </div>
+            </form>
+          </Form>
+          <div className="mt-6 text-center text-sm">
+            <Link href="/login" className="text-muted-foreground hover:text-primary underline underline-offset-4">
+              Zurück zum Login
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-[80vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    }>
+      <VerifyEmailForm />
+    </Suspense>
   );
 }

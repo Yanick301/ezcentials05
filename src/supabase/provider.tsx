@@ -117,6 +117,7 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
             firstName: data.first_name,
             lastName: data.last_name,
             email: data.email,
+            phone: data.phone || undefined,
             photoURL: data.photo_url || undefined,
             isAdmin: data.is_admin || false,
           });
@@ -148,6 +149,7 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
               firstName: data.first_name,
               lastName: data.last_name,
               email: data.email,
+              phone: data.phone || undefined,
               photoURL: data.photo_url || undefined,
               isAdmin: data.is_admin || false,
             });
