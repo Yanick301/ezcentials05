@@ -139,13 +139,13 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
       const orderDetailsHtml = `
         <ul>
           ${order.items
-            .map(
-              (item) =>
-                `<li>${item.quantity} x ${item.name} - €${(
-                  item.price * item.quantity
-                ).toFixed(2)}</li>`
-            )
-            .join('')}
+          .map(
+            (item) =>
+              `<li>${item.quantity} x ${item.name} - €${(
+                item.price * item.quantity
+              ).toFixed(2)}</li>`
+          )
+          .join('')}
         </ul>
         <p><strong>Sous-total:</strong> €${order.subtotal.toFixed(2)}</p>
         <p><strong>Livraison:</strong> €${order.shipping.toFixed(2)}</p>
@@ -176,11 +176,11 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
       if (!emailResult.success) {
         // If email fails because server is not configured, show a toast but don't stop the process
         if (emailResult.error?.includes('Email server is not configured')) {
-           toast({
+          toast({
             variant: "destructive",
             title: <TranslatedText fr="Serveur d'email non configuré" en="Email server not configured">E-Mail-Server nicht konfiguriert</TranslatedText>,
             description: <TranslatedText fr="Le reçu n'a pas pu être envoyé à l'admin, mais votre commande est enregistrée." en="The receipt could not be sent to the admin, but your order is saved.">Der Beleg konnte nicht an den Administrator gesendet werden, aber Ihre Bestellung ist gespeichert.</TranslatedText>,
-           });
+          });
         } else {
           // For other email errors, show warning but don't fail the process
           console.warn('Email sending failed:', emailResult.error);
@@ -191,7 +191,7 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
           });
         }
       }
-      
+
       // Mettre à jour aussi localStorage pour compatibilité
       if (isLocalStorageAvailable()) {
         const localOrders = safeJsonParse<LocalOrder[]>(
@@ -219,7 +219,7 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
           </TranslatedText>
         ),
       })
-      
+
       onReceiptUploaded();
 
     } catch (err) {
@@ -228,12 +228,19 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
         variant: 'destructive',
         title: <TranslatedText fr="Échec" en="Failed">Fehlgeschlagen</TranslatedText>,
         description: (
-          <TranslatedText
-            fr="Erreur lors de l’envoi. Réessayez."
-            en="Error sending. Please try again."
-          >
-            Fehler beim Senden. Bitte versuchen Sie es erneut.
-          </TranslatedText>
+          <div className="flex flex-col gap-1">
+            <TranslatedText
+              fr="Erreur lors de l’envoi. Réessayez."
+              en="Error sending. Please try again."
+            >
+              Fehler beim Senden. Bitte versuchen Sie es erneut.
+            </TranslatedText>
+            {err instanceof Error && (
+              <span className="font-mono text-[10px] opacity-70">
+                {err.message}
+              </span>
+            )}
+          </div>
         ),
       })
     } finally {
