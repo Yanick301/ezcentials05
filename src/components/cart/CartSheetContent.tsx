@@ -11,6 +11,9 @@ import { findProductImage } from '@/lib/image-utils';
 import { useLanguage } from '@/context/LanguageContext';
 import type { Color } from '@/lib/types';
 import { getProductPrice } from '@/lib/perfume-prices';
+import { useCart } from '@/context/CartContext';
+import { SheetClose as PrimitiveSheetClose } from '@/components/ui/sheet';
+import React from 'react';
 
 
 const SheetClose = ({
@@ -19,9 +22,9 @@ const SheetClose = ({
 }: {
   children: React.ReactNode;
 }) => (
-  <DialogClose {...props} asChild>
+  <PrimitiveSheetClose {...props} asChild>
     {children}
-  </DialogClose>
+  </PrimitiveSheetClose>
 );
 
 export function CartSheetContent() {
@@ -82,12 +85,11 @@ export function CartSheetContent() {
         <div className="flex flex-col gap-6 py-4">
           {cartItems.map((item) => {
             // Safety check: if product data is missing, skip this item or show error.
-            // Ideally we should filter these out or handle them gracefully
             if (!item.product) return null;
 
-            const imageToUse = item.product.images && item.product.images.length > 0
-              ? item.product.images[0]
-              : null;
+            // Defensive check for images array
+            const images = Array.isArray(item.product.images) ? item.product.images : [];
+            const imageToUse = images.length > 0 ? images[0] : null;
             const productImage = findProductImage(imageToUse || '');
 
             const translatedColor = getTranslatedColor(item.color);

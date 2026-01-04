@@ -48,7 +48,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         item.product.slug &&
         typeof item.product.price === 'number' &&
         item.product.name &&
-        typeof item.quantity === 'number'
+        typeof item.quantity === 'number' &&
+        // Ensure images is either undefined or an array
+        (!item.product.images || Array.isArray(item.product.images))
       );
       setCartItems(validItems);
     }
