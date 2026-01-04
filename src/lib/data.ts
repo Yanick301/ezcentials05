@@ -1,13 +1,14 @@
 
 import type { Product, Category, Review, Color } from './types';
+import availableImages from './available-images.json';
 
 export const categories: Category[] = [
-  { 
-    id: 'cat-1', 
-    name: 'Herren', 
-    name_fr: 'Homme', 
-    name_en: 'Men', 
-    slug: 'mens-clothing', 
+  {
+    id: 'cat-1',
+    name: 'Herren',
+    name_fr: 'Homme',
+    name_en: 'Men',
+    slug: 'mens-clothing',
     imageId: 'mens-category',
     subcategories: [
       { id: 'sub-homme-1', name: 'Hemden', name_fr: 'Chemises', name_en: 'Shirts', slug: 'chemises-homme' },
@@ -17,12 +18,12 @@ export const categories: Category[] = [
       { id: 'sub-homme-4', name: 'Zubehör', name_fr: 'Accessoires', name_en: 'Accessories', slug: 'accessoires-homme' },
     ]
   },
-  { 
-    id: 'cat-2', 
-    name: 'Damen', 
-    name_fr: 'Femme', 
-    name_en: 'Women', 
-    slug: 'womens-clothing', 
+  {
+    id: 'cat-2',
+    name: 'Damen',
+    name_fr: 'Femme',
+    name_en: 'Women',
+    slug: 'womens-clothing',
     imageId: 'womens-category',
     subcategories: [
       { id: 'sub-femme-1', name: 'Kleider', name_fr: 'Robes', name_en: 'Dresses', slug: 'robes-femme' },
@@ -37,12 +38,12 @@ export const categories: Category[] = [
   { id: 'cat-7', name: 'Parfüm', name_fr: 'Parfum', name_en: 'Perfume', slug: 'perfume', imageId: 'perfume-category' },
   { id: 'cat-8', name: 'Garmin Uhren', name_fr: 'Montre Garmin', name_en: 'Garmin Watch', slug: 'garmin-watch', imageId: 'garmin-watch-category' },
   { id: 'cat-5', name: 'Schuhe', name_fr: 'Chaussures', name_en: 'Shoes', slug: 'shoes', imageId: 'shoes-category' },
-  { 
-    id: 'cat-4', 
-    name: 'Jahreszeiten', 
-    name_fr: 'Saisons', 
-    name_en: 'Seasons', 
-    slug: 'winter-clothing', 
+  {
+    id: 'cat-4',
+    name: 'Jahreszeiten',
+    name_fr: 'Saisons',
+    name_en: 'Seasons',
+    slug: 'winter-clothing',
     imageId: 'winter-category',
     subcategories: [
       { id: 'sub-saison-1', name: 'Frühling', name_fr: 'Printemps', name_en: 'Spring', slug: 'printemps' },
@@ -51,12 +52,12 @@ export const categories: Category[] = [
       { id: 'sub-saison-4', name: 'Winter', name_fr: 'Hiver', name_en: 'Winter', slug: 'hiver' },
     ]
   },
-  { 
-    id: 'cat-6', 
-    name: 'Sport', 
-    name_fr: 'Sport', 
-    name_en: 'Sport', 
-    slug: 'sport', 
+  {
+    id: 'cat-6',
+    name: 'Sport',
+    name_fr: 'Sport',
+    name_en: 'Sport',
+    slug: 'sport',
     imageId: 'sport-category',
     subcategories: [
       { id: 'sub-sport-1', name: 'Sportbekleidung', name_fr: 'Vêtements', name_en: 'Clothing', slug: 'vetements-sport' },
@@ -66,7 +67,7 @@ export const categories: Category[] = [
   },
 ];
 
-export const products: Product[] = [
+const rawProducts: Product[] = [
   {
     id: 'manteau-laine-premium',
     name: 'Langer Mantel aus Premium-Wolle',
@@ -81,7 +82,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['manteau-laine-premium'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'pull-cachemire-femme',
@@ -96,7 +97,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['pull-cachemire-femme'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },],
+    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },],
   },
   {
     id: 'robe-satinee-noire',
@@ -113,7 +114,7 @@ export const products: Product[] = [
     sizes: ['XS', 'S', 'M'],
     colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
-    {
+  {
     id: '1',
     name: 'Gucci Seiden-Midikleid',
     name_fr: 'Robe midi en soie Gucci',
@@ -205,8 +206,8 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['t-shirt-brode-logo-gucci'],
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    
-    colors: [{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White'}, {name_de: 'Schwarz', name_fr: 'Noir', name_en: 'BLACK'}, {name_de: 'Beige', name_fr: 'Beige', name_en: 'Geige' }],
+
+    colors: [{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'BLACK' }, { name_de: 'Beige', name_fr: 'Beige', name_en: 'Geige' }],
   },
   {
     id: 'prod-25',
@@ -223,7 +224,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['pull-col-bateau-manches-ballon-chloe'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Weinrot', name_fr: 'ROUGE AU VIN', name_en: 'Wine red' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'Weinrot', name_fr: 'ROUGE AU VIN', name_en: 'Wine red' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
     id: 'prod-26',
@@ -238,7 +239,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['robe-chemise-oversize-balenciaga'],
     sizes: ['Taille Unique'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weinrot', name_fr: 'ROUGE AU VIN', name_en: 'Wine red' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weinrot', name_fr: 'ROUGE AU VIN', name_en: 'Wine red' }],
   },
   {
     id: 'prod-27',
@@ -318,7 +319,7 @@ export const products: Product[] = [
     category: 'mens-clothing',
     images: ['polo-pique-ralph-lauren'],
     sizes: ['M', 'L', 'XL', 'XXL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'prod-32',
@@ -335,7 +336,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['pull-col-roule-cachemire-loro-piana'],
     sizes: ['M', 'L', 'XL'],
-    colors: [{ name_de: 'kurbisorange', name_fr: 'Orange citrouille', name_en: 'Pumpkin orange' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'kurbisorange', name_fr: 'Orange citrouille', name_en: 'Pumpkin orange' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
     id: 'prod-33',
@@ -350,7 +351,7 @@ export const products: Product[] = [
     category: 'mens-clothing',
     images: ['t-shirt-col-rond-hugo-boss'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }],
   },
   {
     id: 'prod-34',
@@ -365,7 +366,7 @@ export const products: Product[] = [
     description_en: 'A versatile black cargo pant, combining utilitarian style and modern comfort. With its slim fit and practical pockets, it\'s perfect for a casual-chic urban look.',
     category: 'mens-clothing',
     images: ['pantalon-cargo-noir-homme'],
-    sizes: ['S', 'M', 'L', 'XL','XXL'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
@@ -397,7 +398,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['bomber-nylon-moncler'],
     sizes: ['M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Militärgrün', name_fr: 'Vert militaire', name_en: 'Military Green' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Militärgrün', name_fr: 'Vert militaire', name_en: 'Military Green' }],
   },
   {
     id: 'prod-37',
@@ -442,7 +443,7 @@ export const products: Product[] = [
     category: 'mens-clothing',
     images: ['costume-2-pieces-zegna'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Nachtblau', name_fr: 'Bleu nuit', name_en: 'Midnight Blue' },{ name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' }],
+    colors: [{ name_de: 'Nachtblau', name_fr: 'Bleu nuit', name_en: 'Midnight Blue' }, { name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' }],
   },
   {
     id: 'prod-40',
@@ -472,8 +473,8 @@ export const products: Product[] = [
     category: 'winter-clothing',
     subcategory: 'hiver',
     images: ['manteau-long-laine-hugo-boss'],
-    sizes: ['S', 'M', 'L', 'XL','XXL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weinrot', name_fr: 'ROUGE AU VIN', name_en: 'Wine red' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weinrot', name_fr: 'ROUGE AU VIN', name_en: 'Wine red' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'prod-42',
@@ -488,7 +489,7 @@ export const products: Product[] = [
     category: 'mens-clothing',
     images: ['t-shirt-essential-fear-of-god'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir ', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir ', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'prod-43',
@@ -504,7 +505,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['pull-laine-merinos-lacoste'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Waldgrün', name_fr: 'Vert forêt', name_en: 'Forest Green' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },],
+    colors: [{ name_de: 'Waldgrün', name_fr: 'Vert forêt', name_en: 'Forest Green' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },],
   },
   {
     id: 'prod-44',
@@ -519,7 +520,7 @@ export const products: Product[] = [
     category: 'mens-clothing',
     images: ['chemise-oversize-balenciaga'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
     id: 'prod-45',
@@ -548,7 +549,7 @@ export const products: Product[] = [
     description_en: 'Functionality meets high-end style. These technical fabric cargo shorts are both practical and trendy, featuring the brand\'s iconic logo.',
     category: 'mens-clothing',
     images: ['short-cargo-stone-island'],
-    sizes: ['S', 'M', 'L', 'XL','XXL'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }],
   },
   {
@@ -564,7 +565,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['bottines-chelsea-cuir-citadin'],
     sizes: ['40', '41', '42', '43', '44', '45'],
-    colors: [{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Schokolade', name_fr: 'Chocolat', name_en: 'Chocolat' }],
+    colors: [{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Schokolade', name_fr: 'Chocolat', name_en: 'Chocolat' }],
   },
   {
     id: 'prod-48',
@@ -580,7 +581,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['bottines-en-cuir-suede-talon-carre-paris'],
     sizes: ['36', '37', '38', '39', '40'],
-    colors: [{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Schokolade', name_fr: 'Chocolat', name_en: 'Chocolat' },{ name_de: 'Camel', name_fr: 'Camel', name_en: 'Camel' }],
+    colors: [{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Schokolade', name_fr: 'Chocolat', name_en: 'Chocolat' }, { name_de: 'Camel', name_fr: 'Camel', name_en: 'Camel' }],
   },
   {
     id: 'prod-49',
@@ -628,7 +629,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['derby-cuir-graine-elite'],
     sizes: ['41', '42', '43', '44', '45'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'prod-52',
@@ -658,7 +659,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['mocassin-tasseled-suede-club'],
     sizes: ['41', '42', '43'],
-    colors: [{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' },{ name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' }],
+    colors: [{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }, { name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' }],
   },
   {
     id: 'prod-54',
@@ -673,7 +674,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['mules-satin-talon-sculpte-diva'],
     sizes: ['37', '38', '39'],
-    colors: [{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Fuchsia', name_fr: 'Fuchsia', name_en: 'Fuchsia' }],
+    colors: [{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Fuchsia', name_fr: 'Fuchsia', name_en: 'Fuchsia' }],
   },
   {
     id: 'prod-55',
@@ -689,7 +690,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['richelieu-cousu-main-cuir-patine-souverain'],
     sizes: ['41', '42', '43', '44'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Patiniertes Bordeaux', name_fr: 'Bordeaux patiné', name_en: 'Patinated Bordeaux' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Patiniertes Bordeaux', name_fr: 'Bordeaux patiné', name_en: 'Patinated Bordeaux' }],
   },
   {
     id: 'prod-56',
@@ -704,7 +705,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['sandales-a-bride-cheville-en-cuir-serenite'],
     sizes: ['37', '38', '39', '40'],
-    colors: [{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Naturleder', name_fr: 'Cuir naturel', name_en: 'Natural Leather' }],
+    colors: [{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Naturleder', name_fr: 'Cuir naturel', name_en: 'Natural Leather' }],
   },
   {
     id: 'prod-58',
@@ -720,7 +721,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['doudoune-legere-canada-goose'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Gelb gold', name_fr: 'Jaune doré', name_en: 'YEllow gold' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Gelb gold', name_fr: 'Jaune doré', name_en: 'YEllow gold' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'prod-59',
@@ -736,7 +737,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['parka-expedition-the-north-face-black-series'],
     sizes: ['M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'prod-60',
@@ -752,7 +753,7 @@ export const products: Product[] = [
     category: 'mens-clothing',
     images: ['cardigan-zippe-cachemire-brunello-cucinelli'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' },{ name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }],
+    colors: [{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }, { name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }],
   },
   {
     id: 'doudoune-matelassee-moncler',
@@ -786,7 +787,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['pull-col-roule-laine-merinos-paul-smith'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'prod-80',
@@ -803,7 +804,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Canada_Goose_MacMillan_Parka'],
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'prod-81',
@@ -819,7 +820,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Moncler_Quilted_Hooded_Parka'],
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'prod-82',
@@ -836,7 +837,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Moose_Knuckles_Everest_Parka'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' },{ name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }, { name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'prod-83',
@@ -852,7 +853,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Woolrich_Arctic_Parka'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'prod-84',
@@ -868,7 +869,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Parajumpers_Easy_Waterproof_Parka'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }],
   },
   {
     id: 'prod-85',
@@ -885,7 +886,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['ArcTeryx_Patera_Down_Parka'],
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'prod-86',
@@ -917,7 +918,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Belstaff_Pendulum_Parka'],
     sizes: ['48', '50', '52', '54'],
-    colors: [{ name_de: 'TannenGrün', name_fr: 'Vert sapin ', name_en: 'pine Green' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'TannenGrün', name_fr: 'Vert sapin ', name_en: 'pine Green' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'prod-88',
@@ -934,7 +935,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Fjallraven_Expedition_Long_Down_Parka'],
     sizes: ['XS', 'S', 'M', 'L'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }],
   },
   {
     id: 'prod-89',
@@ -950,7 +951,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Napapijri_Skidoo_2_0_Parka'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }],
   },
   {
     id: 'prod-90',
@@ -966,7 +967,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Patagonia_Frozen_Range_3_in_1_Parka'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'prod-91',
@@ -998,8 +999,8 @@ export const products: Product[] = [
     category: 'winter-clothing',
     subcategory: 'hiver',
     images: ['Stone_Island_Cordura_Ripstop_Down_Parka'],
-    sizes: ['M', 'L', 'XL','XXL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    sizes: ['M', 'L', 'XL', 'XXL'],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'prod-93',
@@ -1032,7 +1033,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Bogner_Fire_Ice_Ski_Parka'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' },{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }],
+    colors: [{ name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }, { name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }],
   },
   {
     id: 'sport-101',
@@ -1081,7 +1082,7 @@ export const products: Product[] = [
     subcategory: 'vetements-sport',
     images: ['Alo_Yoga_Veste_Zippee'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }],
+    colors: [{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }],
   },
   {
     id: 'sport-104',
@@ -1097,7 +1098,7 @@ export const products: Product[] = [
     subcategory: 'vetements-sport',
     images: ['Alo_Yoga_Haut_Entrainement'],
     sizes: ['XS', 'S', 'M'],
-    colors: [ { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'sport-105',
@@ -1112,7 +1113,7 @@ export const products: Product[] = [
     category: 'sport',
     subcategory: 'vetements-sport',
     images: ['HAUTE_Motion_Fleece_Polaire'],
-    sizes: ['S', 'M', 'L', 'XL','XXL','3XL'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
     colors: [{ name_de: 'Unique', name_fr: 'Unique', name_en: 'Unique' }],
   },
   {
@@ -1129,7 +1130,7 @@ export const products: Product[] = [
     subcategory: 'vetements-sport',
     images: ['HAUTE_Legging_Nomad'],
     sizes: ['XS', 'S', 'M'],
-    colors: [{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }],
+    colors: [{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }],
   },
   {
     id: 'sport-107',
@@ -1145,7 +1146,7 @@ export const products: Product[] = [
     subcategory: 'vetements-sport',
     images: ['Loewe_On_Brassiere_Sport'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'sport-108',
@@ -1161,7 +1162,7 @@ export const products: Product[] = [
     subcategory: 'vetements-sport',
     images: ['Loewe_On_Legging_Actif'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'sport-109',
@@ -1193,8 +1194,8 @@ export const products: Product[] = [
     category: 'sport',
     subcategory: 'vetements-sport',
     images: ['Under_Armour_Halo_Bonded_Legging'],
-    sizes: ['S', 'M', 'L', 'XL','XXL','3XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' },{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }, { name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }],
   },
   {
     id: 'sport-111',
@@ -1209,8 +1210,8 @@ export const products: Product[] = [
     category: 'sport',
     subcategory: 'vetements-sport',
     images: ['Diesel_Sport_Track_Jacket'],
-    sizes: ['S', 'M', 'L', 'XL','XXL','3XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'sport-112',
@@ -1244,7 +1245,7 @@ export const products: Product[] = [
     subcategory: 'vetements-sport',
     images: ['Lululemon_Veste_Premium'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'sport-114',
@@ -1260,7 +1261,7 @@ export const products: Product[] = [
     category: 'sport',
     subcategory: 'vetements-sport',
     images: ['Peak_Performance_Tech_Jacket'],
-    sizes: ['S', 'M', 'L', 'XL','XXL','3XL'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
     colors: [{ name_de: 'Unique', name_fr: 'Unique', name_en: 'Unique' }],
   },
   {
@@ -1276,8 +1277,8 @@ export const products: Product[] = [
     category: 'sport',
     subcategory: 'vetements-sport',
     images: ['Craft_Running_Tech_Shirt'],
-    sizes: ['S', 'M', 'L', 'XL','XXL','3XL'],
-    colors: [{  name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue'  },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
+    colors: [{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'sport-116',
@@ -1294,7 +1295,7 @@ export const products: Product[] = [
     subcategory: 'vetements-sport',
     images: ['Gore_Wear_Cycling_Jersey'],
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' },{ name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }],
+    colors: [{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }, { name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }, { name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }],
   },
   {
     id: 'sport-117',
@@ -1326,8 +1327,8 @@ export const products: Product[] = [
     category: 'sport',
     subcategory: 'vetements-sport',
     images: ['Bogner_Ski_Parka'],
-    sizes: ['S', 'M', 'L', 'XL','XXL','3XL'],
-    colors: [{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' },{  name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' } ],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
+    colors: [{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'shoe-1',
@@ -1344,7 +1345,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Sorel_Caribou'],
     sizes: ['40', '41', '42', '43', '44', '45'],
-    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'shoe-2',
@@ -1425,7 +1426,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['The_North_Face_Chilkat_V_400'],
     sizes: ['42', '43', '44', '45'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'shoe-7',
@@ -1458,7 +1459,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['Merrell_Thermo_Chill_2_Mid'],
     sizes: ['41', '42', '43', '44', '45'],
-    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'shoe-9',
@@ -1539,7 +1540,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['sac_de_couchage3'],
     sizes: ['Standard'],
-    
+
   },
   {
     id: 'sac_de_couchage4',
@@ -1556,7 +1557,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['sac_de_couchage4'],
     sizes: ['Standard', 'Large'],
-   
+
   },
   {
     id: 'sac_hiver1',
@@ -1589,7 +1590,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['sac_hiver2'],
     sizes: ['30L', '45L'],
-    colors: [{ name_de: 'GRUN', name_fr: 'VERT', name_en: 'GRENN' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'GRUN', name_fr: 'VERT', name_en: 'GRENN' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
     id: 'sac_hiver3',
@@ -1605,7 +1606,7 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['sac_hiver3'],
     sizes: ['Unique'],
-    colors: [{ name_de: 'Weib', name_fr: 'Blanc', name_en: 'Whrite' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Grau Meliert', name_fr: 'Gris Chiné', name_en: 'Heather Gray' },{ name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Weib', name_fr: 'Blanc', name_en: 'Whrite' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Grau Meliert', name_fr: 'Gris Chiné', name_en: 'Heather Gray' }, { name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'sac_hiver4',
@@ -1621,9 +1622,9 @@ export const products: Product[] = [
     subcategory: 'hiver',
     images: ['sac_hiver4'],
     sizes: ['Unique'],
-    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }, { name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
-    {
+  {
     id: 'acc-101',
     name: 'On Silik-Sportuhr',
     name_fr: 'Montre Sport en Silicone',
@@ -1722,7 +1723,7 @@ export const products: Product[] = [
     description_en: 'A luxurious cable-knit wool beanie to keep you warm in style.',
     category: 'accessories',
     images: ['bonnet-laine-torsadee-noir-nordic-luxe'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' },{ name_de: 'Gelb', name_fr: 'Jaune', name_en: 'Yellow' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }, { name_de: 'Gelb', name_fr: 'Jaune', name_en: 'Yellow' }],
   },
   {
     id: 'acc-113',
@@ -1736,7 +1737,7 @@ export const products: Product[] = [
     description_en: 'A thick and comfortable grey beanie, a must-have for winter.',
     category: 'accessories',
     images: ['bonnet-epais-gris-winter-essential'],
-    colors: [{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
+    colors: [{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }],
   },
   {
     id: 'acc-114',
@@ -1750,7 +1751,7 @@ export const products: Product[] = [
     description_en: 'A trendy cuffed beanie for an urban and casual style.',
     category: 'accessories',
     images: ['bonnet-streetwear-a-revers-urban-knit'],
-    colors: [ { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'acc-115',
@@ -1779,7 +1780,7 @@ export const products: Product[] = [
     description_en: 'A premium leather crossbody bag for the modern professional, combining style and functionality.',
     category: 'accessories',
     images: ['sacoche-bandouliere-cuir-premium-executive-bag'],
-    colors: [{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' },{ name_de: 'Schokolade', name_fr: 'Chocolat', name_en: 'Chocolat' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'Dunkelbraun', name_fr: 'Marron foncé', name_en: 'Dark Brown' }, { name_de: 'Schokolade', name_fr: 'Chocolat', name_en: 'Chocolat' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
     id: 'acc-117',
@@ -1793,7 +1794,7 @@ export const products: Product[] = [
     description_en: 'A wool beanie with a playful faux fur pompom for a glamorous winter look.',
     category: 'accessories',
     images: ['bonnet-laine-pompon-fourrure-synthetique-cozy-glam'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }],
   },
   {
     id: 'acc-118',
@@ -1807,7 +1808,7 @@ export const products: Product[] = [
     description_en: 'A long, oversized beanie for a relaxed and chic urban look.',
     category: 'accessories',
     images: ['bonnet-long-oversize-urban-chic'],
-    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
     id: 'acc-119',
@@ -1821,9 +1822,9 @@ export const products: Product[] = [
     description_en: 'An elegantly knitted beanie adorned with pearls for a touch of winter sophistication.',
     category: 'accessories',
     images: ['bonnet-tricote-perle-winter-pearl'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }],
   },
-   {
+  {
     id: 'acc-10',
     name: 'Alpine Soft Schal',
     name_fr: 'Écharpe Alpine Soft',
@@ -1837,7 +1838,7 @@ export const products: Product[] = [
     category: 'accessories',
     images: ['echarpe-laine-vierge-premium-alpine-soft'],
     sizes: ['Unique'],
-    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'acc-11',
@@ -1852,7 +1853,7 @@ export const products: Product[] = [
     category: 'accessories',
     images: ['snood-polaire-winter-shield-premium'],
     sizes: ['Unique'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'acc-13',
@@ -1868,7 +1869,7 @@ export const products: Product[] = [
     category: 'accessories',
     images: ['gants-tactiles-thermiques-tech-gloves'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Marineblau', name_fr: 'Bleu Marine', name_en: 'Navy Blue' }],
   },
   {
     id: 'acc-23',
@@ -1883,7 +1884,7 @@ export const products: Product[] = [
     category: 'accessories',
     images: ['echarpe-oversize-fausse-fourrure-luxe-soft'],
     sizes: ['Unique'],
-    colors: [{name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown'},{ name_de: 'Cremeweiß', name_fr: 'Blanc crème', name_en: 'Cream White' }],
+    colors: [{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' }, { name_de: 'Cremeweiß', name_fr: 'Blanc crème', name_en: 'Cream White' }],
   },
   {
     id: 'acc-24',
@@ -1898,7 +1899,7 @@ export const products: Product[] = [
     category: 'accessories',
     images: ['echarpe-maille-torsadee-warm-plush'],
     sizes: ['Unique'],
-    colors: [{ name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' },{ name_de: 'Creme', name_fr: 'Crème', name_en: 'Cream' }],
+    colors: [{ name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' }, { name_de: 'Creme', name_fr: 'Crème', name_en: 'Cream' }],
   },
   {
     id: 'acc-27',
@@ -2002,7 +2003,7 @@ export const products: Product[] = [
     description_en: 'The perfect little bag to carry your essentials. Its chic design and compact size make it the ideal accessory for your outings.',
     category: 'accessories',
     images: ['petit-sac-a-main-chic-mini-glam'],
-    colors: [{ name_de: 'Gold/Beige', name_fr: 'Or/beige', name_en: 'gold/beige' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'Gold/Beige', name_fr: 'Or/beige', name_en: 'gold/beige' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
     id: 'acc-126',
@@ -2046,7 +2047,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['femme1'],
     sizes: ['36', '38', '40', '42'],
-    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' },{ name_de: 'Camel', name_fr: 'Camel', name_en: 'Camel' }],
+    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }, { name_de: 'Camel', name_fr: 'Camel', name_en: 'Camel' }],
   },
   {
     id: 'femme2',
@@ -2062,7 +2063,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['femme2'],
     sizes: ['36', '38', '40'],
-    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' },{ name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'femme3',
@@ -2078,7 +2079,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['femme3'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' },{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
+    colors: [{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }, { name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }],
   },
   {
     id: 'femme4',
@@ -2094,7 +2095,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['femme4'],
     sizes: ['S', 'M', 'L'],
-    colors: [{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' },{ name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' }],
+    colors: [{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }, { name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' }],
   },
   {
     id: 'femme5',
@@ -2110,7 +2111,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['femme5'],
     sizes: ['Taille Unique'],
-    colors: [{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' },{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' },{ name_de: 'Perlgrau', name_fr: 'Gris perle', name_en: 'Pearl Gray' }],
+    colors: [{ name_de: 'Beige', name_fr: 'Beige', name_en: 'Beige' }, { name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }, { name_de: 'Perlgrau', name_fr: 'Gris perle', name_en: 'Pearl Gray' }],
   },
   {
     id: 'femme6',
@@ -2126,7 +2127,7 @@ export const products: Product[] = [
     category: 'womens-clothing',
     images: ['femme6'],
     sizes: ['S/M', 'L/XL'],
-    colors: [{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' },{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Flaschengrün', name_fr: 'Vert bouteille', name_en: 'Bottle Green' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }],
+    colors: [{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }, { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Flaschengrün', name_fr: 'Vert bouteille', name_en: 'Bottle Green' }, { name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }],
   },
   {
     id: 'shoe-11',
@@ -2202,7 +2203,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['air_jordan_4_military_noir'],
     sizes: ['40', '41', '42', '43', '44', '45'],
-    colors: [ { name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Grau', name_fr: 'Gris', name_en: 'Gray' }],
   },
   {
     id: 'shoe-16',
@@ -2247,7 +2248,7 @@ export const products: Product[] = [
     category: 'shoes',
     images: ['kids_aire_jordan1'],
     sizes: ['38', '39', '40', '41', '42', '43', '44', '45'],
-    colors: [ { name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Blau', name_fr: 'Bleu', name_en: 'Blue' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'shoe-19',
@@ -2308,7 +2309,7 @@ export const products: Product[] = [
     subcategory: 'chaussures-sport',
     images: ['new_balance'],
     sizes: ['39', '40', '41', '42', '43', '44', '45'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Grau Meliert', name_fr: 'Gris chiné', name_en: 'Heather Gray' }],
   },
   {
     id: 'sport-120',
@@ -2356,7 +2357,7 @@ export const products: Product[] = [
     subcategory: 'chaussures-sport',
     images: ['tenis_adidas1'],
     sizes: ['39', '40', '41', '42', '43'],
-    colors: [{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' },{ name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Rot', name_fr: 'Rouge', name_en: 'Red' }, { name_de: 'Grun', name_fr: 'Vert', name_en: 'Green' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'sport-123',
@@ -2373,7 +2374,7 @@ export const products: Product[] = [
     subcategory: 'chaussures-sport',
     images: ['tenis_adidas'],
     sizes: ['40', '41', '42', '43', '44', '45', '46'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Weinrot', name_fr: 'ROUGE AU VIN', name_en: 'Wine red' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Weinrot', name_fr: 'ROUGE AU VIN', name_en: 'Wine red' }],
   },
   {
     id: 'sport-124',
@@ -2389,7 +2390,7 @@ export const products: Product[] = [
     subcategory: 'chaussures-sport',
     images: ['adidis_campus'],
     sizes: ['38', '39', '40', '41', '42', '43'],
-    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' },{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
+    colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
   {
     id: 'sport-125',
@@ -2405,7 +2406,7 @@ export const products: Product[] = [
     subcategory: 'chaussures-sport',
     images: ['adidas_superstar'],
     sizes: ['36', '37', '38', '39', '40', '41', '42', '43', '44'],
-    colors: [{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' },{ name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }],
+    colors: [{ name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }, { name_de: 'Dunkelblau', name_fr: 'Bleu foncé', name_en: 'Dark Blue' }],
   },
   {
     id: 'ensemble-hiver-luxe',
@@ -9355,6 +9356,12 @@ export const trendingProductIds: string[] = [
   'pantalon-valentino-wool-mohair',
 ];
 
+export const products = rawProducts.filter(p =>
+  p.images &&
+  p.images.length > 0 &&
+  availableImages.includes(p.images[0])
+);
+
 
 // --- Fonctions de récupération de données ---
 
@@ -9376,7 +9383,7 @@ export function getProductsByCategory(products: Product[], categorySlug: string,
   if (excludeId) {
     filteredProducts = filteredProducts.filter((p) => p.id !== excludeId);
   }
-  
+
   if (limit) {
     return filteredProducts.slice(0, limit);
   }
@@ -9385,7 +9392,7 @@ export function getProductsByCategory(products: Product[], categorySlug: string,
 }
 
 export function getProductsBySubcategory(products: Product[], categorySlug: string, subcategorySlug: string): Product[] {
-  return products.filter((p) => 
+  return products.filter((p) =>
     p.category === categorySlug && p.subcategory === subcategorySlug
   ).sort((a, b) => a.id.localeCompare(b.id));
 }
@@ -9399,8 +9406,8 @@ export function getProductById(products: Product[], id: string): Product | undef
 }
 
 export function getFeaturedProducts(products: Product[], limit: number = 4): Product[] {
-    const winterProducts = products.filter(p => p.category === 'winter-clothing' || p.name.toLowerCase().includes('winter') || p.name.toLowerCase().includes('mantel') || p.name.toLowerCase().includes('pullover'));
-    return winterProducts.sort((a, b) => a.id.localeCompare(b.id)).slice(0, limit);
+  const winterProducts = products.filter(p => p.category === 'winter-clothing' || p.name.toLowerCase().includes('winter') || p.name.toLowerCase().includes('mantel') || p.name.toLowerCase().includes('pullover'));
+  return winterProducts.sort((a, b) => a.id.localeCompare(b.id)).slice(0, limit);
 }
 
 export function getWinterSaleProducts(products: Product[], limit?: number): Product[] {
@@ -9409,6 +9416,6 @@ export function getWinterSaleProducts(products: Product[], limit?: number): Prod
   if (!limit) {
     return allSaleItems;
   }
-  
+
   return allSaleItems.slice(0, limit);
 }

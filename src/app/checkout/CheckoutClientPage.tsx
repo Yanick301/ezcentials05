@@ -1,6 +1,8 @@
 
 'use client';
 
+import { OptimizedImage } from '@/components/OptimizedImage';
+
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -506,13 +508,12 @@ export function CheckoutClientPage() {
                       return (
                         <li key={item.id} className="flex space-x-4 py-6">
                           <div className="relative h-20 w-20 flex-shrink-0">
-                            <img
+                            <OptimizedImage
                               src={image.imageUrl}
                               alt={item.product.name}
-                              className="h-full w-full rounded-md object-cover object-center"
-                              onError={(e) => {
-                                e.currentTarget.src = '/images/logo.png';
-                              }}
+                              fill
+                              sizes="80px"
+                              className="rounded-md object-cover"
                             />
                             <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
                               {item.quantity}
@@ -618,9 +619,9 @@ export function CheckoutClientPage() {
               </div>
             </aside>
           </div>
-        </form>
-      </Form>
-    </div>
+        </form >
+      </Form >
+    </div >
   );
 }
 

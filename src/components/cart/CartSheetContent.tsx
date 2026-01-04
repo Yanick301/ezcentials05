@@ -6,9 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { TranslatedText } from '@/components/TranslatedText';
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { useCart } from '@/context/CartContext';
-import { DialogClose } from '@radix-ui/react-dialog';
+import { OptimizedImage } from '@/components/OptimizedImage';
 import { findProductImage } from '@/lib/image-utils';
 import { useLanguage } from '@/context/LanguageContext';
 import type { Color } from '@/lib/types';
@@ -88,16 +86,12 @@ export function CartSheetContent() {
             return (
               <div key={item.id} className="flex items-start gap-4">
                 <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
-                  <Image
+                  <OptimizedImage
                     src={productImage.imageUrl}
                     alt={item.product.name}
                     fill
                     sizes="96px"
                     className="object-cover"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.src = '/images/logo.png';
-                    }}
                   />
                 </div>
                 <div className="flex flex-1 flex-col gap-1">
