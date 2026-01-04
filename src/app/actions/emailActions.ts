@@ -17,10 +17,17 @@ function escapeHtml(text: string): string {
 
 const SendReceiptInput = z.object({
   orderId: z.string(),
-  receiptDataUrl: z.string(),
+  receiptDataUrl: z.string().url(),
   orderDetailsHtml: z.string(),
   userEmail: z.string().email(),
   siteUrl: z.string().url(),
+  customerDetails: z.object({
+    name: z.string(),
+    address: z.string(),
+    city: z.string(),
+    zip: z.string(),
+    country: z.string(),
+  }),
 })
 
 type SendReceiptInput = z.infer<typeof SendReceiptInput>
@@ -31,7 +38,7 @@ const sendEmailToCustomerInput = z.object({
 })
 
 export async function sendReceiptEmail(input: SendReceiptInput) {
-  const { orderId, receiptDataUrl, orderDetailsHtml, userEmail, siteUrl } =
+  const { orderId, receiptDataUrl, orderDetailsHtml, userEmail, siteUrl, customerDetails } =
     SendReceiptInput.parse(input)
 
   const resendApiKey = process.env.RESEND_API_KEY
@@ -55,12 +62,10 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
   const confirmUrl = `${siteUrl}/order-status/customer-confirm?orderId=${orderId}&userEmail=${encodedUserEmail}`;
   const rejectUrl = `${siteUrl}/order-status/customer-reject?orderId=${orderId}&userEmail=${encodedUserEmail}`;
 
-  const base64Content = receiptDataUrl.split(',')[1]
-  if (!base64Content) {
-    const errorMsg = 'Invalid receipt data URI: Base64 content not found.'
-    console.error(`sendReceiptEmail Error: ${errorMsg}`)
-    return { success: false, error: errorMsg }
-  }
+  // Determine file type from URL or default to octet-stream
+  const isImage = receiptDataUrl.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/);
+  const isPdf = receiptDataUrl.toLowerCase().endsWith('.pdf');
+  const filename = `receipt-${orderId}.${isPdf ? 'pdf' : (isImage ? 'jpg' : 'bin')}`;
 
   try {
     console.log(
@@ -69,19 +74,44 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
     const { data, error } = await resend.emails.send({
       from: fromEmail,
       to: [adminEmail],
-      subject: `Neue Zahlungsbestätigung für Bestellung ${orderId}`,
+      subject: `Bestellung #${orderId} - Zahlungsnachweis`,
       html: `
-        <h1>Neue Zahlungsbestätigung für Bestellung ${escapeHtml(orderId)}</h1>
-        <p><strong>Kunden-E-Mail:</strong> ${escapeHtml(userEmail)}</p>
+        <h1>Zahlungsnachweis für Bestellung #${escapeHtml(orderId)}</h1>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+          <h2 style="margin-top: 0;">Kundeninformationen</h2>
+          <p><strong>Name:</strong> ${escapeHtml(customerDetails.name)}</p>
+          <p><strong>E-Mail:</strong> <a href="mailto:${escapeHtml(userEmail)}">${escapeHtml(userEmail)}</a></p>
+          <p><strong>Adresse:</strong><br>
+          ${escapeHtml(customerDetails.address)}<br>
+          ${escapeHtml(customerDetails.zip)} ${escapeHtml(customerDetails.city)}<br>
+          ${escapeHtml(customerDetails.country)}</p>
+        </div>
 
-        <h2>Bestelldetails:</h2>
-        ${orderDetailsHtml}
-
-        <p>Der Beleg ist dieser E-Mail beigefügt.</p>
+        <div style="margin-bottom: 20px;">
+          <h2>Bestelldetails</h2>
+          ${orderDetailsHtml}
+        </div>
 
         <hr>
 
-        <h2>Bestellaktionen:</h2>
+        <div style="margin-bottom: 20px;">
+          <h2>Zahlungsbeleg</h2>
+          <p>
+            <a href="${escapeHtml(receiptDataUrl)}" target="_blank" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+              Beleg herunterladen/ansehen
+            </a>
+          </p>
+          ${isImage ? `
+            <div style="margin-top: 15px; border: 1px solid #ddd; padding: 5px;">
+              <img src="${escapeHtml(receiptDataUrl)}" alt="Zahlungsbeleg" style="max-width: 100%; height: auto; max-height: 500px;" />
+            </div>
+          ` : ''} 
+        </div>
+
+        <hr>
+
+        <h2>Bestellaktionen</h2>
         <p>Bitte bestätigen oder lehnen Sie diese Bestellung ab. Der Kunde wird per E-Mail benachrichtigt.</p>
         <table width="100%" cellspacing="0" cellpadding="0">
           <tr>
@@ -111,8 +141,8 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
       `,
       attachments: [
         {
-          filename: `recu-${orderId}.jpg`,
-          content: base64Content,
+          filename: filename,
+          path: receiptDataUrl, // Use path for URL
         },
       ],
     })

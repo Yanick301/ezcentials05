@@ -186,10 +186,17 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
       // Envoyer l'email à l'admin
       const emailResult = await sendReceiptEmail({
         orderId: order.id,
-        receiptDataUrl: publicUrl, // Send URL instead of Base64
+        receiptDataUrl: publicUrl, // Send URL
         orderDetailsHtml,
         userEmail: order.shippingInfo.email,
         siteUrl: process.env.NEXT_PUBLIC_SITE_URL || window.location.origin,
+        customerDetails: {
+          name: order.shippingInfo.name,
+          address: order.shippingInfo.address,
+          city: order.shippingInfo.city,
+          zip: order.shippingInfo.zip,
+          country: order.shippingInfo.country,
+        }
       })
 
       if (!emailResult.success) {
