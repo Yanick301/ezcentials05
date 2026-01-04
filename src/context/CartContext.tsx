@@ -45,6 +45,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         item.id &&
         item.product &&
         item.product.id &&
+        item.product.slug &&
+        typeof item.product.price === 'number' &&
+        item.product.name &&
         typeof item.quantity === 'number'
       );
       setCartItems(validItems);
@@ -54,7 +57,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isInitialLoad && isLocalStorageAvailable()) {
-      safeSetLocalStorage(LOCAL_STORAGE_CART_KEY, JSON.stringify(cartItems));
+      // Double check validity before saving
+      const validToSave = cartItems.filter(item => item && item.product && item.product.id);
+      safeSetLocalStorage(LOCAL_STORAGE_CART_KEY, JSON.stringify(validToSave));
     }
   }, [cartItems, isInitialLoad]);
 
@@ -104,7 +109,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + getProductPrice(item.product, item.size) * item.quantity,
+    (sum, item) => {
+      const price = getProductPrice(item.product, item.size);
+      return sum + (typeof price === 'number' && !isNaN(price) ? price : 0) * item.quantity;
+    },
     0
   );
 
