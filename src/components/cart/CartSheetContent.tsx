@@ -126,7 +126,7 @@ export function CartSheetContent() {
                     </Button>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    €{getProductPrice(item.product, item.size).toFixed(2)}
+                    €{(getProductPrice(item.product, item.size) || 0).toFixed(2)}
                   </p>
                   {(item.size || translatedColor) && (
                     <p className="text-xs text-muted-foreground">
@@ -165,7 +165,7 @@ export function CartSheetContent() {
             );
           })}
         </div>
-      </ScrollArea>
+      </ScrollArea >
       <div className="border-t px-6 py-4">
         <div className="flex justify-between text-base font-medium text-foreground">
           <p>

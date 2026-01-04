@@ -35,11 +35,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setIsInitialLoad(false);
       return;
     }
-    
+
     const localData = safeGetLocalStorage(LOCAL_STORAGE_CART_KEY);
     if (localData) {
       const parsed = safeJsonParse<CartItem[]>(localData, []);
-      setCartItems(parsed);
+      // Filter out invalid items to prevent crashes
+      const validItems = parsed.filter(item =>
+        item &&
+        item.id &&
+        item.product &&
+        item.product.id &&
+        typeof item.quantity === 'number'
+      );
+      setCartItems(validItems);
     }
     setIsInitialLoad(false);
   }, []);
@@ -54,9 +62,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (item: Omit<CartItem, 'id'>) => {
       const { product, quantity, size, color } = item;
       // Create a unique ID for the cart item based on product and variants
-      const itemId = `${product.id}${size ? `-${size}` : ''}${
-        color ? `-${color}` : ''
-      }`;
+      const itemId = `${product.id}${size ? `-${size}` : ''}${color ? `-${color}` : ''
+        }`;
 
       setCartItems((prevItems) => {
         const existingItem = prevItems.find((i) => i.id === itemId);
