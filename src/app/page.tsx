@@ -21,13 +21,13 @@ import { useMemo } from 'react';
 export default function HomePage() {
   // We want 9 products in total on the homepage sale section - memoize to avoid recalculation
   const trendingProducts = useMemo(() => getTrendingProducts(products).slice(0, 9), []);
-  
+
   // Get 5 products from each category on sale (with oldPrice) for end of year promotions
   // Garmin watches first, then other categories
   const endOfYearPromoProducts = useMemo(() => {
     const categories = ['garmin-watch', 'mens-clothing', 'womens-clothing', 'accessories', 'shoes', 'sport', 'winter-clothing', 'perfume'];
     const promoByCategory: { [key: string]: typeof products } = {};
-    
+
     categories.forEach(category => {
       const categoryProducts = getProductsByCategory(products, category);
       const promoProducts = categoryProducts.filter(p => p.oldPrice).slice(0, 5);
@@ -35,10 +35,10 @@ export default function HomePage() {
         promoByCategory[category] = promoProducts;
       }
     });
-    
+
     return promoByCategory;
   }, []);
-  
+
   const testimonials = useMemo(() => [
     {
       name: 'Sophie L.',
@@ -110,7 +110,6 @@ export default function HomePage() {
             priority
             quality={90}
             onError={(e) => {
-              console.error('Failed to load header image');
               e.currentTarget.src = '/images/logo.png';
             }}
           />
@@ -118,13 +117,13 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
         <div className="container px-4 z-10">
           <p className="text-sm uppercase tracking-widest text-white/90 animate-fade-in-up font-medium">
-             <TranslatedText fr="BIENVENUE CHEZ EZCENTIALS" en="WELCOME TO EZCENTIALS">WILLKOMMEN BEI EZCENTIALS</TranslatedText>
+            <TranslatedText fr="BIENVENUE CHEZ EZCENTIALS" en="WELCOME TO EZCENTIALS">WILLKOMMEN BEI EZCENTIALS</TranslatedText>
           </p>
           <h1 className="mt-4 font-headline text-5xl sm:text-6xl md:text-8xl lg:text-9xl animate-fade-in-up drop-shadow-2xl" style={{ animationDelay: '0.2s' }}>
             <TranslatedText fr="L'Excellence du Luxe" en="The Excellence of Luxury">Die Exzellenz des Luxus</TranslatedText>
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-base md:text-lg text-white/95 animate-fade-in-up leading-relaxed" style={{ animationDelay: '0.4s' }}>
-             <TranslatedText fr="Découvrez notre sélection exclusive de vêtements et accessoires haut de gamme." en="Discover our exclusive selection of high-end clothing and accessories.">Entdecken Sie unsere exklusive Auswahl an hochwertiger Kleidung und Accessoires.</TranslatedText>
+            <TranslatedText fr="Découvrez notre sélection exclusive de vêtements et accessoires haut de gamme." en="Discover our exclusive selection of high-end clothing and accessories.">Entdecken Sie unsere exklusive Auswahl an hochwertiger Kleidung und Accessoires.</TranslatedText>
           </p>
           <Button size="lg" asChild className="mt-8 bg-white text-black hover:bg-white/90 hover:scale-105 transition-all duration-300 shadow-lg animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
             <Link href="/products/all" prefetch={true}>
@@ -136,190 +135,125 @@ export default function HomePage() {
 
       <section className="w-full bg-gradient-to-b from-background to-muted/30 py-16 lg:py-24">
         <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-                <h2 className="font-headline text-3xl md:text-5xl text-foreground mb-4">
-                    <TranslatedText fr="Menu Maison" en="Home Menu">Menu Maison</TranslatedText>
-                </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                    <TranslatedText 
-                        fr="Découvrez nos collections exclusives soigneusement sélectionnées" 
-                        en="Discover our exclusive, carefully curated collections"
-                    >
-                        Entdecken Sie unsere exklusiven, sorgfältig kuratierten Kollektionen
-                    </TranslatedText>
-                </p>
-            </div>
-             <Carousel
-                opts={{
-                    align: "start",
-                    loop: true,
-                }}
-                className="w-full"
-            >
-                <CarouselContent className="-ml-2 md:-ml-4">
-                    {[...categories].sort((a, b) => {
-                        const aHasSub = a.subcategories && a.subcategories.length > 0;
-                        const bHasSub = b.subcategories && b.subcategories.length > 0;
-                        if (aHasSub && !bHasSub) return -1;
-                        if (!aHasSub && bHasSub) return 1;
-                        return 0;
-                    }).map((category, index) => (
-                        <CarouselItem key={category.id || index} className="pl-2 md:pl-4 basis-4/5 md:basis-1/2 lg:basis-1/3">
-                             <CategoryCard 
-                                pretitle={<TranslatedText fr="CATÉGORIE" en="CATEGORY">KATEGORIE</TranslatedText>}
-                                title={<TranslatedText fr={category.name_fr} en={category.name_en}>{category.name}</TranslatedText>}
-                                description={<TranslatedText fr={`Explorez notre collection ${category.name_fr}.`} en={`Explore our ${category.name_en} collection.`}>Entdecken Sie unsere {category.name}-Kollektion.</TranslatedText>}
-                                linkText={<TranslatedText fr="EXPLORER" en="DISCOVER">ENTDECKEN</TranslatedText>}
-                                href={`/products/${category.slug}`}
-                                imageId={category.imageId}
-                            />
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-            </Carousel>
+          <div className="text-center mb-12">
+            <h2 className="font-headline text-3xl md:text-5xl text-foreground mb-4">
+              <TranslatedText fr="Menu Maison" en="Home Menu">Menu Maison</TranslatedText>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              <TranslatedText
+                fr="Découvrez nos collections exclusives soigneusement sélectionnées"
+                en="Discover our exclusive, carefully curated collections"
+              >
+                Entdecken Sie unsere exklusiven, sorgfältig kuratierten Kollektionen
+              </TranslatedText>
+            </p>
+          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {[...categories].sort((a, b) => {
+                const aHasSub = a.subcategories && a.subcategories.length > 0;
+                const bHasSub = b.subcategories && b.subcategories.length > 0;
+                if (aHasSub && !bHasSub) return -1;
+                if (!aHasSub && bHasSub) return 1;
+                return 0;
+              }).map((category, index) => (
+                <CarouselItem key={category.id || index} className="pl-2 md:pl-4 basis-4/5 md:basis-1/2 lg:basis-1/3">
+                  <CategoryCard
+                    pretitle={<TranslatedText fr="CATÉGORIE" en="CATEGORY">KATEGORIE</TranslatedText>}
+                    title={<TranslatedText fr={category.name_fr} en={category.name_en}>{category.name}</TranslatedText>}
+                    description={<TranslatedText fr={`Explorez notre collection ${category.name_fr}.`} en={`Explore our ${category.name_en} collection.`}>Entdecken Sie unsere {category.name}-Kollektion.</TranslatedText>}
+                    linkText={<TranslatedText fr="EXPLORER" en="DISCOVER">ENTDECKEN</TranslatedText>}
+                    href={`/products/${category.slug}`}
+                    imageId={category.imageId}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
       </section>
 
 
 
-      {/* Section Promotions de fin d'année - Design Sublime et Élégant */}
+      {/* Section Promotions Luxe Intemporel - Design Sublime et Magnifique */}
       {Object.keys(endOfYearPromoProducts).length > 0 && (
-        <section className="relative w-full overflow-hidden">
-          {/* Bannière Hero Élégante et Sublime */}
-          <div className="relative h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-            {/* Background avec effet de luxe premium */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-red-950/90 to-amber-950/90"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-red-900/40 via-transparent to-transparent"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-900/40 via-transparent to-transparent"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-900/30 via-transparent to-transparent"></div>
-            <div className="absolute inset-0 bg-[url('/images/products/hiver.jpg')] opacity-15 mix-blend-overlay bg-cover bg-center"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20"></div>
-            
-            {/* Effets de lumière animés élégants */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-red-500/15 rounded-full blur-[100px] animate-pulse"></div>
-              <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-amber-500/15 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '3s' }}></div>
-        </div>
-            
-            {/* Motif décoratif élégant */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-full h-full" style={{
-                backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,0.03) 35px, rgba(255,255,255,0.03) 70px)`
-              }}></div>
-        </div>
+        <section className="relative w-full overflow-hidden bg-black text-white">
+          {/* Bannière Hero Sublime - Timeless Elegance */}
+          <div className="relative h-[80vh] min-h-[700px] flex items-center justify-center overflow-hidden">
+            {/* Background avec effet de luxe absolu - Or et Noir Profond */}
+            <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-slate-950 to-black"></div>
 
-            {/* Étoiles scintillantes élégantes */}
+            {/* Effets de lumière dynamiques et subtils */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_rgba(251,191,36,0.15),_transparent_50%)]"></div>
+              <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '8s' }}></div>
+              <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '10s' }}></div>
+            </div>
+
+            {/* Particules d'or flottantes */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(40)].map((_, i) => (
+              {[...Array(30)].map((_, i) => (
                 <div
                   key={i}
-                  className="absolute"
+                  className="absolute rounded-full bg-amber-200/40 blur-[1px]"
                   style={{
                     left: `${Math.random() * 100}%`,
                     top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 4}s`,
-                    animationDuration: `${2 + Math.random() * 3}s`,
+                    width: `${Math.random() * 4 + 1}px`,
+                    height: `${Math.random() * 4 + 1}px`,
+                    animation: `float ${10 + Math.random() * 20}s linear infinite`,
+                    opacity: Math.random() * 0.5 + 0.1,
                   }}
-                >
-                  <div className="w-1.5 h-1.5 bg-amber-300 rounded-full shadow-lg shadow-amber-300/60 animate-ping"></div>
-                  <div className="absolute inset-0 w-3 h-3 border border-amber-400/30 rounded-full animate-ping" style={{ animationDelay: `${Math.random() * 2}s` }}></div>
-          </div>
-              ))}
-            </div>
-            
-            {/* Flocons de neige élégants */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(15)].map((_, i) => (
-                <div
-                  key={`snow-${i}`}
-                  className="absolute text-white/20 text-2xl animate-bounce"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${-10 + Math.random() * 20}%`,
-                    animationDelay: `${Math.random() * 5}s`,
-                    animationDuration: `${3 + Math.random() * 4}s`,
-                  }}
-                >
-                  ❄
-                </div>
+                ></div>
               ))}
             </div>
 
-            {/* Contenu de la bannière - Design Sublime */}
+            {/* Contenu Central - Typographie et Élégance */}
             <div className="container relative z-10 mx-auto px-4 text-center">
-              {/* Emojis animés élégants */}
-              <div className="inline-block mb-8">
-                <span className="text-7xl md:text-8xl lg:text-9xl animate-bounce inline-block filter drop-shadow-2xl" style={{ animationDelay: '0s', textShadow: '0 0 20px rgba(251, 191, 36, 0.5)' }}>🎄</span>
-                <span className="text-7xl md:text-8xl lg:text-9xl animate-bounce inline-block mx-4 md:mx-6 filter drop-shadow-2xl" style={{ animationDelay: '0.3s', textShadow: '0 0 20px rgba(220, 38, 38, 0.5)' }}>🎁</span>
-                <span className="text-7xl md:text-8xl lg:text-9xl animate-bounce inline-block filter drop-shadow-2xl" style={{ animationDelay: '0.6s', textShadow: '0 0 20px rgba(34, 197, 94, 0.5)' }}>✨</span>
-              </div>
-              
-              {/* Sous-titre élégant */}
-              <div className="mb-6">
-                <p className="text-sm md:text-base uppercase tracking-[0.4em] font-bold text-white/95 mb-2">
-                  <TranslatedText fr="PROMOTIONS DE FIN D'ANNÉE" en="END OF YEAR PROMOTIONS">JAHRESENDPROMOTIONEN</TranslatedText>
-                </p>
-                <div className="flex items-center justify-center gap-4 max-w-md mx-auto">
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-400/50 to-red-400"></div>
-                  <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                  <div className="flex-1 h-px bg-gradient-to-l from-transparent via-green-400/50 to-green-400"></div>
-                </div>
-              </div>
-              
-              {/* Titre principal sublime */}
-              <h1 className="font-headline text-6xl md:text-8xl lg:text-9xl xl:text-[10rem] mb-8 leading-tight">
-                <span className="relative inline-block">
-                  <span className="absolute inset-0 bg-gradient-to-r from-red-400 via-amber-300 to-green-400 blur-2xl opacity-50"></span>
-                  <span className="relative bg-gradient-to-r from-red-400 via-amber-300 to-green-400 bg-clip-text text-transparent drop-shadow-2xl">
-                    <TranslatedText fr="Soldes Exceptionnels" en="Exceptional Sales">Außergewöhnliche Angebote</TranslatedText>
-                  </span>
+              <div className="inline-block mb-6 animate-fade-in-up">
+                <span className="text-xs md:text-sm uppercase tracking-[0.5em] text-amber-400/80 font-medium border-b border-amber-400/30 pb-2">
+                  <TranslatedText fr="COLLECTION EXCLUSIVE" en="EXCLUSIVE COLLECTION">EXKLUSIVE KOLLEKTION</TranslatedText>
                 </span>
+              </div>
+
+              <h1 className="font-headline text-5xl md:text-7xl lg:text-9xl mb-6 leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-tr from-amber-100 via-amber-200 to-amber-100 drop-shadow-2xl animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                <TranslatedText fr="Luxe Intemporel" en="Timeless Luxury">Zeitloser Luxus</TranslatedText>
               </h1>
-              
-              {/* Description élégante */}
-              <p className="mt-8 max-w-4xl mx-auto text-xl md:text-2xl text-white/95 leading-relaxed font-light">
-                <TranslatedText 
-                  fr="Célébrez les fêtes avec nos promotions exclusives ! Jusqu'à -20% sur une sélection de produits de toutes les catégories." 
-                  en="Celebrate the holidays with our exclusive promotions! Up to -20% off on a selection of products from all categories."
+
+              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mb-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}></div>
+
+              <p className="max-w-3xl mx-auto text-lg md:text-2xl text-neutral-300 font-light leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+                <TranslatedText
+                  fr="L'élégance ne se démode jamais. Profitez de nos offres privilège sur une sélection de pièces d'exception."
+                  en="Elegance never goes out of style. Enjoy our privilege offers on a selection of exceptional pieces."
                 >
-                  Feiern Sie die Feiertage mit unseren exklusiven Aktionen! Bis zu -20% Rabatt auf eine Auswahl von Produkten aus allen Kategorien.
+                  Eleganz kommt nie aus der Mode. Genießen Sie unsere Vorzugsangebote für eine Auswahl außergewöhnlicher Stücke.
                 </TranslatedText>
               </p>
 
-              {/* Badge de réduction premium */}
-              <div className="mt-12 inline-block">
-                <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-red-600 via-amber-500 to-green-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="relative bg-gradient-to-r from-red-600 via-amber-500 to-green-600 text-white px-10 py-5 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-300">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl md:text-5xl font-black">-20%</span>
-                      <div className="h-12 w-px bg-white/30"></div>
-                      <span className="text-sm md:text-base uppercase tracking-widest font-semibold">
-                        <TranslatedText fr="Jusqu'à" en="Up to">Bis zu</TranslatedText>
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              <div className="mt-12 animate-fade-in-up" style={{ animationDelay: '0.7s' }}>
+                <Button asChild size="lg" className="bg-amber-500 text-black hover:bg-amber-400 px-10 py-7 text-lg rounded-full shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-500 hover:scale-105 hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] border border-amber-300/20">
+                  <Link href="#promotions">
+                    <TranslatedText fr="Découvrir l'Excellence" en="Discover Excellence">Exzellenz entdecken</TranslatedText>
+                  </Link>
+                </Button>
               </div>
-            </div>
-
-            {/* Vague décorative en bas */}
-            <div className="absolute bottom-0 left-0 right-0">
-              <svg className="w-full h-24 md:h-32" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M0,60 C300,100 600,20 900,60 C1050,80 1150,40 1200,60 L1200,120 L0,120 Z" fill="currentColor" className="text-background"></path>
-              </svg>
             </div>
           </div>
 
-          {/* Contenu principal */}
-          <div className="relative bg-background py-16 lg:py-24">
-            {/* Effet de fond subtil */}
-            <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/30 to-background"></div>
-            
+          {/* Section Produits - Design Épuré et Premium */}
+          <div id="promotions" className="relative bg-neutral-950 py-20 lg:py-32">
+            {/* Dégradé subtil de fond */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(30,41,59,0.3),_transparent)]"></div>
+
             <div className="container relative z-10 mx-auto px-4">
 
-              {/* Produits par catégorie - Garmin en premier */}
               {Object.entries(endOfYearPromoProducts).map(([category, categoryProducts], categoryIndex) => {
                 const categoryInfo = categories.find(c => c.slug === category);
                 if (!categoryInfo || categoryProducts.length === 0) return null;
@@ -327,133 +261,90 @@ export default function HomePage() {
                 const isGarmin = category === 'garmin-watch';
 
                 return (
-                  <div key={category} className={`mb-20 last:mb-0 ${isGarmin ? 'relative' : ''}`}>
-                    {/* Bannière de catégorie élégante */}
-                    <div className={`relative mb-12 ${isGarmin ? 'bg-gradient-to-r from-amber-50 via-red-50 to-green-50 dark:from-amber-950/40 dark:via-red-950/30 dark:to-green-950/40 rounded-2xl p-8 md:p-12 border-2 border-amber-300/50 shadow-xl' : 'bg-muted/50 rounded-xl p-6 md:p-8'}`}>
-                      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-4">
-                          {isGarmin && (
-                            <div className="text-5xl md:text-6xl animate-pulse">⌚</div>
-                          )}
-                          <div>
-                            <h3 className={`text-2xl md:text-4xl font-bold ${isGarmin ? 'bg-gradient-to-r from-red-600 via-amber-600 to-green-600 bg-clip-text text-transparent' : 'text-foreground'}`}>
-                              <TranslatedText fr={categoryInfo.name_fr} en={categoryInfo.name_en}>
-                                {categoryInfo.name}
-                              </TranslatedText>
-                            </h3>
-                            {isGarmin && (
-                              <p className="mt-2 text-sm md:text-base font-semibold bg-gradient-to-r from-red-600 to-amber-600 bg-clip-text text-transparent">
-                                <TranslatedText fr="⭐ Collection Premium en Promotion ⭐" en="⭐ Premium Collection on Sale ⭐">
-                                  ⭐ Premium-Kollektion im Angebot ⭐
-                                </TranslatedText>
-                              </p>
-                            )}
-                          </div>
-                          {isGarmin && (
-                            <div className="text-5xl md:text-6xl animate-pulse" style={{ animationDelay: '0.5s' }}>✨</div>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="h-px w-12 bg-gradient-to-r from-transparent to-red-400"></div>
-                          <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                            <TranslatedText fr={`${categoryProducts.length} Produits`} en={`${categoryProducts.length} Products`}>
-                              {categoryProducts.length} Produkte
-                            </TranslatedText>
-                          </span>
-                          <div className="h-px w-12 bg-gradient-to-l from-transparent to-green-400"></div>
-                        </div>
+                  <div key={category} className="mb-24 last:mb-0">
+                    {/* En-tête de catégorie minimaliste */}
+                    <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-12 border-b border-white/10 pb-6">
+                      <div>
+                        <p className="text-amber-500 text-sm font-medium uppercase tracking-widest mb-2">
+                          <TranslatedText fr="SÉLECTION" en="SELECTION">AUSWAHL</TranslatedText>
+                        </p>
+                        <h3 className="text-3xl md:text-5xl font-light text-white">
+                          <TranslatedText fr={categoryInfo.name_fr} en={categoryInfo.name_en}>
+                            {categoryInfo.name}
+                          </TranslatedText>
+                        </h3>
                       </div>
+                      <Link href={`/products/${category}`} className="text-amber-400 hover:text-amber-300 transition-colors text-sm uppercase tracking-widest flex items-center gap-2 group">
+                        <TranslatedText fr="Voir toute la collection" en="View full collection">Ganzen Kollektion ansehen</TranslatedText>
+                        <span className="transform transition-transform group-hover:translate-x-1">→</span>
+                      </Link>
                     </div>
 
-                    {/* Grille de produits élégante */}
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                    {/* Grille de produits design galerie */}
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                       {categoryProducts.map((product, index) => {
                         const discount = product.oldPrice ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
                         return (
-                          <div 
-                            key={product.id} 
-                            className={`group animate-fade-in-up transform transition-all duration-500 hover:scale-105 hover:-translate-y-2 ${isGarmin ? 'hover:shadow-2xl hover:shadow-amber-500/20' : 'hover:shadow-xl'}`}
-                            style={{ animationDelay: `${(categoryIndex * 0.3) + (index * 0.1)}s` }}
+                          <div
+                            key={product.id}
+                            className="group relative"
+                            style={{ animationDelay: `${(categoryIndex * 0.2) + (index * 0.1)}s` }}
                           >
-                            <div className="relative h-full">
-                              {/* Badge promotion élégant */}
-                              <div className={`absolute -top-3 -right-3 z-30 ${isGarmin ? 'bg-gradient-to-br from-red-600 via-amber-500 to-green-600' : 'bg-gradient-to-br from-red-600 to-amber-600'} text-white font-bold px-3 py-1.5 rounded-full shadow-2xl transform group-hover:scale-110 transition-transform duration-300`}>
-                                <div className="text-xs md:text-sm">-{discount}%</div>
-                              </div>
-                              
-                              {/* Badge "PROMO" */}
-                              <div className={`absolute -top-3 -left-3 z-30 bg-gradient-to-r ${isGarmin ? 'from-amber-500 to-green-500' : 'from-red-500 to-amber-500'} text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg uppercase tracking-wider`}>
-                                <TranslatedText fr="PROMO" en="SALE">ANGEBOT</TranslatedText>
+                            <div className="relative overflow-hidden rounded-sm bg-neutral-900 border border-white/5 transition-all duration-500 group-hover:border-amber-500/30 group-hover:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]">
+
+                              {/* Badge Luxe */}
+                              <div className="absolute top-0 right-0 z-20 bg-amber-500 text-black text-xs font-bold px-3 py-1">
+                                -{discount}%
                               </div>
 
-                              <div className={`h-full ${isGarmin ? 'border-2 border-amber-200/50 rounded-xl overflow-hidden bg-gradient-to-br from-amber-50/30 to-green-50/30 dark:from-amber-950/20 dark:to-green-950/20' : 'rounded-lg overflow-hidden'}`}>
+                              <div className="relative aspect-[3/4] overflow-hidden transition-opacity duration-500">
                                 <ProductCard product={product} />
+                                {/* Overlay gradient au hover */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                               </div>
                             </div>
                           </div>
                         );
                       })}
                     </div>
-
-                    {/* Bouton de catégorie élégant */}
-                    <div className="mt-10 text-center">
-                      <Button 
-                        asChild 
-                        variant="outline" 
-                        size="lg"
-                        className={`border-2 transition-all duration-300 hover:scale-105 ${isGarmin 
-                          ? 'border-amber-500 text-amber-600 hover:bg-gradient-to-r hover:from-red-500 hover:via-amber-500 hover:to-green-500 hover:text-white hover:border-transparent bg-gradient-to-r from-red-50/50 to-green-50/50 dark:from-red-950/30 dark:to-green-950/30 shadow-lg' 
-                          : 'border-red-500 text-red-600 hover:bg-red-500 hover:text-white shadow-md'
-                        }`}
-                      >
-                        <Link href={`/products/${category}`} prefetch={true}>
-                          <TranslatedText fr={`Voir tous les produits ${categoryInfo.name_fr}`} en={`View All ${categoryInfo.name_en} Products`}>
-                            Alle {categoryInfo.name} Produkte anzeigen
-                          </TranslatedText>
-                        </Link>
-                      </Button>
-                    </div>
                   </div>
                 );
               })}
 
-              {/* Bannière CTA finale élégante */}
-              <div className="mt-20 relative overflow-hidden rounded-3xl bg-gradient-to-r from-red-600 via-amber-500 to-green-600 p-1">
-                <div className="relative bg-background rounded-3xl p-8 md:p-12">
-                  <div className="text-center">
-                    <h3 className="text-2xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-red-600 via-amber-600 to-green-600 bg-clip-text text-transparent">
-                      <TranslatedText fr="Découvrez Toutes Nos Promotions" en="Discover All Our Promotions">
-                        Entdecken Sie Alle Unsere Angebote
-                      </TranslatedText>
-                    </h3>
-                    <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                      <TranslatedText 
-                        fr="Explorez notre collection complète de produits en promotion. Des offres exceptionnelles vous attendent !" 
-                        en="Explore our complete collection of products on sale. Exceptional offers await you!"
-                      >
-                        Erkunden Sie unsere vollständige Kollektion von Produkten im Angebot. Außergewöhnliche Angebote warten auf Sie!
-                      </TranslatedText>
-                    </p>
-                    <Button 
-                      asChild 
-                      size="lg" 
-                      className="bg-gradient-to-r from-red-600 via-amber-500 to-green-600 hover:from-red-700 hover:via-amber-600 hover:to-green-700 text-white shadow-2xl transform transition-all duration-300 hover:scale-105 px-8 py-6 text-lg"
+              {/* Bannière Finale - Invitation au Voyage */}
+              <div className="mt-32 relative overflow-hidden rounded-2xl bg-gradient-to-r from-neutral-900 to-neutral-800 border border-white/5 p-12 md:p-24 text-center">
+                <div className="absolute inset-0 bg-[url('/images/pattern-luxury.png')] opacity-5 mix-blend-overlay"></div>
+                <div className="relative z-10">
+                  <h3 className="font-headline text-4xl md:text-6xl text-white mb-6">
+                    <TranslatedText fr="L'Art de Vivre" en="The Art of Living">Die Kunst zu leben</TranslatedText>
+                  </h3>
+                  <p className="text-neutral-400 max-w-2xl mx-auto text-lg mb-10 font-light">
+                    <TranslatedText
+                      fr="Inscrivez-vous à notre newsletter privée pour accéder à nos ventes exclusives et nouvelles collections en avant-première."
+                      en="Subscribe to our private newsletter to access our exclusive sales and new collections in preview."
                     >
-                      <Link href="/products/all" prefetch={true}>
-                        <TranslatedText fr="Voir toutes les promotions" en="View All Promotions">
-                          Alle Angebote anzeigen
-                        </TranslatedText>
-                      </Link>
-            </Button>
-                  </div>
+                      Abonnieren Sie unseren privaten Newsletter, um Zugang zu unseren exklusiven Verkäufen und neuen Kollektionen in der Vorschau zu erhalten.
+                    </TranslatedText>
+                  </p>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="border-amber-500/50 text-amber-500 hover:bg-amber-500 hover:text-black transition-all duration-300 uppercase tracking-widest text-sm"
+                  >
+                    <Link href="/register">
+                      <TranslatedText fr="Devenir Membre" en="Become a Member">Mitglied werden</TranslatedText>
+                    </Link>
+                  </Button>
                 </div>
               </div>
+
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       )}
 
-      <CollectionHighlight 
+      <CollectionHighlight
         supertitle={<TranslatedText fr="COLLECTION HIVER" en="WINTER COLLECTION">WINTER KOLLEKTION</TranslatedText>}
         title={<TranslatedText fr="Élégance Hivernale" en="Winter Elegance">Winterliche Eleganz</TranslatedText>}
         description={<TranslatedText fr="Nos collections d'hiver allient confort, chaleur et style intemporel. Chaque pièce est sélectionnée pour sa qualité exceptionnelle et ses finitions impeccables." en="Our winter collections combine comfort, warmth, and timeless style. Each piece is selected for its exceptional quality and flawless finishes.">Unsere Winterkollektionen vereinen Komfort, Wärme und zeitlosen Stil. Jedes Stück wird aufgrund seiner außergewöhnlichen Qualität und tadellosen Verarbeitung ausgewählt.</TranslatedText>}
@@ -466,7 +357,7 @@ export default function HomePage() {
           'blouson-cuir-saint-laurent',
           'robe-longue-en-velours-valentino',
           'bottines-chelsea-cuir-citadin',
-           'montre-sport-silicone-hydrosport-5-atm'
+          'montre-sport-silicone-hydrosport-5-atm'
         ]}
         primaryActionLink="/products/winter-clothing"
         primaryActionText={<TranslatedText fr="Voir la Collection" en="View the Collection">Kollektion ansehen</TranslatedText>}
@@ -474,14 +365,14 @@ export default function HomePage() {
         secondaryActionText={<TranslatedText fr="Explorer" en="Explore">Erkunden</TranslatedText>}
       />
 
-       <section className="bg-background py-16 lg:py-24">
+      <section className="bg-background py-16 lg:py-24">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="text-center">
             <h2 className="font-headline text-3xl md:text-5xl text-foreground">
-                <TranslatedText fr="L'Expérience EZCENTIALS" en="The EZCENTIALS Experience">Das EZCENTIALS Erlebnis</TranslatedText>
+              <TranslatedText fr="L'Expérience EZCENTIALS" en="The EZCENTIALS Experience">Das EZCENTIALS Erlebnis</TranslatedText>
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-                <TranslatedText fr="Plus qu'une marque, une promesse de qualité, de durabilité et d'élégance." en="More than a brand, a promise of quality, sustainability, and elegance.">Mehr als eine Marke, ein Versprechen von Qualität, Nachhaltigkeit und Eleganz.</TranslatedText>
+              <TranslatedText fr="Plus qu'une marque, une promesse de qualité, de durabilité et d'élégance." en="More than a brand, a promise of quality, sustainability, and elegance.">Mehr als eine Marke, ein Versprechen von Qualität, Nachhaltigkeit und Eleganz.</TranslatedText>
             </p>
           </div>
           <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -509,7 +400,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      
+
       <section className="bg-muted/50 py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center">
@@ -532,9 +423,8 @@ export default function HomePage() {
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-5 w-5 ${
-                          i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground/30'
-                        }`}
+                        className={`h-5 w-5 ${i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground/30'
+                          }`}
                       />
                     ))}
                   </div>

@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { sendReceiptEmail } from '@/app/actions/emailActions'
 import { updateOrderStatus } from '@/app/actions/orderActions'
+import { createClient } from '@/lib/supabase/client'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -99,13 +100,7 @@ interface LocalOrder {
   receiptImageUrl: string | null
 }
 
-const toBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = (err) => reject(err)
-  })
+
 
 interface UploadReceiptFormProps {
   order: LocalOrder;
@@ -134,7 +129,30 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
 
     try {
       const file = data.receipt[0]
-      const receiptDataUrl = await toBase64(file)
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${order.id}-${Date.now()}.${fileExt}`
+      const filePath = `${order.id}/${fileName}`
+
+      // Create Supabase client for storage upload
+      // We must use the client-side client here as it has the user's session (if any)
+      // or we rely on public/anon policy if user is not signed in but keys are available.
+      // However, our storage policy requires auth. If this form is used by public, policy might need adjustment
+      // or we assume user is logged in (likely for orders).
+      // Based on context, let's assume standard client creation works.
+      const supabase = createClient()
+      if (!supabase) throw new Error('Supabase not configured')
+
+      const { error: uploadError } = await supabase.storage
+        .from('receipts')
+        .upload(filePath, file)
+
+      if (uploadError) {
+        throw new Error(`Upload failed: ${uploadError.message}`)
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('receipts')
+        .getPublicUrl(filePath)
 
       const orderDetailsHtml = `
         <ul>
@@ -154,10 +172,11 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
       `
 
       // Mettre à jour le statut de la commande dans Supabase à 'processing'
+      // Pass the public URL instead of Base64
       const updateResult = await updateOrderStatus({
         orderId: order.id,
         status: 'processing',
-        receiptImageUrl: receiptDataUrl, // Sauvegarder l'URL du reçu
+        receiptImageUrl: publicUrl,
       });
 
       if (!updateResult.success) {
@@ -167,7 +186,7 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
       // Envoyer l'email à l'admin
       const emailResult = await sendReceiptEmail({
         orderId: order.id,
-        receiptDataUrl,
+        receiptDataUrl: publicUrl, // Send URL instead of Base64
         orderDetailsHtml,
         userEmail: order.shippingInfo.email,
         siteUrl: process.env.NEXT_PUBLIC_SITE_URL || window.location.origin,
@@ -199,7 +218,7 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
           []
         );
         const updatedOrders = localOrders.map((o: LocalOrder) =>
-          o.id === order.id ? { ...o, paymentStatus: 'processing', receiptImageUrl: receiptDataUrl } : o
+          o.id === order.id ? { ...o, paymentStatus: 'processing', receiptImageUrl: publicUrl } : o
         );
         safeSetLocalStorage('localOrders', JSON.stringify(updatedOrders));
       }

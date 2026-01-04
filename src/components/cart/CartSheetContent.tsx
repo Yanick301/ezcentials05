@@ -81,7 +81,15 @@ export function CartSheetContent() {
       <ScrollArea className="flex-grow pr-6">
         <div className="flex flex-col gap-6 py-4">
           {cartItems.map((item) => {
-            const productImage = findProductImage(item.product.images[0]);
+            // Safety check: if product data is missing, skip this item or show error.
+            // Ideally we should filter these out or handle them gracefully
+            if (!item.product) return null;
+
+            const imageToUse = item.product.images && item.product.images.length > 0
+              ? item.product.images[0]
+              : null;
+            const productImage = findProductImage(imageToUse || '');
+
             const translatedColor = getTranslatedColor(item.color);
             return (
               <div key={item.id} className="flex items-start gap-4">

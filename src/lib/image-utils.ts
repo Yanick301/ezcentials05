@@ -19,8 +19,12 @@ export function getProductImageUrl(imageId: string): string {
 
   // Sinon, générer directement le chemin depuis l'ID
   // Les images sont stockées dans /public/images/products/
-  // Format: /images/products/{imageId}.jpg
-  // On essaie différentes extensions
+  // Si l'ID a déjà une extension, on l'utilise telle quelle
+  if (imageId.match(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/i)) {
+    return `/images/products/${imageId}`;
+  }
+
+  // Format par défaut: /images/products/{imageId}.jpg
   return `/images/products/${imageId}.jpg`;
 }
 
@@ -67,9 +71,14 @@ export function findProductImage(imageId: string) {
   // Générer un objet image depuis l'ID
   // On essaie d'abord .jpg (le plus commun), mais le navigateur essaiera aussi .png, .webp, etc.
   // Si l'image n'existe pas, onError dans les composants affichera le logo
+  const hasExtension = imageId.match(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/i);
+  const imageUrl = hasExtension
+    ? `/images/products/${imageId}`
+    : `/images/products/${imageId}.jpg`;
+
   return {
     id: imageId,
-    imageUrl: `/images/products/${imageId}.jpg`,
+    imageUrl,
     imageHint: 'product',
   };
 }
