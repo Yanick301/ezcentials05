@@ -47,9 +47,7 @@ export function OptimizedImage({
         fill: true,
         sizes,
         className: cn(
-          'object-cover transition-opacity duration-300',
-          isLoading && 'opacity-0',
-          !isLoading && 'opacity-100',
+          'object-cover',
           className
         ),
       }
@@ -57,9 +55,7 @@ export function OptimizedImage({
         width: width || 400,
         height: height || 400,
         className: cn(
-          'object-cover transition-opacity duration-300',
-          isLoading && 'opacity-0',
-          !isLoading && 'opacity-100',
+          'object-cover',
           className
         ),
       };
