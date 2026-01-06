@@ -1,4 +1,5 @@
 import placeholderImagesData from './placeholder-images.json';
+import existingProductImages from './existing-images.json';
 
 const { placeholderImages } = placeholderImagesData;
 
@@ -17,11 +18,14 @@ export function getProductImageUrl(imageId: string): string {
     return placeholderImage.imageUrl;
   }
 
-  // Sinon, générer directement le chemin depuis l'ID
-  // Les images sont stockées dans /public/images/products/
-  // Format: /images/products/{imageId}.jpg
-  // On essaie différentes extensions
-  return `/images/products/${imageId}.jpg`;
+  // Vérifier si l'image existe dans notre inventaire
+  const baseId = imageId.split('.')[0];
+  if (existingProductImages.includes(baseId)) {
+    return `/images/products/${baseId}.jpg`;
+  }
+
+  // Fallback vers le logo si l'image n'est pas trouvée
+  return '/images/logo.png';
 }
 
 /**
@@ -64,12 +68,20 @@ export function findProductImage(imageId: string) {
     };
   }
 
-  // Générer un objet image depuis l'ID
-  // On essaie d'abord .jpg (le plus commun), mais le navigateur essaiera aussi .png, .webp, etc.
-  // Si l'image n'existe pas, onError dans les composants affichera le logo
+  // Vérifier si l'image existe dans notre inventaire
+  const baseId = imageId.split('.')[0];
+  if (existingProductImages.includes(baseId)) {
+    return {
+      id: imageId,
+      imageUrl: `/images/products/${baseId}.jpg`,
+      imageHint: 'product',
+    };
+  }
+
+  // Si l'image n'existe pas, on renvoie le logo
   return {
-    id: imageId,
-    imageUrl: `/images/products/${imageId}.jpg`,
+    id: 'logo',
+    imageUrl: '/images/logo.png',
     imageHint: 'product',
   };
 }
