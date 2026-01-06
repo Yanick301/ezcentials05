@@ -9363,13 +9363,6 @@ export const trendingProductIds: string[] = [
   'pantalon-valentino-wool-mohair',
 ];
 
-export const products = rawProducts.filter(p =>
-  p.images &&
-  p.images.length > 0 &&
-  availableImages.includes(p.images[0])
-);
-
-
 // --- Fonctions de récupération de données ---
 
 export function getTrendingProducts(products: Product[]): Product[] {
