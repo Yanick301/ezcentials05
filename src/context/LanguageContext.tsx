@@ -11,26 +11,18 @@ type LanguageContextType = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState('de');
+  const [language] = useState('de');
   const [isInitial, setIsInitial] = useState(true);
 
   useEffect(() => {
-    // Toujours utiliser l'allemand par défaut, sauf si l'utilisateur a explicitement choisi une autre langue
-    const storedLang = localStorage.getItem('ezcentials-lang');
-    if (storedLang && ['de', 'fr', 'en'].includes(storedLang)) {
-      setLanguageState(storedLang);
-    } else {
-      // L'allemand est toujours la langue par défaut pour ce site
-      setLanguageState('de');
-    }
+    // Le site est désormais exclusivement en allemand
+    localStorage.setItem('ezcentials-lang', 'de');
     setIsInitial(false);
   }, []);
 
   const setLanguage = (lang: string) => {
-    if (['de', 'fr', 'en'].includes(lang)) {
-        setLanguageState(lang);
-        localStorage.setItem('ezcentials-lang', lang);
-    }
+    // No-op car l'allemand est la seule langue
+    console.log('Language switching is disabled, site is German-only.');
   };
 
   return (

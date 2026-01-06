@@ -38,6 +38,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import type { Database, Json } from '@/lib/supabase/database.types';
 import type { OrderItem } from '@/lib/types';
+import { OptimizedImage } from '@/components/OptimizedImage';
+import { findProductImage } from '@/lib/image-utils';
 
 type OrderRow = Database['public']['Tables']['orders']['Row'];
 
@@ -364,17 +366,36 @@ export default function AdminOrdersPage() {
                       <TranslatedText fr="Articles" en="Items">Artikel</TranslatedText>
                     </h4>
                     <ul className="divide-y">
-                      {order.items.map((item, index) => (
-                        <li key={index} className="flex items-center justify-between py-2 text-sm">
-                          <span>
-                            {item.quantity} x{' '}
-                            <TranslatedText fr={item.name_fr} en={item.name_en}>
-                              {item.name}
-                            </TranslatedText>
-                          </span>
-                          <span className="font-medium">€{(item.price * item.quantity).toFixed(2)}</span>
-                        </li>
-                      ))}
+                      {order.items.map((item, index) => {
+                        const imageInfo = findProductImage(item.image);
+                        return (
+                          <li key={index} className="flex items-center justify-between py-2 text-sm">
+                            <div className="flex items-center gap-3">
+                              <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border bg-muted">
+                                <OptimizedImage
+                                  src={imageInfo.imageUrl}
+                                  alt={item.name}
+                                  fill
+                                  sizes="48px"
+                                  className="object-cover"
+                                />
+                              </div>
+                              <div className="flex flex-col">
+                                <span>
+                                  {item.quantity} x{' '}
+                                  <TranslatedText fr={item.name_fr} en={item.name_en}>
+                                    {item.name}
+                                  </TranslatedText>
+                                </span>
+                                {item.size && (
+                                  <span className="text-xs text-muted-foreground">{item.size}</span>
+                                )}
+                              </div>
+                            </div>
+                            <span className="font-medium">€{(item.price * item.quantity).toFixed(2)}</span>
+                          </li>
+                        );
+                      })}
                     </ul>
                     <div className="mt-4 border-t pt-4">
                       <div className="flex justify-between text-sm">

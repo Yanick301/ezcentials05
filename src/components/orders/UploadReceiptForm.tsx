@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { sendReceiptEmail } from '@/app/actions/emailActions'
 import { updateOrderStatus } from '@/app/actions/orderActions'
+import { createClient } from '@/lib/supabase/client'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -99,13 +100,7 @@ interface LocalOrder {
   receiptImageUrl: string | null
 }
 
-const toBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = (err) => reject(err)
-  })
+
 
 interface UploadReceiptFormProps {
   order: LocalOrder;
@@ -134,18 +129,41 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
 
     try {
       const file = data.receipt[0]
-      const receiptDataUrl = await toBase64(file)
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${order.id}-${Date.now()}.${fileExt}`
+      const filePath = `${order.id}/${fileName}`
+
+      // Create Supabase client for storage upload
+      // We must use the client-side client here as it has the user's session (if any)
+      // or we rely on public/anon policy if user is not signed in but keys are available.
+      // However, our storage policy requires auth. If this form is used by public, policy might need adjustment
+      // or we assume user is logged in (likely for orders).
+      // Based on context, let's assume standard client creation works.
+      const supabase = createClient()
+      if (!supabase) throw new Error('Supabase not configured')
+
+      const { error: uploadError } = await supabase.storage
+        .from('receipts')
+        .upload(filePath, file)
+
+      if (uploadError) {
+        throw new Error(`Upload failed: ${uploadError.message}`)
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('receipts')
+        .getPublicUrl(filePath)
 
       const orderDetailsHtml = `
         <ul>
           ${order.items
-            .map(
-              (item) =>
-                `<li>${item.quantity} x ${item.name} - €${(
-                  item.price * item.quantity
-                ).toFixed(2)}</li>`
-            )
-            .join('')}
+          .map(
+            (item) =>
+              `<li>${item.quantity} x ${item.name} - €${(
+                item.price * item.quantity
+              ).toFixed(2)}</li>`
+          )
+          .join('')}
         </ul>
         <p><strong>Sous-total:</strong> €${order.subtotal.toFixed(2)}</p>
         <p><strong>Livraison:</strong> €${order.shipping.toFixed(2)}</p>
@@ -154,10 +172,11 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
       `
 
       // Mettre à jour le statut de la commande dans Supabase à 'processing'
+      // Pass the public URL instead of Base64
       const updateResult = await updateOrderStatus({
         orderId: order.id,
         status: 'processing',
-        receiptImageUrl: receiptDataUrl, // Sauvegarder l'URL du reçu
+        receiptImageUrl: publicUrl,
       });
 
       if (!updateResult.success) {
@@ -167,20 +186,27 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
       // Envoyer l'email à l'admin
       const emailResult = await sendReceiptEmail({
         orderId: order.id,
-        receiptDataUrl,
+        receiptDataUrl: publicUrl, // Send URL
         orderDetailsHtml,
         userEmail: order.shippingInfo.email,
         siteUrl: process.env.NEXT_PUBLIC_SITE_URL || window.location.origin,
+        customerDetails: {
+          name: order.shippingInfo.name,
+          address: order.shippingInfo.address,
+          city: order.shippingInfo.city,
+          zip: order.shippingInfo.zip,
+          country: order.shippingInfo.country,
+        }
       })
 
       if (!emailResult.success) {
         // If email fails because server is not configured, show a toast but don't stop the process
         if (emailResult.error?.includes('Email server is not configured')) {
-           toast({
+          toast({
             variant: "destructive",
             title: <TranslatedText fr="Serveur d'email non configuré" en="Email server not configured">E-Mail-Server nicht konfiguriert</TranslatedText>,
             description: <TranslatedText fr="Le reçu n'a pas pu être envoyé à l'admin, mais votre commande est enregistrée." en="The receipt could not be sent to the admin, but your order is saved.">Der Beleg konnte nicht an den Administrator gesendet werden, aber Ihre Bestellung ist gespeichert.</TranslatedText>,
-           });
+          });
         } else {
           // For other email errors, show warning but don't fail the process
           console.warn('Email sending failed:', emailResult.error);
@@ -191,7 +217,7 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
           });
         }
       }
-      
+
       // Mettre à jour aussi localStorage pour compatibilité
       if (isLocalStorageAvailable()) {
         const localOrders = safeJsonParse<LocalOrder[]>(
@@ -199,7 +225,7 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
           []
         );
         const updatedOrders = localOrders.map((o: LocalOrder) =>
-          o.id === order.id ? { ...o, paymentStatus: 'processing', receiptImageUrl: receiptDataUrl } : o
+          o.id === order.id ? { ...o, paymentStatus: 'processing', receiptImageUrl: publicUrl } : o
         );
         safeSetLocalStorage('localOrders', JSON.stringify(updatedOrders));
       }
@@ -219,7 +245,7 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
           </TranslatedText>
         ),
       })
-      
+
       onReceiptUploaded();
 
     } catch (err) {
@@ -228,12 +254,19 @@ export default function UploadReceiptForm({ order, onReceiptUploaded }: UploadRe
         variant: 'destructive',
         title: <TranslatedText fr="Échec" en="Failed">Fehlgeschlagen</TranslatedText>,
         description: (
-          <TranslatedText
-            fr="Erreur lors de l’envoi. Réessayez."
-            en="Error sending. Please try again."
-          >
-            Fehler beim Senden. Bitte versuchen Sie es erneut.
-          </TranslatedText>
+          <div className="flex flex-col gap-1">
+            <TranslatedText
+              fr="Erreur lors de l’envoi. Réessayez."
+              en="Error sending. Please try again."
+            >
+              Fehler beim Senden. Bitte versuchen Sie es erneut.
+            </TranslatedText>
+            {err instanceof Error && (
+              <span className="font-mono text-[10px] opacity-70">
+                {err.message}
+              </span>
+            )}
+          </div>
         ),
       })
     } finally {

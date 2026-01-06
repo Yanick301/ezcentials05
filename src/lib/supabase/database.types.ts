@@ -18,6 +18,7 @@ export interface Database {
           email: string;
           first_name: string;
           last_name: string;
+          phone: string;
           photo_url: string | null;
           is_admin: boolean;
           created_at: string;
@@ -28,6 +29,7 @@ export interface Database {
           email: string;
           first_name?: string;
           last_name?: string;
+          phone?: string;
           photo_url?: string;
           is_admin?: boolean;
           created_at?: string;
@@ -38,6 +40,7 @@ export interface Database {
           email?: string;
           first_name?: string;
           last_name?: string;
+          phone?: string;
           photo_url?: string;
           is_admin?: boolean;
           created_at?: string;

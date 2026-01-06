@@ -36,6 +36,17 @@ export async function GET(request: Request) {
           // Rediriger vers reset-password avec le code pour que la page puisse vérifier la session
           return NextResponse.redirect(new URL('/reset-password', requestUrl.origin));
         }
+        
+        // Vérifier si c'est une confirmation d'inscription (signup)
+        const isSignupConfirmation = type === 'signup' || 
+                                  requestUrl.search.includes('type=signup') ||
+                                  next.includes('email-confirmed');
+        
+        if (isSignupConfirmation) {
+          // Rediriger vers la page de confirmation d'email avec un message de succès
+          return NextResponse.redirect(new URL('/email-confirmed', requestUrl.origin));
+        }
+        
         // Sinon, redirection normale après confirmation
         return NextResponse.redirect(new URL(next, requestUrl.origin));
       } else {

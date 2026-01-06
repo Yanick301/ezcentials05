@@ -1,6 +1,8 @@
 
 'use client';
 
+import { OptimizedImage } from '@/components/OptimizedImage';
+
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -90,19 +92,19 @@ const checkoutSchemaEN = z.object({
 type CheckoutFormValues = z.infer<typeof checkoutSchemaEN>;
 
 const europeanCountries = [
-    { code: "DE", name_de: "Deutschland", name_fr: "Allemagne", name_en: "Germany" },
-    { code: "FR", name_de: "Frankreich", name_fr: "France", name_en: "France" },
-    { code: "AT", name_de: "Österreich", name_fr: "Autriche", name_en: "Austria" },
-    { code: "BE", name_de: "Belgien", name_fr: "Belgique", name_en: "Belgium" },
-    { code: "DK", name_de: "Dänemark", name_fr: "Danemark", name_en: "Denmark" },
-    { code: "ES", name_de: "Spanien", name_fr: "Espagne", name_en: "Spain" },
-    { code: "FI", name_de: "Finnland", name_fr: "Finlande", name_en: "Finland" },
-    { code: "IT", name_de: "Italien", name_fr: "Italie", name_en: "Italy" },
-    { code: "LU", name_de: "Luxemburg", name_fr: "Luxembourg", name_en: "Luxembourg" },
-    { code: "NL", name_de: "Niederlande", name_fr: "Pays-Bas", name_en: "Netherlands" },
-    { code: "PT", name_de: "Portugal", name_fr: "Portugal", name_en: "Portugal" },
-    { code: "SE", name_de: "Schweden", name_fr: "Suède", name_en: "Sweden" },
-    { code: "CH", name_de: "Schweiz", name_fr: "Suisse", name_en: "Switzerland" },
+  { code: "DE", name_de: "Deutschland", name_fr: "Allemagne", name_en: "Germany" },
+  { code: "FR", name_de: "Frankreich", name_fr: "France", name_en: "France" },
+  { code: "AT", name_de: "Österreich", name_fr: "Autriche", name_en: "Austria" },
+  { code: "BE", name_de: "Belgien", name_fr: "Belgique", name_en: "Belgium" },
+  { code: "DK", name_de: "Dänemark", name_fr: "Danemark", name_en: "Denmark" },
+  { code: "ES", name_de: "Spanien", name_fr: "Espagne", name_en: "Spain" },
+  { code: "FI", name_de: "Finnland", name_fr: "Finlande", name_en: "Finland" },
+  { code: "IT", name_de: "Italien", name_fr: "Italie", name_en: "Italy" },
+  { code: "LU", name_de: "Luxemburg", name_fr: "Luxembourg", name_en: "Luxembourg" },
+  { code: "NL", name_de: "Niederlande", name_fr: "Pays-Bas", name_en: "Netherlands" },
+  { code: "PT", name_de: "Portugal", name_fr: "Portugal", name_en: "Portugal" },
+  { code: "SE", name_de: "Schweden", name_fr: "Suède", name_en: "Sweden" },
+  { code: "CH", name_de: "Schweiz", name_fr: "Suisse", name_en: "Switzerland" },
 ];
 
 
@@ -114,7 +116,7 @@ export function CheckoutClientPage() {
   const router = useRouter();
   const { user, profile, isUserLoading } = useUser();
   const { toast } = useToast();
-  
+
   const currentSchema = language === 'fr' ? checkoutSchemaFR : language === 'en' ? checkoutSchemaEN : checkoutSchemaDE;
 
   const form = useForm<CheckoutFormValues>({
@@ -138,36 +140,36 @@ export function CheckoutClientPage() {
   const shippingCost = selectedCountry === 'Germany' ? 0 : 40;
   const taxes = subtotal * TAX_RATE;
   const total = subtotal + shippingCost + taxes;
-  
+
   useEffect(() => {
     if (isUserLoading) return;
     if (!user) {
-        router.push('/login?redirect=/checkout');
-        return;
+      router.push('/login?redirect=/checkout');
+      return;
     }
 
     form.reset({
-        email: user.email || '',
-        firstName: profile?.firstName || '',
-        lastName: profile?.lastName || '',
-        country: 'Germany',
-        address: '',
-        apartment: '',
-        city: '',
-        state: '',
-        zip: '',
-        discountCode: '',
+      email: user.email || '',
+      firstName: profile?.firstName || '',
+      lastName: profile?.lastName || '',
+      country: 'Germany',
+      address: '',
+      apartment: '',
+      city: '',
+      state: '',
+      zip: '',
+      discountCode: '',
     });
 
   }, [user, isUserLoading, router, form])
 
   const onSubmit: SubmitHandler<CheckoutFormValues> = async (data) => {
     if (!user) {
-        toast({ 
-            variant: 'destructive', 
-            title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>, 
-            description: <TranslatedText fr="Vous devez être connecté pour passer une commande." en="You must be logged in to place an order.">Sie müssen eingeloggt sein, um eine Bestellung aufzugeben.</TranslatedText>
-        });
+      toast({
+        variant: 'destructive',
+        title: <TranslatedText fr="Erreur" en="Error">Fehler</TranslatedText>,
+        description: <TranslatedText fr="Vous devez être connecté pour passer une commande." en="You must be logged in to place an order.">Sie müssen eingeloggt sein, um eine Bestellung aufzugeben.</TranslatedText>
+      });
       return;
     }
 
@@ -212,7 +214,11 @@ export function CheckoutClientPage() {
       toast({
         variant: "destructive",
         title: <TranslatedText fr="Erreur de commande" en="Order Error">Bestellfehler</TranslatedText>,
-        description: <TranslatedText fr="Impossible de créer la commande. Veuillez réessayer." en="Could not create order. Please try again.">Bestellung konnte nicht erstellt werden. Bitte versuchen Sie es erneut.</TranslatedText>
+        description: orderResult.error ? (
+          <span className="font-mono text-xs">{orderResult.error}</span>
+        ) : (
+          <TranslatedText fr="Impossible de créer la commande. Veuillez réessayer." en="Could not create order. Please try again.">Bestellung konnte nicht erstellt werden. Bitte versuchen Sie es erneut.</TranslatedText>
+        )
       });
       return;
     }
@@ -239,10 +245,10 @@ export function CheckoutClientPage() {
     }
 
     toast({
-        title: <TranslatedText fr="Veuillez téléverser votre reçu" en="Please upload your receipt">Bitte laden Sie Ihre Quittung hoch</TranslatedText>,
-        description: <TranslatedText fr="Vous allez être redirigé pour finaliser votre commande." en="You will be redirected to finalize your order.">Sie werden weitergeleitet, um Ihre Bestellung abzuschließen.</TranslatedText>
+      title: <TranslatedText fr="Veuillez téléverser votre reçu" en="Please upload your receipt">Bitte laden Sie Ihre Quittung hoch</TranslatedText>,
+      description: <TranslatedText fr="Vous allez être redirigé pour finaliser votre commande." en="You will be redirected to finalize your order.">Sie werden weitergeleitet, um Ihre Bestellung abzuschließen.</TranslatedText>
     });
-    
+
     router.push(`/checkout/upload-receipt?orderId=${orderResult.orderId}`);
   };
 
@@ -368,9 +374,9 @@ export function CheckoutClientPage() {
                               </FormControl>
                               <SelectContent>
                                 {europeanCountries.map(country => (
-                                    <SelectItem key={country.code} value={country.name_en}>
-                                        <TranslatedText fr={country.name_fr} en={country.name_en}>{country.name_de}</TranslatedText>
-                                    </SelectItem>
+                                  <SelectItem key={country.code} value={country.name_en}>
+                                    <TranslatedText fr={country.name_fr} en={country.name_en}>{country.name_de}</TranslatedText>
+                                  </SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
@@ -502,13 +508,12 @@ export function CheckoutClientPage() {
                       return (
                         <li key={item.id} className="flex space-x-4 py-6">
                           <div className="relative h-20 w-20 flex-shrink-0">
-                            <img
+                            <OptimizedImage
                               src={image.imageUrl}
                               alt={item.product.name}
-                              className="h-full w-full rounded-md object-cover object-center"
-                              onError={(e) => {
-                                e.currentTarget.src = '/images/logo.png';
-                              }}
+                              fill
+                              sizes="80px"
+                              className="rounded-md object-cover"
                             />
                             <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
                               {item.quantity}
@@ -552,10 +557,10 @@ export function CheckoutClientPage() {
                       {shippingCost > 0 ? `€${shippingCost.toFixed(2)}` : <TranslatedText fr="Gratuit" en="Free">Gratis</TranslatedText>}
                     </p>
                   </div>
-                   <div className="flex justify-between">
+                  <div className="flex justify-between">
                     <p><TranslatedText fr="Taxes" en="Taxes">Steuern</TranslatedText> ({(TAX_RATE * 100).toFixed(0)}%)</p>
                     <p className="font-medium text-foreground">
-                        €{taxes.toFixed(2)}
+                      €{taxes.toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -568,30 +573,30 @@ export function CheckoutClientPage() {
                 </div>
 
                 <div className="mt-8">
-                    <div className="rounded-lg border border-border bg-card p-6">
-                        <h3 className="mb-4 flex items-center text-lg font-medium text-card-foreground">
-                            <Banknote className="mr-2 h-5 w-5" />
-                            <TranslatedText fr="Paiement par virement bancaire" en="Bank Transfer Payment">Zahlung per Banküberweisung</TranslatedText>
-                        </h3>
-                        <p className="mb-4 text-sm text-muted-foreground">
-                            <TranslatedText fr="Veuillez effectuer un virement instantané aux coordonnées ci-dessous. Votre commande ne sera traitée qu'à réception du paiement." en="Please make an instant bank transfer to the details below. Your order will only be processed upon receipt of payment.">Bitte tätigen Sie eine Sofortüberweisung an die unten stehenden Daten. Ihre Bestellung wird erst nach Zahlungseingang bearbeitet.</TranslatedText>
-                        </p>
-                        <div className="space-y-2 text-sm">
-                            <div className="flex justify-between"><span className="font-medium text-foreground"><TranslatedText fr="Titulaire du compte" en="Account Holder">Kontoinhaber</TranslatedText>:</span> <span className="text-foreground">Klaus Peter Scheid</span></div>
-                            <div className="flex justify-between"><span className="font-medium text-foreground">IBAN:</span> <span className="text-foreground">DE33500319000014065210</span></div>
-                            <div className="flex justify-between"><span className="font-medium text-foreground">BIC:</span> <span className="text-foreground">BBVADEFFXXX</span></div>
-                            <div className="flex justify-between"><span className="font-medium text-foreground"><TranslatedText fr="Banque" en="Bank">Bank</TranslatedText>:</span> <span className="text-foreground">BBVA</span></div>
-                            <div className="flex justify-between"><span className="font-medium text-foreground"><TranslatedText fr="Motif" en="Reference">Verwendungszweck</TranslatedText>:</span> <span className="font-bold text-foreground">EZCENTIALS</span></div>
-                        </div>
-
-                        <Alert variant="destructive" className="mt-6 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200">
-                            <AlertTriangle className="h-4 w-4 text-amber-800 dark:text-amber-200" />
-                            <AlertTitle className="font-semibold text-amber-800 dark:text-amber-200"><TranslatedText fr="Avertissement Important" en="Important Warning">Wichtiger Hinweis</TranslatedText></AlertTitle>
-                            <AlertDescription className="text-amber-700 dark:text-amber-300">
-                                <TranslatedText fr="Après avoir cliqué sur 'Poursuivre ma commande', vous serez redirigé pour téléverser le reçu de votre virement pour finaliser votre commande." en="After clicking 'Continue my order', you will be redirected to upload your transfer receipt to finalize your order.">Nachdem Sie auf 'Meine Bestellung fortsetzen' geklickt haben, werden Sie weitergeleitet, um Ihren Überweisungsbeleg hochzuladen und Ihre Bestellung abzuschließen.</TranslatedText>
-                            </AlertDescription>
-                        </Alert>
+                  <div className="rounded-lg border border-border bg-card p-6">
+                    <h3 className="mb-4 flex items-center text-lg font-medium text-card-foreground">
+                      <Banknote className="mr-2 h-5 w-5" />
+                      <TranslatedText fr="Paiement par virement bancaire" en="Bank Transfer Payment">Zahlung per Banküberweisung</TranslatedText>
+                    </h3>
+                    <p className="mb-4 text-sm text-muted-foreground">
+                      <TranslatedText fr="Veuillez effectuer un virement instantané aux coordonnées ci-dessous. Votre commande ne sera traitée qu'à réception du paiement." en="Please make an instant bank transfer to the details below. Your order will only be processed upon receipt of payment.">Bitte tätigen Sie eine Sofortüberweisung an die unten stehenden Daten. Ihre Bestellung wird erst nach Zahlungseingang bearbeitet.</TranslatedText>
+                    </p>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between"><span className="font-medium text-foreground"><TranslatedText fr="Titulaire du compte" en="Account Holder">Kontoinhaber</TranslatedText>:</span> <span className="text-foreground">Klaus Peter Scheid</span></div>
+                      <div className="flex justify-between"><span className="font-medium text-foreground">IBAN:</span> <span className="text-foreground">DE33500319000014065210</span></div>
+                      <div className="flex justify-between"><span className="font-medium text-foreground">BIC:</span> <span className="text-foreground">BBVADEFFXXX</span></div>
+                      <div className="flex justify-between"><span className="font-medium text-foreground"><TranslatedText fr="Banque" en="Bank">Bank</TranslatedText>:</span> <span className="text-foreground">BBVA</span></div>
+                      <div className="flex justify-between"><span className="font-medium text-foreground"><TranslatedText fr="Motif" en="Reference">Verwendungszweck</TranslatedText>:</span> <span className="font-bold text-foreground">EZCENTIALS</span></div>
                     </div>
+
+                    <Alert variant="destructive" className="mt-6 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200">
+                      <AlertTriangle className="h-4 w-4 text-amber-800 dark:text-amber-200" />
+                      <AlertTitle className="font-semibold text-amber-800 dark:text-amber-200"><TranslatedText fr="Avertissement Important" en="Important Warning">Wichtiger Hinweis</TranslatedText></AlertTitle>
+                      <AlertDescription className="text-amber-700 dark:text-amber-300">
+                        <TranslatedText fr="Après avoir cliqué sur 'Poursuivre ma commande', vous serez redirigé pour téléverser le reçu de votre virement pour finaliser votre commande." en="After clicking 'Continue my order', you will be redirected to upload your transfer receipt to finalize your order.">Nachdem Sie auf 'Meine Bestellung fortsetzen' geklickt haben, werden Sie weitergeleitet, um Ihren Überweisungsbeleg hochzuladen und Ihre Bestellung abzuschließen.</TranslatedText>
+                      </AlertDescription>
+                    </Alert>
+                  </div>
                 </div>
 
                 <div className="mt-8">
@@ -602,22 +607,22 @@ export function CheckoutClientPage() {
                     disabled={form.formState.isSubmitting}
                   >
                     {form.formState.isSubmitting ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            <TranslatedText fr="Création en cours..." en="Creating...">Erstellung...</TranslatedText>
-                        </>
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <TranslatedText fr="Création en cours..." en="Creating...">Erstellung...</TranslatedText>
+                      </>
                     ) : (
-                        <TranslatedText fr="Poursuivre ma commande" en="Continue my order">Meine Bestellung fortsetzen</TranslatedText>
+                      <TranslatedText fr="Poursuivre ma commande" en="Continue my order">Meine Bestellung fortsetzen</TranslatedText>
                     )}
                   </Button>
                 </div>
               </div>
             </aside>
           </div>
-        </form>
-      </Form>
-    </div>
+        </form >
+      </Form >
+    </div >
   );
 }
 
-    
+

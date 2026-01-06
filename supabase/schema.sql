@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   email TEXT NOT NULL,
   first_name TEXT DEFAULT '',
   last_name TEXT DEFAULT '',
+  phone TEXT DEFAULT '',
   photo_url TEXT DEFAULT '',
   is_admin BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -121,12 +122,13 @@ CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.user_profiles (id, email, first_name, last_name, photo_url, is_admin)
+  INSERT INTO public.user_profiles (id, email, first_name, last_name, phone, photo_url, is_admin)
   VALUES (
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'first_name', ''),
     COALESCE(NEW.raw_user_meta_data->>'last_name', ''),
+    COALESCE(NEW.raw_user_meta_data->>'phone', ''),
     COALESCE(NEW.raw_user_meta_data->>'photo_url', ''),
     FALSE
   );

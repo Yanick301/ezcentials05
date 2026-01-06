@@ -1,9 +1,8 @@
 
 import type { Product, Category, Review, Color } from './types';
-import existingProductImages from './existing-images.json';
+import availableImages from './available-images.json';
 
 export const categories: Category[] = [
-  // ... (rest of the code will be filtered below)
   {
     id: 'cat-1',
     name: 'Herren',
@@ -5734,7 +5733,7 @@ const rawProducts: Product[] = [
     description_en: 'Automatic steel watch, classic military style',
     category: 'mens-clothing',
     subcategory: 'accessoires-homme',
-    images: ['hamilton-khaki-field.'],
+    images: ['hamilton-khaki-field'],
     sizes: ['Unique'],
     colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Silber', name_fr: 'Argent', name_en: 'Silver' }],
   },
@@ -6044,7 +6043,7 @@ const rawProducts: Product[] = [
     description_en: 'Fashionable sunglasses with signature Celine frame',
     category: 'womens-clothing',
     subcategory: 'accessoires-femme',
-    images: ['celine-sunglasses.'],
+    images: ['celine-sunglasses'],
     sizes: ['Unique'],
     colors: [{ name_de: 'Schwarz', name_fr: 'Noir', name_en: 'Black' }, { name_de: 'Braun', name_fr: 'Marron', name_en: 'Brown' }],
   },
@@ -6239,7 +6238,7 @@ const rawProducts: Product[] = [
     description_en: 'Comfortable running / walking shoes',
     category: 'sport',
     subcategory: 'chaussures-sport',
-    images: ['sport_asics_sonoma7_women.'],
+    images: ['sport_asics_sonoma7_women'],
     sizes: ['36', '37', '38', '39', '40', '41', '42'],
     colors: [{ name_de: 'Rosa', name_fr: 'Rose', name_en: 'Pink' }, { name_de: 'Weiß', name_fr: 'Blanc', name_en: 'White' }],
   },
@@ -6689,7 +6688,7 @@ const rawProducts: Product[] = [
     description_en: 'Comfortable for gym, stretching & abs',
     category: 'sport',
     subcategory: 'accessoires-sport',
-    images: ['accessoire_tapis_nbr'],
+    images: ['accessoire_tapis_yoga'],
     sizes: ['Unique'],
     colors: [{ name_de: 'Rosa', name_fr: 'Rose', name_en: 'Pink' }],
   },
@@ -9224,7 +9223,7 @@ export const products = rawProducts.filter(p => {
   if (!p.images || p.images.length === 0) return false;
   // On ne garde que les produits dont l'image principale existe
   const mainImageId = p.images[0].split('.')[0];
-  return existingProductImages.includes(mainImageId);
+  return availableImages.includes(mainImageId);
 });
 
 
@@ -9363,6 +9362,12 @@ export const trendingProductIds: string[] = [
   'pantalon-tom-ford-cotton-satin-chinos',
   'pantalon-valentino-wool-mohair',
 ];
+
+export const products = rawProducts.filter(p =>
+  p.images &&
+  p.images.length > 0 &&
+  availableImages.includes(p.images[0])
+);
 
 
 // --- Fonctions de récupération de données ---

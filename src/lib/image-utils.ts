@@ -1,5 +1,5 @@
 import placeholderImagesData from './placeholder-images.json';
-import existingProductImages from './existing-images.json';
+import availableImages from './available-images.json';
 
 const { placeholderImages } = placeholderImagesData;
 
@@ -20,7 +20,11 @@ export function getProductImageUrl(imageId: string): string {
 
   // Vérifier si l'image existe dans notre inventaire
   const baseId = imageId.split('.')[0];
-  if (existingProductImages.includes(baseId)) {
+  if (availableImages.includes(baseId)) {
+    // Si l'ID a déjà une extension, on l'utilise telle quelle
+    if (imageId.match(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/i)) {
+      return `/images/products/${imageId}`;
+    }
     return `/images/products/${baseId}.jpg`;
   }
 
@@ -70,10 +74,15 @@ export function findProductImage(imageId: string) {
 
   // Vérifier si l'image existe dans notre inventaire
   const baseId = imageId.split('.')[0];
-  if (existingProductImages.includes(baseId)) {
+  if (availableImages.includes(baseId)) {
+    const hasExtension = imageId.match(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/i);
+    const imageUrl = hasExtension
+      ? `/images/products/${imageId}`
+      : `/images/products/${baseId}.jpg`;
+
     return {
       id: imageId,
-      imageUrl: `/images/products/${baseId}.jpg`,
+      imageUrl,
       imageHint: 'product',
     };
   }

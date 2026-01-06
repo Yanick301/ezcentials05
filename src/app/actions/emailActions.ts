@@ -17,10 +17,17 @@ function escapeHtml(text: string): string {
 
 const SendReceiptInput = z.object({
   orderId: z.string(),
-  receiptDataUrl: z.string(),
+  receiptDataUrl: z.string().url(),
   orderDetailsHtml: z.string(),
   userEmail: z.string().email(),
   siteUrl: z.string().url(),
+  customerDetails: z.object({
+    name: z.string(),
+    address: z.string(),
+    city: z.string(),
+    zip: z.string(),
+    country: z.string(),
+  }),
 })
 
 type SendReceiptInput = z.infer<typeof SendReceiptInput>
@@ -31,7 +38,7 @@ const sendEmailToCustomerInput = z.object({
 })
 
 export async function sendReceiptEmail(input: SendReceiptInput) {
-  const { orderId, receiptDataUrl, orderDetailsHtml, userEmail, siteUrl } =
+  const { orderId, receiptDataUrl, orderDetailsHtml, userEmail, siteUrl, customerDetails } =
     SendReceiptInput.parse(input)
 
   const resendApiKey = process.env.RESEND_API_KEY
@@ -55,12 +62,10 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
   const confirmUrl = `${siteUrl}/order-status/customer-confirm?orderId=${orderId}&userEmail=${encodedUserEmail}`;
   const rejectUrl = `${siteUrl}/order-status/customer-reject?orderId=${orderId}&userEmail=${encodedUserEmail}`;
 
-  const base64Content = receiptDataUrl.split(',')[1]
-  if (!base64Content) {
-    const errorMsg = 'Invalid receipt data URI: Base64 content not found.'
-    console.error(`sendReceiptEmail Error: ${errorMsg}`)
-    return { success: false, error: errorMsg }
-  }
+  // Determine file type from URL or default to octet-stream
+  const isImage = receiptDataUrl.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/);
+  const isPdf = receiptDataUrl.toLowerCase().endsWith('.pdf');
+  const filename = `receipt-${orderId}.${isPdf ? 'pdf' : (isImage ? 'jpg' : 'bin')}`;
 
   try {
     console.log(
@@ -69,20 +74,45 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
     const { data, error } = await resend.emails.send({
       from: fromEmail,
       to: [adminEmail],
-      subject: `Nouveau reçu pour la commande ${orderId}`,
+      subject: `Bestellung #${orderId} - Zahlungsnachweis`,
       html: `
-        <h1>Nouveau reçu de paiement pour la commande ${escapeHtml(orderId)}</h1>
-        <p><strong>Email du client:</strong> ${escapeHtml(userEmail)}</p>
+        <h1>Zahlungsnachweis für Bestellung #${escapeHtml(orderId)}</h1>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+          <h2 style="margin-top: 0;">Kundeninformationen</h2>
+          <p><strong>Name:</strong> ${escapeHtml(customerDetails.name)}</p>
+          <p><strong>E-Mail:</strong> <a href="mailto:${escapeHtml(userEmail)}">${escapeHtml(userEmail)}</a></p>
+          <p><strong>Adresse:</strong><br>
+          ${escapeHtml(customerDetails.address)}<br>
+          ${escapeHtml(customerDetails.zip)} ${escapeHtml(customerDetails.city)}<br>
+          ${escapeHtml(customerDetails.country)}</p>
+        </div>
 
-        <h2>Détails de la commande:</h2>
-        ${orderDetailsHtml}
-
-        <p>Le reçu est attaché à cet e-mail.</p>
+        <div style="margin-bottom: 20px;">
+          <h2>Bestelldetails</h2>
+          ${orderDetailsHtml}
+        </div>
 
         <hr>
 
-        <h2>Actions de la commande :</h2>
-        <p>Veuillez confirmer ou rejeter cette commande. Le client sera notifié par e-mail.</p>
+        <div style="margin-bottom: 20px;">
+          <h2>Zahlungsbeleg</h2>
+          <p>
+            <a href="${escapeHtml(receiptDataUrl)}" target="_blank" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+              Beleg herunterladen/ansehen
+            </a>
+          </p>
+          ${isImage ? `
+            <div style="margin-top: 15px; border: 1px solid #ddd; padding: 5px;">
+              <img src="${escapeHtml(receiptDataUrl)}" alt="Zahlungsbeleg" style="max-width: 100%; height: auto; max-height: 500px;" />
+            </div>
+          ` : ''} 
+        </div>
+
+        <hr>
+
+        <h2>Bestellaktionen</h2>
+        <p>Bitte bestätigen oder lehnen Sie diese Bestellung ab. Der Kunde wird per E-Mail benachrichtigt.</p>
         <table width="100%" cellspacing="0" cellpadding="0">
           <tr>
             <td>
@@ -90,13 +120,13 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
                 <tr>
                   <td align="center" width="200" height="40" bgcolor="#28a745" style="border-radius: 5px; color: #ffffff; display: block;">
                     <a href="${escapeHtml(confirmUrl)}" target="_blank" style="font-size: 16px; font-weight: bold; font-family: sans-serif; text-decoration: none; line-height: 40px; width: 100%; display: inline-block;">
-                      <span style="color: #ffffff;">Confirmer la commande</span>
+                      <span style="color: #ffffff;">Bestellung bestätigen</span>
                     </a>
                   </td>
                   <td width="20"></td>
                   <td align="center" width="200" height="40" bgcolor="#dc3545" style="border-radius: 5px; color: #ffffff; display: block;">
                      <a href="${escapeHtml(rejectUrl)}" target="_blank" style="font-size: 16px; font-weight: bold; font-family: sans-serif; text-decoration: none; line-height: 40px; width: 100%; display: inline-block;">
-                      <span style="color: #ffffff;">Rejeter la commande</span>
+                      <span style="color: #ffffff;">Bestellung ablehnen</span>
                     </a>
                   </td>
                 </tr>
@@ -104,15 +134,15 @@ export async function sendReceiptEmail(input: SendReceiptInput) {
             </td>
           </tr>
         </table>
-        <p style="font-size: 12px; color: #666;">Si les boutons ne fonctionnent pas, copiez-collez les liens suivants :<br>
-           Confirmer : ${escapeHtml(confirmUrl)}<br>
-           Rejeter : ${escapeHtml(rejectUrl)}
+        <p style="font-size: 12px; color: #666;">Falls die Buttons nicht funktionieren, kopieren Sie bitte die folgenden Links:<br>
+           Bestätigen: ${escapeHtml(confirmUrl)}<br>
+           Ablehnen: ${escapeHtml(rejectUrl)}
         </p>
       `,
       attachments: [
         {
-          filename: `recu-${orderId}.jpg`,
-          content: base64Content,
+          filename: filename,
+          path: receiptDataUrl, // Use path for URL
         },
       ],
     })
@@ -157,16 +187,16 @@ export async function sendCustomerConfirmationEmail(
     await resend.emails.send({
       from: fromEmail,
       to: userEmail,
-      subject: `Votre commande EZCENTIALS #${orderId} est confirmée !`,
+      subject: `Ihre EZCENTIALS Bestellung #${orderId} wurde bestätigt!`,
       html: `
-                <h1>Votre commande a été validée !</h1>
-                <p>Bonjour,</p>
-                <p>Bonne nouvelle ! Votre commande <strong>#${orderId}</strong> a été validée par notre équipe.</p>
-                <p>Elle sera préparée et expédiée dans les plus brefs délais. Vous pouvez consulter le statut mis à jour dans votre historique de commandes.</p>
-                <p>Merci pour votre confiance.</p>
+                <h1>Ihre Bestellung wurde bestätigt!</h1>
+                <p>Hallo,</p>
+                <p>Gute Neuigkeiten! Ihre Bestellung <strong>#${orderId}</strong> wurde von unserem Team bestätigt.</p>
+                <p>Sie wird so schnell wie möglich vorbereitet und versendet. Sie können den aktuellen Status in Ihrer Bestellübersicht einsehen.</p>
+                <p>Vielen Dank für Ihr Vertrauen.</p>
                 <br>
-                <p>Cordialement,</p>
-                <p>L'équipe EZCENTIALS</p>
+                <p>Mit freundlichen Grüßen,</p>
+                <p>Ihr EZCENTIALS Team</p>
             `,
     })
     return { success: true, error: null }
@@ -198,17 +228,17 @@ export async function sendCustomerRejectionEmail(
     await resend.emails.send({
       from: fromEmail,
       to: userEmail,
-      subject: `Information concernant votre commande EZCENTIALS #${orderId}`,
+      subject: `Information zu Ihrer EZCENTIALS Bestellung #${orderId}`,
       html: `
-                <h1>Un problème est survenu avec votre commande</h1>
-                <p>Bonjour,</p>
-                <p>Nous vous contactons concernant votre commande <strong>#${orderId}</strong>.</p>
-                <p>Malheureusement, nous n'avons pas pu valider votre paiement et votre commande a été rejetée. Vous pouvez consulter le statut mis à jour dans votre historique de commandes.</p>
-                <p>Nous vous invitons à contacter notre support client à <a href="mailto:contact-support@ezcentials.com">contact-support@ezcentials.com</a> pour plus d'informations ou pour tenter de finaliser votre commande à nouveau.</p>
-                <p>Nous nous excusons pour ce désagrément.</p>
+                <h1>Es gibt ein Problem mit Ihrer Bestellung</h1>
+                <p>Hallo,</p>
+                <p>Wir kontaktieren Sie bezüglich Ihrer Bestellung <strong>#${orderId}</strong>.</p>
+                <p>Leider konnten wir Ihre Zahlung nicht validieren und Ihre Bestellung wurde abgelehnt. Sie können den aktuellen Status in Ihrer Bestellübersicht einsehen.</p>
+                <p>Wir laden Sie ein, unseren Kundensupport unter <a href="mailto:contact-support@ezcentials.com">contact-support@ezcentials.com</a> zu kontaktieren, um weitere Informationen zu erhalten oder zu versuchen, Ihre Bestellung erneut abzuschließen.</p>
+                <p>Wir entschuldigen uns für die Unannehmlichkeiten.</p>
                 <br>
-                <p>Cordialement,</p>
-                <p>L'équipe EZCENTIALS</p>
+                <p>Mit freundlichen Grüßen,</p>
+                <p>Ihr EZCENTIALS Team</p>
             `,
     })
     return { success: true, error: null }

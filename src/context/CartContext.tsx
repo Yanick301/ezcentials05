@@ -35,18 +35,33 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setIsInitialLoad(false);
       return;
     }
-    
+
     const localData = safeGetLocalStorage(LOCAL_STORAGE_CART_KEY);
     if (localData) {
       const parsed = safeJsonParse<CartItem[]>(localData, []);
-      setCartItems(parsed);
+      // Filter out invalid items to prevent crashes
+      const validItems = parsed.filter(item =>
+        item &&
+        item.id &&
+        item.product &&
+        item.product.id &&
+        item.product.slug &&
+        typeof item.product.price === 'number' &&
+        item.product.name &&
+        typeof item.quantity === 'number' &&
+        // Ensure images is either undefined or an array
+        (!item.product.images || Array.isArray(item.product.images))
+      );
+      setCartItems(validItems);
     }
     setIsInitialLoad(false);
   }, []);
 
   useEffect(() => {
     if (!isInitialLoad && isLocalStorageAvailable()) {
-      safeSetLocalStorage(LOCAL_STORAGE_CART_KEY, JSON.stringify(cartItems));
+      // Double check validity before saving
+      const validToSave = cartItems.filter(item => item && item.product && item.product.id);
+      safeSetLocalStorage(LOCAL_STORAGE_CART_KEY, JSON.stringify(validToSave));
     }
   }, [cartItems, isInitialLoad]);
 
@@ -54,9 +69,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (item: Omit<CartItem, 'id'>) => {
       const { product, quantity, size, color } = item;
       // Create a unique ID for the cart item based on product and variants
-      const itemId = `${product.id}${size ? `-${size}` : ''}${
-        color ? `-${color}` : ''
-      }`;
+      const itemId = `${product.id}${size ? `-${size}` : ''}${color ? `-${color}` : ''
+        }`;
 
       setCartItems((prevItems) => {
         const existingItem = prevItems.find((i) => i.id === itemId);
@@ -97,7 +111,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + getProductPrice(item.product, item.size) * item.quantity,
+    (sum, item) => {
+      const price = getProductPrice(item.product, item.size);
+      return sum + (typeof price === 'number' && !isNaN(price) ? price : 0) * item.quantity;
+    },
     0
   );
 

@@ -6,13 +6,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { TranslatedText } from '@/components/TranslatedText';
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { useCart } from '@/context/CartContext';
-import { DialogClose } from '@radix-ui/react-dialog';
+import { OptimizedImage } from '@/components/OptimizedImage';
 import { findProductImage } from '@/lib/image-utils';
 import { useLanguage } from '@/context/LanguageContext';
 import type { Color } from '@/lib/types';
 import { getProductPrice } from '@/lib/perfume-prices';
+import { useCart } from '@/context/CartContext';
+import { SheetClose as PrimitiveSheetClose } from '@/components/ui/sheet';
+import React from 'react';
 
 
 const SheetClose = ({
@@ -21,9 +22,9 @@ const SheetClose = ({
 }: {
   children: React.ReactNode;
 }) => (
-  <DialogClose {...props} asChild>
+  <PrimitiveSheetClose {...props} asChild>
     {children}
-  </DialogClose>
+  </PrimitiveSheetClose>
 );
 
 export function CartSheetContent() {
@@ -83,21 +84,24 @@ export function CartSheetContent() {
       <ScrollArea className="flex-grow pr-6">
         <div className="flex flex-col gap-6 py-4">
           {cartItems.map((item) => {
-            const productImage = findProductImage(item.product.images[0]);
+            // Safety check: if product data is missing, skip this item or show error.
+            if (!item.product) return null;
+
+            // Defensive check for images array
+            const images = Array.isArray(item.product.images) ? item.product.images : [];
+            const imageToUse = images.length > 0 ? images[0] : null;
+            const productImage = findProductImage(imageToUse || '');
+
             const translatedColor = getTranslatedColor(item.color);
             return (
               <div key={item.id} className="flex items-start gap-4">
                 <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
-                  <Image
+                  <OptimizedImage
                     src={productImage.imageUrl}
                     alt={item.product.name}
                     fill
                     sizes="96px"
                     className="object-cover"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.src = '/images/logo.png';
-                    }}
                   />
                 </div>
                 <div className="flex flex-1 flex-col gap-1">
@@ -124,7 +128,7 @@ export function CartSheetContent() {
                     </Button>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    €{getProductPrice(item.product, item.size).toFixed(2)}
+                    €{(getProductPrice(item.product, item.size) || 0).toFixed(2)}
                   </p>
                   {(item.size || translatedColor) && (
                     <p className="text-xs text-muted-foreground">
@@ -163,7 +167,7 @@ export function CartSheetContent() {
             );
           })}
         </div>
-      </ScrollArea>
+      </ScrollArea >
       <div className="border-t px-6 py-4">
         <div className="flex justify-between text-base font-medium text-foreground">
           <p>
